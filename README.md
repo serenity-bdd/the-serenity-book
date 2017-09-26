@@ -1,3 +1,6 @@
-# My Awesome Book
+# The Serenity Book
 
-This file file serves as your book's preface, a great place to describe your book's content and ideas.
+This book will help you write great automated acceptance tests.
+
+
+

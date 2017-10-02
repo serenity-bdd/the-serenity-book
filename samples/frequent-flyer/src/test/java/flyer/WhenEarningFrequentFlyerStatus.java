@@ -9,7 +9,6 @@ import flyer.steps.TravellerEarningStatusPoints;
 import static flyer.Status.Bronze;
 import static flyer.Status.Silver;
 
-//! [class-body]
 @RunWith(SerenityRunner.class)
 public class WhenEarningFrequentFlyerStatus {
 
@@ -35,5 +34,5 @@ public class WhenEarningFrequentFlyerStatus {
 
         // THEN
         tracy.should_have_a_status_of(Silver);
-    }}
-//! [class-body]
+    }
+}

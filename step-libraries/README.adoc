@@ -20,9 +20,7 @@ And the second can be broken into three steps:
 
 We could express these tests using Serenity in JUnit as follows:
 
-```java
-[snippet](samples/frequent-flyer/src/test/java/flyer/WhenEarningFrequentFlyerStatus.java#class-body)
-```
+{% codesnippet "samples/frequent-flyer/src/test/java/flyer/WhenEarningFrequentFlyerStatus.java", language="java", lines="12:38" %}{% endcodesnippet %}
 
 Notice how the second test reuses step methods used in the first to perform a slightly different test. This is a typical example of the way we reuse steps in similar tests, in order to avoid duplicated code and make the code easier to maintain.
 
@@ -32,10 +30,7 @@ Notice how we did not need to instantiate the `Steps` class `TravellerEarningSta
 
 Step methods are annotated with the @Step annotation:
 
-[source, java]
-----
-include::{source-dir}/flyer/steps/TravellerEarningStatusPoints.java[tags=preamble,joins,flies,should,tail]
-----
+{% codesnippet "samples/frequent-flyer/src/test/java/flyer/steps/TravellerEarningStatusPoints.java", language="java", lines="9:39" %}{% endcodesnippet %}
 
 <1> Steps classes can extend any class, or none
 <2> If you include an `actor` field in your step library, Serenity will inject the name of the step.

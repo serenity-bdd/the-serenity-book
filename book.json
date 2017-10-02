@@ -1,13 +1,6 @@
 {
-	"plugins": [
-      "snippet@git+https://github.com/cucumber-ltd/gitbook-plugin-snippet.git"
-    ],
-    "pluginsConfig": {
-      "snippet": {
-        "problem": "fail"
-	  }
-	},
-	"structure": {
+	"plugins": ["codesnippet"],
+    "structure": {
 		"readme" : "README.adoc",
 		"summary" : "SUMMARY.adoc",
 		"glossary" : "GLOSSARY.adoc"

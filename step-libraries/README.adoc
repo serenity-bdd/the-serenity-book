@@ -30,8 +30,6 @@ Notice how we did not need to instantiate the `Steps` class `TravellerEarningSta
 
 Step methods are annotated with the @Step annotation:
 
-{% codesnippet "samples/frequent-flyer/src/test/java/flyer/steps/TravellerEarningStatusPoints.java", language="java", lines="9:39" %}{% endcodesnippet %}
-
 <1> Steps classes can extend any class, or none
 <2> If you include an `actor` field in your step library, Serenity will inject the name of the step.
 <3> The @Step annotation denotes a Serenity step method

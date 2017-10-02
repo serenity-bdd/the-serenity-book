@@ -1,5 +1,5 @@
 {
-	"plugins": ["include-codeblock"],
+	"plugins": ["include-codeblock", "asciidoc-admonition-icons"],
     "structure": {
 		"readme" : "README.adoc",
 		"summary" : "SUMMARY.adoc",

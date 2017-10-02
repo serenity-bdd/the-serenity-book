@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import static flyer.Status.Bronze;
 import static flyer.Status.Silver;
 
-//tag::classbody[]
+/// [classbody]
 @RunWith(SerenityRunner.class)
 public class WhenTransferringFrequentFlyerPoints {
 
@@ -32,7 +32,10 @@ public class WhenTransferringFrequentFlyerPoints {
         tracy.transfers_points(15000, troy);
 
         // THEN
+        troy.should_have_points(15000);
+
+        // AND
         tracy.should_have_a_status_of(Silver);
     }
 }
-//end::classbody[]
+/// [classbody]

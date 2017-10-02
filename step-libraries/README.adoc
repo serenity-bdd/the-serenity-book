@@ -1,147 +1,105 @@
+In Serenity, tests are broken down into reusable steps. An important principle behind Serenity is the idea that it is easier to maintain a test that uses several layers of abstraction to hide the complexity behind different parts of a test.
+
+In an automated acceptance test, test steps represent the level of abstraction between the code that interacts with your application (for example, Page Objects in an automated web test, which are designed in terms of actions that you perform on a given page) and higher-level stories (sequences of more business-focused actions that illustrate how a given user story has been implemented). If your automated test is not UI-oriented (for example, if it calls a web service), steps orchestrate other more technical components such as REST clients. Steps can contain other steps, and are included in the Serenity reports. Whenever a step is executed, a screenshot is stored and displayed in the report.
+
+Suppose we are testing a Frequent Flyer programme, and need to illustrate the following business rules:
+
+  - Members should start with Bronze status
+  - Members should earn Silver status after flying 10,000 km.
+
+Each of these can be broken down further. The first rule could be broken into two steps:
+
+. Create a new Frequent Flyer member
+. Check that the member has a status of Bronze
+
+And the second can be broken into three steps:
+
+. Create a new Frequent Flyer member
+. Make the member fly 10000 km
+. Check that the member has a status of Silver
+
+We could express these tests using Serenity in JUnit as follows:
+
+[source, java]
+----
+include::samples/frequent-flyer/src/test/java/flyer/WhenEarningFrequentFlyerStatus.java[tags=classbody]
+----
+
+Notice how the second test reuses step methods used in the first to perform a slightly different test. This is a typical example of the way we reuse steps in similar tests, in order to avoid duplicated code and make the code easier to maintain.
+
+We use the `@Steps` class to indicate a step library. Step libraries contain the business tasks or actions that a user performs during a test. There are many ways to organise your step libraries, but a convenient way is to group methods in slices of business behaviour for a given type of user. In this case a _traveller_ who is _earning status points_.
+
+Notice how we did not need to instantiate the `Steps` class `TravellerEarningStatusPoints`. When you annotated a member variable of this class with the `@Steps` annotation, Serenity BDD will automatically instantiate it for you.
+
+Step methods are annotated with the @Step annotation:
+
+[source, java]
+----
+include::samples/frequent-flyer/src/test/java/flyer/steps/TravellerEarningStatusPoints.java[tags=preamble,joins,flies,should,tail]
+----
+
+<1> Steps classes can extend any class, or none
+<2> If you include an `actor` field in your step library, Serenity will inject the name of the step.
+<3> The @Step annotation denotes a Serenity step method
+<4> The @Step can take a String value to override the default step name
+<5> {0} indicates the first parameter of the step method. #name indicates the name field of the step library.
+
 One of the keys to writing good tests is getting the layers right. Test suites are more maintainable when they are organised in clear, well defined layers. This helps our brain concentrate on one thing at a time.
 
-== Basic step libraries
+== Step libraries and personas
 
-In Serenity, we use step libraries to better organise our test logic into reusable components.
+Step libraries are often used to represent actors or persona who interact with the application. For example, the `TravellerEarningStatusPoints` step library we saw earlier represents how a Frequent Flyer member earns status points.
 
-Step libraries are often used to represent actors or persona who interact with the application. For example, we might have an `AccountHolder` step library that represents how a client interacts with a banking application to open and manage her account.
 
-[source, java]
-----
-public static class AccountHolder {
-
-	private long newBankAccountNumber = 0;
-
-	/**
-	 * A client opens a new bank account via the client website.
-	 * We record the bank account number for future use
-	 */
-	@Step
-	public void opensABankAccount() {...}
-
-	/**
-	 * Does this client have an open account?
-	 */
-	public boolean hasAnOpenAccount() { ... }
-
-	/**
-	 * What is the new bank account number for this customer?
-	 */
-	public long newBankAccountNumber() {
-		return newBankAccountNumber;
-	}
-}
-----
-
-Methods that represent a business task or action (`opensABankAccount()`), and that will appear in the reports as a separate step, are annotated with the `@Step` annotation. Other methods, such as `hasAnOpenAccount()`, query the state of the application and are used in assert statements; these ones don't need to have the `@Step` annotation.
-
-We could use this step library to write a test that illustrates a user opening a new account online like this:
+Methods that represent a business task or action (`joins_the_frequent_flyer_program()`), and that will appear in the reports as a separate step, are annotated with the `@Step` annotation.
 
 [source, java]
 ----
-@RunWith(SerenityRunner.class)
-public void WhenACustomerOpensANewAccount {
-
-	@Steps
-	AccountHolder jane;
-
-	@Test
-	public void jane_opens_an_account() {
-		jane.opensABankAccount();
-
-		assertThat(jane.hasAnOpenAccount(), is(true));
-	}
+include::samples/frequent-flyer/src/test/java/flyer/steps/TravellerEarningStatusPoints.java[tags=preamble,joins]
 ----
 
-We could make this a little more declarative by giving our account holder a name
+Notice how the `@Step` attribute has a string value. This tells Serenity what to write in the reports when this step is executed. You don't need a value (if you don't have one, the name of the method will be used instead). But you can use this value to make your step names more meaningful.
+
+If you add an `actor` field to your step library, Serenity will inject the name of the `@Steps` variable into this field. You can then refer to it in the @Step annotation using the `#` notation that we saw earlier:
 
 [source, java]
 ----
-public class AccountHolder {
-
-	private long newBankAccountNumber = 0;
-	public String firstName;
-	public String lastName;
-
-	@Step("Given an account holder called {0} {1}")
-	public void isCalled(String firstName, String lastName) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-	}
-	...
-}
+@Step("#actor joins the frequent flyer program")
 ----
 
-Now we can give Jane some details that can be used during the account creation process:
+Suppose we declare a step library like this:
 
-[source, java]
+[source,java]
 ----
-@Test
-public void jane_opens_an_account() {
-	jane.isCalled("Jane","Smith");
-
-	jane.opensABankAccount();
-
-	assertThat(jane.hasAnOpenAccount(), is(true));
-}
+@Steps
+TravellerEarningStatusPoints tracy;
 ----
 
-We might want to flesh out the details of the account creation process, and break it down into steps, like "choose to open an account", "provide personal details" and "apply for a current account". We would add `@Step`-annotation methods for each of these tasks:
+In this case, the name "Tracy" would be injected into the `actor` field, and the step description would become "Tracy joins the frequent flyer program"
 
-[source, java]
+You can also provide a more detailed name in the @Steps annotation:
+
+[source,java]
 ----
-@Test
-public void jane_opens_an_account() {
-	jane.isCalled("Jane","Smith");
-
-	jane.choosesToOpenABankAccount();
-	jane.providesPersonalDetails();
-	jane.appliesForACurrentAccount();
-
-	assertThat(jane.hasAnOpenAccount(), is(true));
-}
+@Steps("Tracy Jones")
+TravellerEarningStatusPoints tracy;
 ----
 
-Each of these steps might use other steps (or even other step libraries), or interact with the web application via a page object. We might end up with a `providesPersonalDetails()` method that looks like this:
+@Step methods can also take parameters, as we saw for the `flies()` and `should_have_a_status_of()` methods. You can refer to these in your step description using an indexed notation starting at zero: `{0}` for the first parameter, `{1}` for the second, and so on.
 
-[source, java]
+[source,java]
 ----
-AccountApplicationPage accountApplicationPage;
-
-@Step
-public void providesPersonalDetails() {
-	accountApplicationPage.enterCustomerName(firstName, lastName);
-	accountApplicationPage.enterDateOfBirth(dateOfBirth);
-	accountApplicationPage.enterAddress(address);
-	...
-}
+@Step("#actor flies {0} km")
+public void flies(int distance) {...}
 ----
 
 === Using several step libraries
 
-Sometimes we can use several step libraries of the same type to make our tests more readable. For example, the following test shows how bank transfers between different customers works.
+Sometimes we can use several step libraries of the same type to make our tests more readable. For example, the following test shows how point transfers between different travellers works.
 
 [source, java]
 ----
-@Steps
-AccountHolder jane;
-
-@Steps
-AccountHolder joe;
-
-@Test
-public void jane_transfers_money_to_joe() {
-	jane.isCalled("Jane","Smith");
-	joe.isCalled("Joe","Blogs");
-
-	jane.hasACurrentAccountWithABalanceOf(1000.00);
-	joe.hasACurrentAccountWithABalanceOf(100.00);
-
-	jane.transfersTo(joe.getAccountNumber(), 100.00);
-
-	assertThat(jane.getAccountBalance(), is(900.00));
-	assertThat(joe.getAccountBalance(), is(200.00));
-}
+include::samples/frequent-flyer/src/test/java/flyer/WhenTransferringFrequentFlyerPoints.java[tags=classbody]
 ----
 
 Note that a more elegant way to do this is by using the Screenplay pattern, where each actor can have their own browser and abilities.

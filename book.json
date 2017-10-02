@@ -5,6 +5,7 @@
     "pluginsConfig": {
       "snippet": {
         "problem": "fail"
+	  }
 	},
 	"structure": {
 		"readme" : "README.adoc",

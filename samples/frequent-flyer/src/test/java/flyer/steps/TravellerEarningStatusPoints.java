@@ -6,7 +6,7 @@ import net.thucydides.core.annotations.Step;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-//! [classbody]
+/// [classbody]
 public class TravellerEarningStatusPoints { //<1>
 
     private String actor; // <2>
@@ -37,4 +37,4 @@ public class TravellerEarningStatusPoints { //<1>
         return actor;
     }
 }
-//! [classbody]
+/// [classbody]

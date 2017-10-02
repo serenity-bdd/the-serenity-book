@@ -1,46 +1,159 @@
 One of the keys to writing good tests is getting the layers right. Test suites are more maintainable when they are organised in clear, well defined layers. This helps our brain concentrate on one thing at a time.
 
-## Basic Step Libraries
+## Basic step libraries
 
 In Serenity, we use step libraries to better organise our test logic into reusable components.
 
 Step libraries are often used to represent actors or persona who interact with the application. For example, we might have an `AccountHolder` step library that represents how a client interacts with a banking application to open and manage her account.
 
-`public static class AccountHolder {`
+```
+public static class AccountHolder {
 
-`private long newBankAccountNumber = 0;`
+	private long newBankAccountNumber = 0;
 
-`/**`
+	/**
+	 * A client opens a new bank account via the client website.
+	 * We record the bank account number for future use
+	 */
+	@Step
+	public void opensABankAccount() {...}
 
-`* A client opens a new bank account via the client website.`
+	/**
+	 * Does this client have an open account?
+	 */
+	public boolean hasAnOpenAccount() { ... }
 
-`* We record the bank account number for future use`
+	/**
+	 * What is the new bank account number for this customer?
+	 */
+	public long newBankAccountNumber() {
+		return newBankAccountNumber;
+	}
+}
+```
 
-`*/`
+Methods that represent a business task or action (`opensABankAccount()`), and that will appear in the reports as a separate step, are annotated with the `@Step` annotation. Other methods, such as `hasAnOpenAccount()`, query the state of the application and are used in assert statements; these ones don't need to have the `@Step` annotation.
 
-`@Step`
+We could use this step library to write a test that illustrates a user opening a new account online like this:
 
-`public void opensABankAccount() {...}`
+```
 
-`/**`
+@RunWith(SerenityRunner.class)
+public void WhenACustomerOpensANewAccount {
 
-`* Does this client have an open account?`
+	@Steps
+	AccountHolder jane;
 
-`*/`
+	@Test
+	public void jane_opens_an_account() {
+		jane.opensABankAccount();
 
-`public boolean hasAnOpenAccount() { ... }`
+		assertThat(jane.hasAnOpenAccount(), is(true));
+	}
+```
 
-`/**`
+We could make this a little more declarative by giving our account holder a name
 
-`* What is the new bank account number for this customer?`
+```
+public class AccountHolder {
 
-`*/`
+	private long newBankAccountNumber = 0;
+	public String firstName;
+	public String lastName;
 
-`public long newBankAccountNumber() {`
+	@Step("Given an account holder called {0} {1}")
+	public void isCalled(String firstName, String lastName) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
+	...
+}
+```
 
-`return newBankAccountNumber;`
+Now we can give Jane some details that can be used during the account creation process:
 
-`}`
+```
+@Test
+public void jane_opens_an_account() {
+	jane.isCalled("Jane","Smith");
 
-`}`
+	jane.opensABankAccount();
 
+	assertThat(jane.hasAnOpenAccount(), is(true));
+}
+```
+
+We might want to flesh out the details of the account creation process, and break it down into steps, like "choose to open an account", "provide personal details" and "apply for a current account". We would add `@Step`-annotation methods for each of these tasks:
+
+```
+@Test
+public void jane_opens_an_account() {
+	jane.isCalled("Jane","Smith");
+
+	jane.choosesToOpenABankAccount();
+	jane.providesPersonalDetails();
+	jane.appliesForACurrentAccount();
+
+	assertThat(jane.hasAnOpenAccount(), is(true));
+}
+```
+
+Each of these steps might use other steps (or even other step libraries), or interact with the web application via a page object. We might end up with a `providesPersonalDetails()` method that looks like this:
+
+```
+AccountApplicationPage accountApplicationPage;
+
+@Step
+public void providesPersonalDetails() {
+	accountApplicationPage.enterCustomerName(firstName, lastName);
+	accountApplicationPage.enterDateOfBirth(dateOfBirth);
+	accountApplicationPage.enterAddress(address);
+	...
+}
+```
+
+## Using several step libraries
+
+Sometimes we can use several step libraries of the same type to make our tests more readable. For example, the following test shows how bank transfers between different customers works.
+
+```
+@Steps
+AccountHolder jane;
+
+@Steps
+AccountHolder joe;
+
+@Test
+public void jane_transfers_money_to_joe() {
+	jane.isCalled("Jane","Smith");
+	joe.isCalled("Joe","Blogs");
+
+	jane.hasACurrentAccountWithABalanceOf(1000.00);
+	joe.hasACurrentAccountWithABalanceOf(100.00);
+
+	jane.transfersTo(joe.getAccountNumber(), 100.00);
+
+	assertThat(jane.getAccountBalance(), is(900.00));
+	assertThat(joe.getAccountBalance(), is(200.00));
+}
+```
+
+Note that a more elegant way to do this is by using the Screenplay pattern, where each actor can have their own browser and abilities.
+
+## Shared Instances
+
+There are some cases where we want to reuse the same step library instance in different places across a test. For example, suppose we have a step library that interacts with a backend API, and that maintains some internal state and caching to improve performance. We might want to reuse a single instance of this step library, rather than having a separate instance for each variable.
+
+We can do this by declaring the step library to be _shared_, like this:
+
+```
+@Steps(shared = true)
+CustomerAPIStepLibrary customerAPI;
+```
+
+Now, any other step libraries of type `CustomerAPIStepLibrary`, that have the `shared` attribute set to true will refer to the same instance.
+
+In older versions of Serenity, sharing instances was the default behaviour, and you used the `uniqueInstance` attribute to indicate that a step library should _not_ be shared. If you need to force this behaviour for legacy test suites, set the `step.creation.strategy` property to `legacy` in your `serenity.properties` file:
+```
+step.creation.strategy = legacy
+```

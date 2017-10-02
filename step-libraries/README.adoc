@@ -51,7 +51,7 @@ public void WhenACustomerOpensANewAccount {
 
 		assertThat(jane.hasAnOpenAccount(), is(true));
 	}
----
+----
 
 We could make this a little more declarative by giving our account holder a name
 

@@ -17,7 +17,7 @@ public class WhenEarningFrequentFlyerStatus {
     TravellerEarningStatusPoints tracy;
 
     @Test
-    public void membersShouldStartWithBronzeStatus() {
+    public void members_should_start_with_Bronze_status() {
         // GIVEN
         tracy.joins_the_frequent_flyer_program();
 
@@ -26,7 +26,7 @@ public class WhenEarningFrequentFlyerStatus {
     }
 
     @Test
-    public void earnSilverAfter10000Points() {
+    public void earn_silver_after_10000_kilometers() {
         // GIVEN
         tracy.joins_the_frequent_flyer_program();
 

@@ -4,4 +4,5 @@
 		"summary" : "SUMMARY.adoc",
 		"glossary" : "GLOSSARY.adoc"
 	}
+	"plugins": ["codesnippet"]
 }

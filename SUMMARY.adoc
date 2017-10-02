@@ -1,4 +1,4 @@
 = Summary
 
 . link:README.adoc[Introduction]
-. link:step-libraries/README.adoc[Step Libraries]
+. link:step-libraries/README.adoc[Writing Serenity Step Libraries]

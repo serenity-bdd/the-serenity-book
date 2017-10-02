@@ -1,5 +1,3 @@
-:source-dir: samples/frequent-flyer/src/test/java
-
 In Serenity, tests are broken down into reusable steps. An important principle behind Serenity is the idea that it is easier to maintain a test that uses several layers of abstraction to hide the complexity behind different parts of a test.
 
 In an automated acceptance test, test steps represent the level of abstraction between the code that interacts with your application (for example, Page Objects in an automated web test, which are designed in terms of actions that you perform on a given page) and higher-level stories (sequences of more business-focused actions that illustrate how a given user story has been implemented). If your automated test is not UI-oriented (for example, if it calls a web service), steps orchestrate other more technical components such as REST clients. Steps can contain other steps, and are included in the Serenity reports. Whenever a step is executed, a screenshot is stored and displayed in the report.
@@ -22,7 +20,7 @@ And the second can be broken into three steps:
 
 We could express these tests using Serenity in JUnit as follows:
 
-{% codesnippet "{source-dir}/flyer/WhenEarningFrequentFlyerStatus.java", language="java" %}{% endcodesnippet %}
+{% codesnippet "samples/frequent-flyer/src/test/java/flyer/WhenEarningFrequentFlyerStatus.java", language="java" %}{% endcodesnippet %}
 
 Notice how the second test reuses step methods used in the first to perform a slightly different test. This is a typical example of the way we reuse steps in similar tests, in order to avoid duplicated code and make the code easier to maintain.
 

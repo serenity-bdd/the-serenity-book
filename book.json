@@ -1,5 +1,5 @@
 {
-	"plugins": ["codesnippet"],
+	"plugins": ["include-codeblock"],
     "structure": {
 		"readme" : "README.adoc",
 		"summary" : "SUMMARY.adoc",

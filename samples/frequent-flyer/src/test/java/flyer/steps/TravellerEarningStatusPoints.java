@@ -37,4 +37,4 @@ public class TravellerEarningStatusPoints { //<1>
         return actor;
     }
 }
-/// [classbody]
+//! [classbody]

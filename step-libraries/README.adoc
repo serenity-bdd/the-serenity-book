@@ -20,7 +20,7 @@ And the second can be broken into three steps:
 
 We could express these tests using Serenity in JUnit as follows:
 
-[import:'<classbody>'](../samples/frequent-flyer/src/test/java/flyer/WhenEarningFrequentFlyerStatus.java)
+[import:'classbody'](../samples/frequent-flyer/src/test/java/flyer/WhenEarningFrequentFlyerStatus.java)
 
 Notice how the second test reuses step methods used in the first to perform a slightly different test. This is a typical example of the way we reuse steps in similar tests, in order to avoid duplicated code and make the code easier to maintain.
 

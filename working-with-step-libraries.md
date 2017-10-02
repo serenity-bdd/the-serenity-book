@@ -1,4 +1,4 @@
-One of the keys to writing good tests is getting the layers right. Test suites are more maintainable when they are organised in clear, well defined layers. This helps our brain concentrate on one thing at a time. 
+One of the keys to writing good tests is getting the layers right. Test suites are more maintainable when they are organised in clear, well defined layers. This helps our brain concentrate on one thing at a time.
 
 ## Basic Step Libraries
 
@@ -8,53 +8,39 @@ Step libraries are often used to represent actors or persona who interact with t
 
 `public static class AccountHolder {`
 
+`private long newBankAccountNumber = 0;`
 
+`/**`
 
-`	private long newBankAccountNumber = 0;`
+`* A client opens a new bank account via the client website.`
 
+`* We record the bank account number for future use`
 
+`*/`
 
-`	/**`
+`@Step`
 
-`	 * A client opens a new bank account via the client website.`
+`public void opensABankAccount() {...}`
 
-`	 * We record the bank account number for future use`
+`/**`
 
-`	 */`
+`* Does this client have an open account?`
 
-`	@Step`
+`*/`
 
-`	public void opensABankAccount() {...}`
+`public boolean hasAnOpenAccount() { ... }`
 
+`/**`
 
+`* What is the new bank account number for this customer?`
 
-`	/**`
+`*/`
 
-`	 * Does this client have an open account?`
+`public long newBankAccountNumber() {`
 
-`	 */`
-
-`	public boolean hasAnOpenAccount() { ... }`
-
-
-
-`	/**`
-
-`	 * What is the new bank account number for this customer?`
-
-`	 */`
-
-`	public long newBankAccountNumber() {`
-
-`		return newBankAccountNumber;`
-
-`	}`
+`return newBankAccountNumber;`
 
 `}`
 
-
-
-
-
-
+`}`
 

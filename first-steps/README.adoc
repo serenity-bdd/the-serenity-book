@@ -228,7 +228,7 @@ Firstly, there is the `actor` field. The `actor` field is an optional field that
 
 Secondly, each method has a `@Step` annotation. These tell Serenity to add a corresponding entry in the test report whenever this method is called.
 
-The text in the annotation (such as "#actor starts with {0}") tells Serenity how to render the step. Any fields with the `#` prefix will be rendered (so "#actor" will be replaced by the value of the `actor` field). Any parameters can be reported using positional variables (`{0}` for the first parameter, {1} for the second, and so forth).
+The text in the annotation (such as "\#actor starts with {0}") tells Serenity how to render the step. Any fields with the `\#` prefix will be rendered (so "\#actor" will be replaced by the value of the `actor` field). Any parameters can be reported using positional variables (`{0}` for the first parameter, {1} for the second, and so forth).
 
 If you use the `@Step` annotation alone, Serenity will use the name of the method, in a more human-readable form, in the reports. For example, suppose you have the following step declaration:
 

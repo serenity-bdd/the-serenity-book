@@ -54,20 +54,22 @@ gradle clean test
 starter.ASimpleTest STANDARD_OUT
     23:14:22.434 [Test worker] INFO  net.serenitybdd.core.Serenity -
 
-    -------------------------------------------------------------------------------------
-         _______. _______ .______       _______ .__   __.  __  .___________.____    ____
-        /       ||   ____||   _  \     |   ____||  \ |  | |  | |           |\   \  /   /
-       |   (----`|  |__   |  |_)  |    |  |__   |   \|  | |  | `---|  |----` \   \/   /
-        \   \    |   __|  |      /     |   __|  |  . `  | |  |     |  |       \_    _/
-    .----)   |   |  |____ |  |\  \----.|  |____ |  |\   | |  |     |  |         |  |
-    |_______/    |_______|| _| `._____||_______||__| \__| |__|     |__|         |__|
+    ----------------------------------------------------------------------------
+         _______. _______ .______       _______ .__   __.  __  .___________.____
+        /       ||   ____||   _  \     |   ____||  \ |  | |  | |           |\
+       |   (----`|  |__   |  |_)  |    |  |__   |   \|  | |  | `---|  |----` \
+        \   \    |   __|  |      /     |   __|  |  . `  | |  |     |  |       \_
+    .----)   |   |  |____ |  |\  \----.|  |____ |  |\   | |  |     |  |
+    |_______/    |_______|| _| `._____||_______||__| \__| |__|     |__|
 
      News and tutorials at http://www.serenity-bdd.info
      Documentation at https://wakaleo.gitbooks.io/the-serenity-book/content/
-     Join the Serenity Community on Rocket Chat at https://serenity-bdd.rocket.chat
-     Serenity BDD Support and Training at http://serenity-bdd.info/#/trainingandsupport
+     Join the Serenity Community on Rocket Chat
+       at https://serenity-bdd.rocket.chat
+     Serenity BDD Support and Training
+       at http://serenity-bdd.info/#/trainingandsupport
      Learn Serenity BDD online at http://serenity-dojo.com
-    -------------------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
 
 
 starter.ASimpleTest > addingSums STANDARD_OUT
@@ -114,7 +116,6 @@ image::../images/junit-starter-report.png[]
 
 Now import the project into your IDE (be sure to import the project as a Maven or Gradle project). The project structure looks something like this (some less interesting files and directories have been left out):
 
-[source]
 ----
 ├── pom.xml                                 // <1>
 ├── build.gradle                            // <2>
@@ -126,7 +127,6 @@ Now import the project into your IDE (be sure to import the project as a Maven o
 |               ├── ASimpleTest.java        // <5>
 |               ├── steps                   // <6>
 |                   ├── MathWizSteps.java   // <7>
-
 ----
 <1> Maven POM file
 <2> Gradle build script

@@ -439,6 +439,12 @@ image::../images/first-pasing-test-outcome.png[]
 
 If you have got this far, congratulations, you have just written your first Serenity BDD test!
 
+[TIP]
+====
+Check out the sample code for this example on [Github](https://github.com/serenity-bdd/serenity-junit-starter/tree/first-steps-with-serenity).
+
+====
+
 === Personalise the starter project
 
 Now that you have seen how a simple Serenity test works, we can get onto some serious work. First of all, make yourself at home. To personalise this project, just rename the `starter` package into one that represents the root package for your own project, and delete the sample test and step library.

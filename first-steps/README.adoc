@@ -127,7 +127,7 @@ Now import the project into your IDE (be sure to import the project as a Maven o
 |               ├── steps                   // <6>
 |                   ├── MathWizSteps.java   // <7>
 
- ----
+----
 <1> Maven POM file
 <2> Gradle build script
 <3> Test code

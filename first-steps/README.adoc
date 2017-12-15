@@ -447,3 +447,5 @@ Check out the sample code for this example on https://github.com/serenity-bdd/se
 === Personalise the starter project
 
 Now that you have seen how a simple Serenity test works, we can get onto some serious work. First of all, make yourself at home. To personalise this project, just rename the `starter` package into one that represents the root package for your own project, and delete the sample test and step library.
+
+In the next chapter, you will see how to write your first web test with Serenity.

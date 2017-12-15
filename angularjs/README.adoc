@@ -84,7 +84,7 @@ Suppose you have an Angular app with the following code:
 
 [source,html]
 ----
-<div class="product">
+<div id="product">
   <ul>
     <li class="colour">Red</li>
     <li class="colour">Blue</li>

@@ -133,3 +133,43 @@ In older versions of Serenity, sharing instances was the default behaviour, and 
 ----
 step.creation.strategy = legacy
 ----
+
+=== Sharing instances using the @Shared annotation
+
+You can also use the `@Shared` annotation to share objects between steps and tasks in your test.
+The `@Shared` annotation is in practical terms a shortcut for `@Steps(shared=true)`. This is handy in Screenplay tests, where the `@Shared` annotation reflects the intention more accurately than the `@Steps` annotation.
+
+For example, suppose you have a Screenplay task that you use to set up some reference data that you want to share between steps. You could set them up in a special task called `PrepareReferenceTestData`:
+
+[source,java]
+----
+givenThat(dana).wasAbleTo(PrepareReferenceTestData.inTheTestEnvironment());
+----
+
+The `PrepareReferenceTestData` class would prepare test data and place the data in a Java class (say `ReferenceData`):
+
+[source,java]
+----
+public class PrepareReferenceTestData implements Task {
+    public static Performable inTheTestEnvironment() {
+            return instrumented(PrepareSomeCommonData.class);
+    }
+
+    @Shared
+    ReferenceData referenceData;
+
+    @Override
+    public <T extends Actor> void performAs(T actor) {
+        // Prepare reference data used in several tasks in a shared class
+        referenceData = ...
+    }
+}
+----
+
+Any other `Task`, `Interaction` or `Question` class can then refer to the reference data, simply by declaring a shared field of type `ReferenceData`:
+
+[source,java]
+----
+@Shared
+ReferenceData referenceData;
+----

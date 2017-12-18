@@ -5,4 +5,5 @@
 . link:first-steps/README.adoc[First Steps with Serenity]
 . link:step-libraries/README.adoc[Working with Serenity Step Libraries]
 . link:angularjs/README.adoc[Using Serenity BDD with Angular JS]
+. link:multi-browser-testing/README.adoc[Multi-browser testing]
 . link:GLOSSARY.adoc[Glossary]

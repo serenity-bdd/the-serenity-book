@@ -133,9 +133,10 @@ For example, the following code retrieves a Firefox instance associated with "jo
 [source,java]
 ----
 WebDriver driver = ThucydidesWebDriverSupport.getWebdriverManager()
-                                             .getWebdriverByName("joe",
-											                     "firefox");
+                                             .getWebdriverByName("joe", "firefox");
 ----
+
+This method can be called from anywhere in the test suite.
 
 === Using multiple browsers with Screenplay and legacy Page Object classes
 

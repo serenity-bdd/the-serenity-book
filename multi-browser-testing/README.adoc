@@ -176,3 +176,23 @@ A Screenplay actor can then open this page, with the corresponding driver instan
 ----
 actor.attemptsTo(OpenGoogle.homePage());
 ----
+
+==== Using the @Managed annotation for Remote drivers
+
+Selenium Grid, as well as services like BrowserLabs and SauceSafe, offer a convenient way to scale your web tests by running them on batteries of remote machines. In Serenity, you can run your tests on a remote server simply by specifying the `webdriver.remote.url` property in your `serenity.properties` file or on the command line:
+
+----
+webdriver.remote.url=http://localhost:4444/wd/hub
+----
+
+You can also use the `saucelabs.url` or `browserstack.url` properties to work with one of these services.
+
+As soon as you set a remote url, Serenity will use a Remote driver. However Serenity will still respect your choice of browsers on the remote server. For example, suppose you run a test with the following @Managed driver:
+
+[source,java]
+----
+@Managed(driver = "chrome", options = "--headless")
+WebDriver driver;
+----
+
+If you use a remote url, a Chrome driver will be used on the remote server.

@@ -1,4 +1,4 @@
-== Working with AngularJS applications
+= Working with AngularJS applications
 
 AngularJS applications have their own challenges when it comes to WebDriver test automation. The asycnhronous nature of Angular apps makes testing these applications particularly tricky when using traditional WebDriver-based technologies.
 
@@ -6,7 +6,7 @@ In the JavaScript world, http://www.protractortest.org/#/[Protractor] provides a
 
 Serenity BDD integrates with https://github.com/paul-hammant/ngWebDriver[ngWebDriver] to leverage the power of Protractor from within your Serenity BDD test suites.
 
-=== Waiting for Angular to finish asynchronous activities
+== Waiting for Angular to finish asynchronous activities
 
 Sometimes you need to wait until Angular has finished it's application processing activities before interacting with an element or moving to the next step of a test. You can do this in a Serenity Page Object by calling the `waitForAngularRequestsToFinish()` method, like this:
 
@@ -24,7 +24,7 @@ If you are using Screenplay, you can use the `WaitUntil` class (from the `net.se
 	)
 ----
 
-=== Working with AngularJS locators
+= Working with AngularJS locators
 
 Protractor provides a number of Angular-specific locators, such as `by.model`, `by.binding` and `by.repeater` (note that the `binding` and `model` locators are not supported in Angular 2). The _ngWebDriver_ library from Paul Hammant allows you to call Protractor locators from your Java test code.
 
@@ -34,7 +34,7 @@ In Serenity BDD, you can use the ngWebDriver locators anywhere you would use nor
 
 Some examples are shown in the following sections.
 
-==== Binding and Model
+== Binding and Model
 
 In Angular 1.x apps, you can use Protractor's `binding` and `model` locators using the `ByAngular.binding()` and `ByAngular.model()` methods. In a Serenity Page Object, you could retrieve an element using the `find()` method:
 
@@ -58,7 +58,7 @@ Or you could define a Screenplay `Target`like this:
 
 Note that these won't work with Angular 2.x or above.
 
-==== Button text
+== Button text
 
 Often it is useful to identify button by it's text label. Traditionally this calls for XPath. But Protractor gives us a more elegant approach. Suppose you have the following HTML element on your page.
 
@@ -76,7 +76,7 @@ You can locate this element using the `buttonText()` method:
 
 For more flexibility, you can also use the `partialButtonText()` method.
 
-==== CSS Containing Text
+== CSS Containing Text
 
 Another useful trick is to fine elements that match a given CSS selector, _and_ which contain a specific string. This is not usually possible with CSS in WebDriver, so you need to resort to chained selectors or cumbersome XPath expressions.
 
@@ -99,7 +99,7 @@ You could locate the `Red` entry in this list by using the following code:
     find(ByAngular.cssContainingText("#product .colour", "Red"))
 ----
 
-==== Using repeaters
+== Using repeaters
 
 You can use `ByAngular.repeater()` to retrieve elements that have been implemented on the page using `ng-repeat`. For example, in the http://todomvc.com/examples/angularjs/#/[TodoMVC App], a list of todo items is represented using the `ng-repeat` attribute:
 

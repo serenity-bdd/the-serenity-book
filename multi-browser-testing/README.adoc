@@ -1,8 +1,8 @@
-== Working with multiple browsers
+= Working with multiple browsers
 
 Some web tests need to exercise two different browsers simultaneously. Workflow applications are a good example of this scenario: imagine for example a scenario where one user (say, a salesperson) raises an expense and another user (his or her manager) needs to approve this expense in a different session.
 
-=== Do you need to use multiple browsers?
+== Do you need to use multiple browsers?
 
 Before you go down this path, there are often ways to avoid the use of two browsers in such scenarios. For example, suppose you need to automate the following scenario:
 
@@ -21,7 +21,7 @@ Then Mark should see the following expense claims in his inbox:
 
 In this scenario, three actors are involved: Joe, Jane and Mark. You could test this using three browsers, one for each user. Or, knowing that the expense claim UI is tested elsewhere, you could invoke a web service to inject the claims directly into the system, and use a single web test for Mark, when he views his inbox. _Or_ you could dispense with web testing entirely, and use another web service to query Mark's inbox. There are often many ways to test a scenario.
 
-=== When you really do need to use multiple browsers
+== When you really do need to use multiple browsers
 
 Nevertheless, there are cases where you really do need multiple browsers in the same test. Suppose you have the following (rather silly) test case:
 
@@ -38,7 +38,7 @@ Scenario: Users are stubborn about their browser choice
 
 The interesting thing here is that we have two actors, each using a different browser. How could you implement this test in Serenity?
 
-===== Using Screenplay
+=== Using Screenplay
 Multiple browsers are easy to manage in Screenplay. In this case, you could just declare two browsers, and assign each of them to a different user, like this:
 
 [source,java]
@@ -79,7 +79,7 @@ One nice thing about this approach is that, once the driver is assigned to an ac
 );
 ----
 
-==== Using @Managed drivers
+=== Using @Managed drivers
 
 The @Managed field can be used to declare drivers of specific types, in both JUnit tests and Cucumber step definitions. The driver you declare in this annotation will override any drivers declared in the `serenity.properties` file, and you can use the `option` attribute to pass in Chrome options, as shown here:
 
@@ -89,7 +89,7 @@ The @Managed field can be used to declare drivers of specific types, in both JUn
 WebDriver chrome;
 ----
 
-==== Obtaining drivers dynamically
+=== Obtaining drivers dynamically
 
 Sometimes you need a solution more dynamic than defining the drivers ahead of time with the `@Managed` annotation. In this case, you can use the Serenity `ThucydidesWebDriverSupport` class to allocate a dynamically driver by name.
 
@@ -124,7 +124,7 @@ public void joeBrowsesTheWebWith(String actorName, String driverType) throws Thr
 (2) Set the cast so that we can refer to actors later on using `theActorCalled()` and `theActorInTheSpotlight()`
 (3) Retrieve an actor using a given browser with a given name
 
-=== Obtaining drivers from the WebDriverManager
+== Obtaining drivers from the WebDriverManager
 
 Another alternative is to retrieve the `WebDriver` instance from the Serenity `WebDriverManager` class. This class keeps track of all the open drivers, and you can retrieve a driver either by it's type (e.g. "firefox"), or in conjunction with a unique name. If you provide the unique name, you can have several browsers of the same type simultaneously in the same test.
 
@@ -138,7 +138,7 @@ WebDriver driver = ThucydidesWebDriverSupport.getWebdriverManager()
 
 This method can be called from anywhere in the test suite.
 
-=== Using multiple browsers with Screenplay and legacy Page Object classes
+== Using multiple browsers with Screenplay and legacy Page Object classes
 
 Sometimes you need to use multiple browsers with test code that uses non-Screenplay page objects. You can do this quite easily, by extracting the WebDriver from the actor. For example, suppose you have a page that opens the Google home page:
 
@@ -177,7 +177,7 @@ A Screenplay actor can then open this page, with the corresponding driver instan
 actor.attemptsTo(OpenGoogle.homePage());
 ----
 
-==== Using the @Managed annotation for Remote drivers
+=== Using the @Managed annotation for Remote drivers
 
 Selenium Grid, as well as services like BrowserLabs and SauceSafe, offer a convenient way to scale your web tests by running them on batteries of remote machines. In Serenity, you can run your tests on a remote server simply by specifying the `webdriver.remote.url` property in your `serenity.properties` file or on the command line:
 

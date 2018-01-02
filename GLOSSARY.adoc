@@ -4,9 +4,14 @@
 
 A collaborative practice where teams use conversations around business rules and concrete examples to build up a shared understanding of customer needs. The team selects some key examples as the basis for acceptance criteria, which can be automated in the form of executable specifications.
 
+== Cucumber
+
+A tool used to execute Gherkin scenarios. See https://cucumber.io/docs.
+
 == Executable Specifications
 
 Acceptance Criteria that have been written in a form that can be executed automatically. For high-level acceptance criteria, tools like Cucumber and JBehave are often used to automate acceptance criteria.
+
 
 == Gherkin
 
@@ -21,3 +26,5 @@ Scenario: Adding an item to a todo list
   When Joe adds 'Buy some milk'
   Then his default todo list should contain 'Buy some milk'
 ----
+
+Gherkin scenarios are organised in Feature Files.

@@ -1,0 +1,7 @@
+name: theserenitybook
+title: The Serenity Book
+version: '0.0.1'
+nav:
+- modules/ROOT/nav.adoc
+
+start_page: ROOT:index.adoc

@@ -1,0 +1,6 @@
+.Serenity BDD Fundamentals
+* xref:index.adoc[Introduction to Serenity BDD]
+* xref:first-steps.adoc[First Steps]
+
+.Serenity BDD  and the Screenplay Pattern
+* xref:screenplay-rest[REST API Tesing with Screenplay]

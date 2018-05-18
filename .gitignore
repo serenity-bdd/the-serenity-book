@@ -19,3 +19,5 @@ _book
 build
 target
 *.iml
+.idea
+.gradle

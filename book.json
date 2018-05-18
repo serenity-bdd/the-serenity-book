@@ -1,8 +1,0 @@
-{
-	"plugins": ["include-codeblock", "asciidoc-admonition-icons"],
-    "structure": {
-		"readme" : "README.adoc",
-		"summary" : "SUMMARY.adoc",
-		"glossary" : "GLOSSARY.adoc"
-	}
-}

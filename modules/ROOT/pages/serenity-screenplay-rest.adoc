@@ -1,0 +1,344 @@
+= Working with REST APIs using Serenity Screenplay
+
+The Screenplay pattern is an approach to writing automated acceptance tests that helps us write cleaner, more maintainable, more scalable automation code. A Screenplay test talks first and foremost about the tasks a user performs, in business language, rather than diving into the details about buttons, clicks and input fields. Focusing on the business tasks makes our tests more readable, more maintainable, and easier to scale.
+
+Screenplay is often associated with UI testing. Interestingly, the name of the pattern is actually unrelated to screens or user interfaces; it comes from a theatre metaphor, where actors play roles on a stage following a predefined script (the "screenplay"), and was coined by Antony Marcano and Andy Palmer around 2015. The pattern itself goes back further than that, and has been around in various forms since it was first proposed by Antony Marcano in 2007.
+
+But Screenplay is also a great fit for API or web service tests. In particular, Screenplay is ideal when we want to include API and UI activities in the same test. For example, we might have an API task to set up some test data, a UI task to illustrate how a user interacts with this data, then another API task to check the new state of the database.
+
+You can get a taste of what REST API interactions using Serenity Screenplay look like here:
+
+[source,java,indent=0]
+.WhenManagingUsers.java
+----
+include::../examples/serenity-screenplay-rest/src/test/java/examples/screenplay/rest/WhenManagingUsers.java[tags=list_all_users]
+----
+
+Serenity Screenplay uses http://rest-assured.io[Rest-Assured] to interact with rest endpoints, and to query the responses. Rest-Assured provides us with a simple but extremely powerful Java DSL that allows us to test and virtually any kind of REST end point. Its highly readable code is also an ideal fit for Screenplay.
+
+== Setting up your project
+
+To test REST API services with Screenplay, you need to add the `serenity-screenplay-rest` dependency to your project. In Maven, add the following to the dependencies in your `pom.xml` file:
+
+[source,xml,indent=0]
+.pom.xml
+----
+include::../examples/serenity-screenplay-rest/pom.xml[tag=screenplay-rest-dep]
+----
+
+And for Gradle, you can add the same dependency to your `build.gradle` file:
+
+[source,groovy,indent=0]
+.build.gradle
+----
+testCompile "net.serenity-bdd:serenity-screenplay-rest:${serenityVersion}"
+----
+
+== Defining a base URI
+
+When you test a REST API, it is convenient to be able to use the same tests against different environments. You may want to run your tests against a server running on your local machine, against a QA server, or even against a production box. And you don't want to have to change your tests whenever you test against a different environment.
+
+For example, in this chapter, we will be demonstrating the features of `serenity-screenplay-rest` using the https://reqres.in[ResReq] application (see below). If you have a reliable internet connection, you can run your tests against the live ResReq server at https://reqres.in/api/. Or if you are running the ResReq server locally, you would access endpoints at http://localhost:5000/api.
+
+.The ResReq test application
+****
+The https://reqres.in[ResReq] application is an open source application written by http://benhowdle.im/[Ben Howdle] that makes it easy to experiment with REST APIs. It is hosted on Digital Ocean, where you can access it online at https://reqres.in/api/. Alternatively, you can also download the application from the project's https://github.com/benhowdle89/reqres[repository on Github], and run it locally. When you run the application on your own machine, the REST API will be available at http://localhost:5000/api.
+****
+
+=== Reading from the Serenity config file
+
+In Serenity BDD, you can define the base URL for your REST API directly in the `serenity.properties` or `serenity.conf` file for your project.
+Here is an example from a `serenity.conf` file:
+
+[source,json,indent=0]
+.serenity.conf
+----
+include::../examples/serenity-screenplay-rest/src/test/resources/serenity.conf[tag=restapi]
+----
+
+Any test can read values from the Serenity configuration files simply by creating a field of type `EnvironmentVariables` in the test.
+You can then fetch the property, and provide a default value to use if the property hasn't been defined, as shown below:
+
+[source, java]
+----
+theRestApiBaseUrl = environmentVariables.optionalProperty("restapi.baseurl")
+                                        .orElse("https://reqres.in/api");
+----
+
+=== Setting the API Url from the command line
+
+You can override the default URL defined this way simply by providing a system property on the command line, like this:
+----
+mvn verify -Drestapi.baseurl=http://localhost:5000/api
+----
+
+=== Configuring the base API URL in Maven
+
+If you are using Maven, a more convenient approach may be to use http://maven.apache.org/guides/introduction/introduction-to-profiles.html[Maven Profiles].
+In your `pom.xml` file, you define up different Maven profiles for each environment, and set the `restapi.baseurl` property accordingly:
+
+[source,xml,indent=0]
+.pom.xml
+----
+include::../examples/serenity-screenplay-rest/pom.xml[tag=profiles]
+----
+
+For this to work properly, you also need to ensure that the `restapi.baseurl` is passed correctly to your tests.
+You do this by using the `systemPropertyVariables` tag in the `maven-failsafe-plugin' configuration, as shown here:
+[source,xml,indent=0]
+.pom.xml
+----
+include::../examples/serenity-screenplay-rest/pom.xml[tag=failsafe]
+----
+
+You can then run the tests with Maven using the `-P` option:
+----
+$ mvn verify -Pdev
+----
+
+== Configuring the actor - the CallAnApi ability
+
+In Screenplay, tests describe behaviour in terms of _actors_, who achieve their business goals by performing _tasks_.
+These tasks usually involve _interacting_ with the application in some way.
+And to perform these tasks, we give the actors various _abilities_.
+
+The `CallAnApi` ability gives actors the ability to interact with a REST web service using http://rest-assured.io[Rest-Assured].
+This includes both invoking REST end-points and querying the results.
+
+
+[source,java,indent=0]
+.WhenManagingUsers.java
+----
+include::../examples/serenity-screenplay-rest/src/test/java/examples/screenplay/rest/WhenManagingUsers.java[tags=setup]
+----
+<1> Serenity properties - Serenity will instantiate this field automatically
+<2> A Screenplay actor - this actor will be used in all our tests
+<3> Here we fetch the REST API base url
+<4> Then we create an actor with the ability to call REST end-points at the specified URL
+
+The `CallAnApi` ability allows the actor to perform the bundled Serenity REST interaction classes. This include:
+
+* Get.resource()
+* Post.to()
+* Put.to()
+* Delete.from()
+
+The simplest of these is `Get`.
+
+== GET Interactions
+
+In a REST API, GET requests are used to query a REST resource.
+Let's see how we can do this using Serenity Screenplay.
+
+=== Simple GET requests
+
+In our demo application, the `/users` resource represents application users.
+We can retrieve the details of a particular user by appending the user ID, like this: `/users/1`.
+The structure of a user record is shown below:
+
+[source,json]
+----
+{
+  "data": {
+    "id": 1,
+    "first_name": "George",
+    "last_name": "Bluth",
+    "avatar": "https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg"
+  }
+}
+----
+
+Suppose we need to write a scenario that retrieves a particular user, and checks some of the user's details, such as first_name and last_name.
+Such a test might look like this:
+
+[source,java,indent=0]
+.WhenManagingUsers.java
+----
+include::../examples/serenity-screenplay-rest/src/test/java/examples/screenplay/rest/WhenManagingUsers.java[tags=find_an_individual_user]
+----
+<1> Sam performs a GET
+<2> We check the response using the `seeThatResponse` method.
+<3> Did the call return a status code of 200?
+<4> Is the first_name field 'George'?
+<5> Is the last_name field 'Bluth'?
+
+As you can see, this code is fairly self-explanatory.
+Like any other Screenplay test, we use the actor's `attemptsTo()` method to perform the action we want to test.
+In this case, we use the `Get` interaction class, which comes bundled with `serenity-screenplay-rest`.
+
+Next we check the response using the `seeThatResponse` method.
+This method takes a Lambda expression and allows us to access the full RestAssured API.
+In particular, we can use http://static.javadoc.io/io.restassured/json-path/3.1.0/io/restassured/path/json/JsonPath.html[jsonPath] expressions to query the JSON structure we receive.
+
+
+=== Retrieving objects
+
+Sometimes we need to fetch a value from a REST response, and keep it for use later on. RestAssured makes it relatively easy to convert a JSON structure to a Java object, which you can use later on in your tests.
+
+For example, suppose we have a class like the one below, which corresponds to the user details returned by our endpoint:
+
+[source,java,indent=0]
+.WhenManagingUsers.java
+----
+include::../examples/serenity-screenplay-rest/src/test/java/examples/screenplay/rest/model/User.java[]
+----
+
+We could retrieve the user as an instance of this class by calling the `jsonPath().getObject()` method on the received response. This method will convert the JSON data on a given path to a corresponding Java structure:
+
+[source,java,indent=0]
+.WhenManagingUsers.java
+----
+include::../examples/serenity-screenplay-rest/src/test/java/examples/screenplay/rest/WhenManagingUsers.java[tags=retrieve_user_details]
+----
+<1> Retrieve the response returned by the previous RESRT call
+<2> Convert the JSON entry in the `data` field to a `User`
+
+=== Retrieving lists
+
+Oftentimes we need to retrieve not a single item, but a list of items.
+Retrieving a list is little different to retrieving a single item:
+
+[source,java,indent=0]
+.WhenManagingUsers.java
+----
+include::../examples/serenity-screenplay-rest/src/test/java/examples/screenplay/rest/WhenManagingUsers.java[tags=fetch_every_user]
+----
+<1> Retrieve all the users
+<2> Check the list of user first names
+
+The difference happens when we query the results.
+In this case, we use a jsonPath expression (`data.first_name`) that will return _all_ of the first_name field values.
+The Hamcrest matcher `hasItems` will compare the collection of first names that the jsonPath query returns, and check that it contains (at least) the names "George", "Janet" and "Emma".
+
+But what if we want to capture the data we retrieve, rather than simply make an assertion about the contents?
+We can do that using the `SerenityRest.lastResponse()` method, like this:
+
+[source,java,indent=0]
+.WhenManagingUsers.java
+----
+include::../examples/serenity-screenplay-rest/src/test/java/examples/screenplay/rest/WhenManagingUsers.java[tags=fetch_every_user_data]
+----
+<1> Use a JsonPath expression to retrieve all the `last_name` values underneath the `data` entry.
+
+We can also retrieve lists of objects, just as we retrieved a single `User` instance in the previous section.
+Simply use the `jsonPath.getList()` method as shown below:
+
+[source,java,indent=0]
+.WhenManagingUsers.java
+----
+include::../examples/serenity-screenplay-rest/src/test/java/examples/screenplay/rest/WhenManagingUsers.java[tags=fetch_every_user_object]
+----
+<1> Return a list of `User` instances
+
+
+=== Using Path Parameters
+
+In the previous example, we hard-coded the path element in the request.
+For a more flexible approach, we can supply the path parameter when we submit the query:
+
+[source,java,indent=0]
+.WhenManagingUsers.java
+----
+include::../examples/serenity-screenplay-rest/src/test/java/examples/screenplay/rest/WhenManagingUsers.java[tags=path_parameters]
+----
+<1> Provide the user ID as a path parameter
+
+Here we are using the `Get.resource(...).with(...)` structure to pass the RestAssured `RequestSpecification` object into a lambda expression.
+Once again, this gives us access to all the richness of the RestAssert library
+
+=== Using Query Parameters
+
+Some REST APIs take query parameters as well as path parameters. Query parameters are commonly used to filter results or implement pagination. For example, we could get the second page of users from our `/users` API by using the `page` query parameter like this:
+
+----
+/users?page=2
+----
+
+In our test code, we use the `queryParam()` method to provide a value for the `page` parameter:
+
+[source,java,indent=0]
+.WhenManagingUsers.java
+----
+include::../examples/serenity-screenplay-rest/src/test/java/examples/screenplay/rest/WhenManagingUsers.java[tags=query_parameters]
+----
+<1> Return page 2 of the results
+
+== Post queries
+
+We can send POST requests to a REST end-point using the `Post` interaction class. Here is a simple example:
+
+[source,java,indent=0]
+.WhenManagingUsers.java
+----
+include::../examples/serenity-screenplay-rest/src/test/java/examples/screenplay/rest/WhenManagingUsers.java[tags=add_a_new_user]
+----
+<1> Specify the content type in the header
+<2> Specify the request body
+
+Alternatively, we can post an object, letting RestAssured convert the object fields into JSON for us:
+
+[source,java,indent=0]
+.WhenManagingUsers.java
+----
+include::../examples/serenity-screenplay-rest/src/test/java/examples/screenplay/rest/WhenManagingUsers.java[tags=add_a_new_user_as_an_object]
+----
+<1> Pass in an object rather than a JSON string
+
+== Other types of queries
+
+Other query types are similar to `GET` and `POST` queries.
+For example, `PUT` requests are often used to update resources.
+In the following example, we use a `PUT` request to update a user's details:
+
+[source,java,indent=0]
+.WhenManagingUsers.java
+----
+include::../examples/serenity-screenplay-rest/src/test/java/examples/screenplay/rest/WhenManagingUsers.java[tags=update_a_user]
+----
+
+Or you can delete a user using the `DELETE` query as shown here:
+
+[source,java,indent=0]
+.WhenManagingUsers.java
+----
+include::../examples/serenity-screenplay-rest/src/test/java/examples/screenplay/rest/WhenManagingUsers.java[tags=delete_a_user]
+----
+
+== Higher level tasks
+
+The interactions we have seen so far are readable but still quite low level.
+Screenplay allows us to build higher level tasks that represent the business intent behind these interactions.
+
+For example, you could define a task that encapsulates listing all users like this:
+
+[source,java,indent=0]
+.UserTasks.java
+----
+include::../examples/serenity-screenplay-rest/src/test/java/examples/screenplay/rest/tasks/UserTasks.java[]
+----
+<1> Define a task where the actor lists all the users
+<2> This task is implemented using a `Get` interaction
+
+We can then use a static import to refactor our first test as follows:
+
+[source,java,indent=0]
+.WhenManagingUsers.java
+----
+include::../examples/serenity-screenplay-rest/src/test/java/examples/screenplay/rest/WhenManagingUsers.java[tags=list_all_users_with_task]
+----
+
+For a bit more flexibility, we can also write a custom `Task` class. For example, we could write a `FindAUser` task to find a user by ID:
+
+[source,java,indent=0]
+.FindAUser.java
+----
+include::../examples/serenity-screenplay-rest/src/test/java/examples/screenplay/rest/tasks/FindAUser.java[]
+----
+
+Using this class, we could refactor our original class to read like this:
+
+[source,java,indent=0]
+.WhenManagingUsers.java
+----
+include::../examples/serenity-screenplay-rest/src/test/java/examples/screenplay/rest/WhenManagingUsers.java[tags=find_an_individual_user_via_a_task]
+----

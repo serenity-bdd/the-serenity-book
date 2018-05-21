@@ -1,6 +1,17 @@
 .Serenity BDD Fundamentals
 * xref:index.adoc[Introduction to Serenity BDD]
+* xref:getting-started.adoc[Getting Started]
 * xref:first-steps.adoc[First Steps]
+* xref:step-libraries.adoc[Working with Step Libraries]
 
-.Serenity BDD  and the Screenplay Pattern
-* xref:screenplay-rest[REST API Tesing with Screenplay]
+.Testing Web Applications
+* xref:angularjs.adoc[Testing AngularJS applications]
+
+.The Screenplay Pattern
+* xref:serenity-screenplay-rest.adoc[REST API Tesing with Screenplay]
+
+.Reporting and Living documentation
+* xref:living-documentation.adoc[Living Documentation]
+
+.Reference
+* link:glossary.adoc[Glossary]

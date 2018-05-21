@@ -19,7 +19,7 @@ public class FindAUser implements Task{
     }
 
     @Override
-    @Step("{0} fetches the user with id #userId")
+    @Step("{0} fetches the user with id #id")
     public <T extends Actor> void performAs(T actor) {
         actor.attemptsTo(
                 Get.resource("/users/{id}")

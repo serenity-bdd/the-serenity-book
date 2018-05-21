@@ -342,3 +342,9 @@ Using this class, we could refactor our original class to read like this:
 ----
 include::../examples/serenity-screenplay-rest/src/test/java/examples/screenplay/rest/WhenManagingUsers.java[tags=find_an_individual_user_via_a_task]
 ----
+
+Using tasks to encapsulate REST interactions results in a clear, layered reporting structure, that first describes what the user is doing, and they how they go about it. The test report for the previous scenario is shown here:
+
+[[fig-requirements-tab]]
+.Serenity living documentation for Screenplay and REST
+image::find-a-user-by-id.png[]

@@ -129,7 +129,7 @@ public class WhenManagingUsers {
     // end::find_an_individual_user[]
 
     @Test
-    public void find_an_individual_user_via_a_task() {
+    public void find_an_individual_user_by_id() {
 
         // tag::find_an_individual_user_via_a_task[]
         sam.attemptsTo(

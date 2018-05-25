@@ -7,7 +7,8 @@
 .Testing Web Applications
 * xref:angularjs.adoc[Testing AngularJS applications]
 
-.The Screenplay Pattern
+.Working with REST APIs
+* xref:serenity-rest.adoc[REST API Tesing in Serenity]
 * xref:serenity-screenplay-rest.adoc[REST API Tesing with Screenplay]
 
 .Reporting and Living documentation

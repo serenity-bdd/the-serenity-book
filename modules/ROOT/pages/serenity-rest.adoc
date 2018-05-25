@@ -1,0 +1,111 @@
+Serenity BDD can help you to create tests for REST services, with all advantages that Serenity BDD introduce to Web Tests and even more.
+
+It is provided tight integration with well known https://github.com/jayway/rest-assured[Rest Assured], with some improvements and advanced reporting. All what you need is use in import instead of RestAssured - SerenityRest, and that's all!!
+
+=== Reports created when Rest is tested
+
+If you use in your tests SerenityRest then all your requests/response will be included in generated report, so you can easy explore body, cookies, headers, response body, url as well as validate them in RestAssured way.
+Here is example of generated report for some of demo tests:
+
+[[request_with_headers_and_body]]
+.Request with Headers and Body Example
+image::request_headers_body.png[]
+
+[[response_with_headers_and_body_and_cookies]]
+.Response with Headers and Body and Cookies Example
+image::response_headers_body_cookies.png[]
+
+As you see all requests included in report under correspond steps:
+
+[[rest_query_in_report]]
+.Rest Query included in report under steps
+image::rest_query_in_report.png[]
+
+
+=== Writing tests with Rest Assured
+
+All Rest Assured tests are valid tests for Serenity BDD. You can use all contractions like given-when-then or expect-when-then, initialise some query parameters, and so on.
+
+[source,java]
+----
+...
+    @Step
+    public void whenIAddThePetToTheStore() {
+        for (Pet pet : pets) {
+            int id = Math.abs(new Random().nextInt());
+            Map<String, Object> jsonAsMap = new HashMap<>();
+            jsonAsMap.put("id", id);
+            jsonAsMap.put("name", pet.getName());
+            jsonAsMap.put("status", pet.getStatus());
+            jsonAsMap.put("photoUrls", new ArrayList<>(Arrays.asList()));
+
+            given().contentType("application/json")
+                    .content(jsonAsMap).log().body()
+                    .baseUri("http://petstore.swagger.io")
+                    .basePath("v2/pet")
+            .when().post();
+
+            pet.setId(id);
+
+        }
+    }
+----
+
+or
+
+[source,java]
+----
+...
+    @Step
+    public void thenPetShouldBeAvailable() {
+        for (Pet pet : pets) {
+            expect().that().statusCode(200)
+                    .and().body("name", equalTo(pet.getName())).when()
+                    .get("http://petstore.swagger.io/v2/pet/{id}", pet.getId());
+        }
+    }
+----
+
+More that that you can create Steps classes in Serenity BDD way and use them as reusable components, and use all features of Serenity aggregated report.
+Also Serenity BDD introduce possibility to share same RestResponse between steps to allow write Steps methods in more native way:
+
+[source,java]
+----
+ ...
+        @Step
+        def getById(final String url) {
+            rest().get("$url/{id}", 1000);
+        }
+
+        @Step
+        def thenCheckOutcome() {
+            then().body("Id", Matchers.anything())
+        }
+----
+
+For easy configuration and resetting rest configuration you can use RestConfigurationRule. All Configuration action described in rule will executed before test and after test will be executed reset.
+
+[source,java]
+----
+...
+    @Rule
+    def RestConfigurationRule rule = new RestConfigurationRule(new RestConfigurationAction() {
+        @Override
+        void apply() {
+            SerenityRest.setDefaultBasePath(value)
+        }
+    })
+----
+
+=== Using split classes to initialise and configure Rest Assured
+
+With Serenity BDD you can configure Rest Assured using chain of calls, that can be much more easy to read than a lot of separated lines:
+
+[source,java]
+----
+...
+new RestDefaultsChained().setDefaultBasePath("some/path")
+    .setDefaultProxy(object).setDefaultPort(10)
+----
+
+Basically all what you can execute during rest tests included in one class 'SerenityRest', but you also use slitted classes to separate your logic and help yourself to find function what you need with 'RestUtility' and 'RestDefaults' and 'RestRequests'.

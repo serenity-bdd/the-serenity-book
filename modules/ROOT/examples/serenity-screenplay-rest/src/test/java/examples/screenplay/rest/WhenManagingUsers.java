@@ -10,16 +10,20 @@ import net.serenitybdd.screenplay.rest.interactions.Delete;
 import net.serenitybdd.screenplay.rest.interactions.Get;
 import net.serenitybdd.screenplay.rest.interactions.Post;
 import net.serenitybdd.screenplay.rest.interactions.Put;
+import net.serenitybdd.screenplay.rest.questions.LastResponse;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static examples.screenplay.rest.tasks.UserTasks.listAllUsers;
+import static net.serenitybdd.rest.SerenityRest.then;
 import static net.serenitybdd.screenplay.rest.questions.ResponseConsequence.seeThatResponse;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.*;
 
 @RunWith(SerenityRunner.class)
@@ -143,6 +147,12 @@ public class WhenManagingUsers {
                                 .body("data.first_name", equalTo("George")) // <4>
                                 .body("data.last_name", equalTo("Bluth")) // <5>
                 )
+        );
+
+        await().atMost(20, TimeUnit.SECONDS).until( () ->
+                th.statusCode(200)
+                .body("data.first_name", equalTo("George"))
+                .body("data.last_name", equalTo("Bluth"))
         );
     }
 

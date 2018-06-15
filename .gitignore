@@ -21,3 +21,5 @@ target
 *.iml
 .idea
 .gradle
+**/.gradle
+**/.idea

@@ -261,7 +261,7 @@ public class MathWizSteps {
 <1> Add a new Calculator field
 <2> Create a new calculator with a given amount
 
-The the `Calculator` class doesn't exist (we are designing it here), so create a `Calculator` class in the `src/main/java/starter` directory:
+The `Calculator` class doesn't exist (we are designing it here), so create a `Calculator` class in the `src/main/java/starter` directory:
 
 [source,java]
 ----

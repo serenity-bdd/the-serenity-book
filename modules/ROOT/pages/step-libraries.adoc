@@ -24,7 +24,11 @@ And the second can be broken into three steps:
 
 We could express these tests using Serenity in JUnit as follows:
 
-[import:'classbody'](../samples/frequent-flyer/src/test/java/flyer/WhenEarningFrequentFlyerStatus.java)
+[source,java,indent=0]
+.WhenEarningFrequentFlyerStatus.java
+----
+include::../samples/frequent-flyer/src/test/java/flyer/WhenEarningFrequentFlyerStatus.java
+----
 
 Notice how the second test reuses step methods used in the first to perform a slightly different test. This is a typical example of the way we reuse steps in similar tests, in order to avoid duplicated code and make the code easier to maintain.
 
@@ -45,7 +49,11 @@ You should never create instances of step libraries using the `new` keyword, as 
 
 Step methods are annotated with the @Step annotation:
 
-[import:'classbody'](../samples/frequent-flyer/src/test/java/flyer/steps/TravellerEarningStatusPoints.java)
+[source,java,indent=0]
+.TravellerEarningStatusPoints.java
+----
+include::../samples/frequent-flyer/src/test/java/flyer/steps/TravellerEarningStatusPoints.java
+----
 
 <1> Steps classes can extend any class, or none
 <2> If you include an `actor` field in your step library, Serenity will inject the name of the step.
@@ -61,7 +69,11 @@ Step libraries are often used to represent actors or persona who interact with t
 
 Methods that represent a business task or action (`joins_the_frequent_flyer_program()`), and that will appear in the reports as a separate step, are annotated with the `@Step` annotation.
 
-[import:'joins'](../samples/frequent-flyer/src/test/java/flyer/steps/TravellerEarningStatusPoints.java)
+[source,java,indent=0]
+.TravellerEarningStatusPoints.java
+----
+include::../samples/frequent-flyer/src/test/java/flyer/steps/TravellerEarningStatusPoints.java
+----
 
 Notice how the `@Step` attribute has a string value. This tells Serenity what to write in the reports when this step is executed. You don't need a value (if you don't have one, the name of the method will be used instead). But you can use this value to make your step names more meaningful.
 
@@ -104,7 +116,13 @@ This step would appear in the Serenity reports as "Tracy flies 10000 km".
 
 Sometimes we can use several step libraries of the same type to make our tests more readable. For example, the following test shows how point transfers between different travellers works.
 
-[import:'classbody'](../samples/frequent-flyer/src/test/java/flyer/WhenTransferringFrequentFlyerPoints.java)
+[source,java,indent=0]
+.TravellerEarningStatusPoints.java
+----
+include::../samples/frequent-flyer/src/test/java/flyer/WhenTransferringFrequentFlyerPoints.java
+...
+include::./samples/frequent-flyer/src/test/java/flyer/steps/TravellerEarningStatusPoints.java
+----
 
 This would produce a report where both actors (Tracy and Troy) appear in different roles:
 

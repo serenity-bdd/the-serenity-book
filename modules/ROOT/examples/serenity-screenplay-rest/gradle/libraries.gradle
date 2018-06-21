@@ -13,6 +13,7 @@ ext{
             test: [
                     serenity: [
                             core: "net.serenity-bdd:serenity-core:${serenityCoreVersion}",
+                            junit: "net.serenity-bdd:serenity-junit:${serenityCoreVersion}",
                             screenplay: "net.serenity-bdd:serenity-screenplay:${serenityCoreVersion}",
                             screenplayWebdriver: "net.serenity-bdd:serenity-screenplay-webdriver:${serenityCoreVersion}",
                             screenplayRest: "net.serenity-bdd:serenity-screenplay-rest:${serenityCoreVersion}",

@@ -30,6 +30,7 @@ dependencies {
             libs.logback
 
     testCompile libs.test.serenity.core,
+            libs.test.serenity.junit,
             libs.test.serenity.screenplay,
             libs.test.serenity.screenplayWebdriver,
             libs.test.serenity.screenplayRest,

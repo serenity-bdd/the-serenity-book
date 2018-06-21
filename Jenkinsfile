@@ -9,30 +9,30 @@ cp -Rf modules/ROOT/assets build'''
         sh 'asciidoctor modules/ROOT/pages/*.adoc -D build -a imagesdir=assets/images'
       }
     }
-    stage('frequent flyer mvn') {
+    stage('Frequent Flyer') {
       parallel {
-        stage('frequent flyer') {
+        stage('Maven') {
           steps {
-            sh 'cd modules/ROOT/examples/frequent-flyer && mvn clean verify'
+            sh '(cd modules/ROOT/examples/frequent-flyer && mvn clean verify)'
           }
         }
-        stage('serenity-screenplay-rest mvn') {
+        stage('Gradle') {
           steps {
-            sh 'cd modules/ROOT/examples/serenity-screenplay-rest && mvn clean verify'
+            sh '(cd modules/ROOT/examples/frequent-flyer && gradle clean test)'
           }
         }
       }
     }
-    stage('frequent-flyer gradle') {
+    stage('REST with Screenplay') {
       parallel {
-        stage('frequent-flyer gradle') {
+        stage('Maven') {
           steps {
-            sh 'cd modules/ROOT/examples/frequent-flyer && gradle clean test'
+            sh '(cd modules/ROOT/examples/serenity-screenplay-rest && mvn clean verify -Pprod)'
           }
         }
-        stage('serenity-screenplay-rest gradle') {
+        stage('Gradle') {
           steps {
-            sh 'cd modules/ROOT/examples/serenity-screenplay-rest && gradle clean test'
+            sh '(cd modules/ROOT/examples/serenity-screenplay-rest && gradle clean test)'
           }
         }
       }

@@ -4,8 +4,8 @@ pipeline {
     stage('compile book') {
       steps {
         sh '''rm -Rf build
-mkdir -p build
-cp -Rf modules/ROOT/assets build'''
+        mkdir -p build
+        cp -Rf modules/ROOT/assets build'''
         sh 'asciidoctor modules/ROOT/pages/*.adoc -D build -a imagesdir=assets/images'
       }
     }
@@ -38,4 +38,9 @@ cp -Rf modules/ROOT/assets build'''
       }
     }
   }
+  post {
+        always {
+            junit '**/target/site/serenity/SERENITY-JUNIT*'
+        }
+    }
 }

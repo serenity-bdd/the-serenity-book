@@ -18,7 +18,7 @@ pipeline {
         }
         stage('Gradle') {
           steps {
-            sh '(cd modules/ROOT/examples/frequent-flyer && gradle clean test)'
+            sh '(cd modules/ROOT/examples/frequent-flyer && ./gradlew clean test)'
           }
         }
       }
@@ -32,7 +32,7 @@ pipeline {
         }
         stage('Gradle') {
           steps {
-            sh '(cd modules/ROOT/examples/serenity-screenplay-rest && gradle clean test)'
+            sh '(cd modules/ROOT/examples/serenity-screenplay-rest && ./gradlew clean test)'
           }
         }
       }

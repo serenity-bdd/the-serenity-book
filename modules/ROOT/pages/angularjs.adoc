@@ -125,9 +125,9 @@ public class TodoListApp extends PageObject {
 == Angular/JS and Serenity Screenplay
 
 Serenity Screenplay provides seamless integration with Angular/JS locators.
-The `Target` class accepts `ByAngular` locators, so you can define element locators with no additional work.
+For example, the `Target` class accepts `ByAngular` locators, so you can define element locators with no additional work. Let's see how this Angular/JS support comes together to make working with Angular applications easier with Screenplay.
 
-For example, in the Todo application, we could write a `Target` object that uses the `ByAngular` locator to find the list of todo items:
+The first thing we need to do in our Todo application is to enter a new todo item by typing a value into the 'new todo' field. We could write a `Target` object that uses the `ByAngular` locator to find this input field as shown here:
 
 [source,java]
 ----
@@ -136,7 +136,7 @@ private static Target NEW_TODO
             .located(ByAngular.model("newTodo"));
 ----
 
-You can use an Angular Target like any other Target object:
+In the context of a Screenplay test with an actor and a browser, we could use this target like this:
 
 [source,java]
 ----
@@ -164,8 +164,7 @@ tim.attemptsTo(
 );
 ----
 
-Angular locators are not limited to individual elements. You can also use `repeater` locators to retrieve lists of values.
-In the code below, we fetch the list of todo items:
+Next we will need to see what items have been recorded. As we have seen, Angular locators are not limited to individual elements, and you can easily use `repeater` locators to retrieve lists of values. In the code below, we fetch the list of todo items using the Angular repeater. We also use the `TheTarget.textValuesOf()` method to turn the list of web elements into a corresponding list of text values:
 
 [source,java]
 ----

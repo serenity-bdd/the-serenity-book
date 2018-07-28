@@ -1,4 +1,5 @@
 = Summary
+:source-highlighter: coderay
 
 . link:README.adoc[Introduction]
 . link:introduction/README.adoc[Getting Started]

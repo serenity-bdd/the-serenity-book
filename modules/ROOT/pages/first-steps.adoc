@@ -5,19 +5,19 @@ In this section, we will help you get going with your first Serenity BDD project
 == What you need to start
 
 === Java 8
-Test Automation is a development activity, so you will need some familiarity with Java. Serenity BDD uses Java 8, so make sure you have a [JDK 1.8 or later](http://www.oracle.com/technetwork/java/javase/downloads/index.html) installed.
+Test Automation is a development activity, so you will need some familiarity with Java. Serenity BDD uses Java 8, so make sure you have a http://www.oracle.com/technetwork/java/javase/downloads/index.html[JDK 1.8 or later] installed.
 
 === An Integrated Development Environment
 
-You will need a modern IDE to work with Java. We recommend IntelliJ (you can download the Community Edition, which is free, [from here](https://www.jetbrains.com/idea/download). But Eclipse will work fine as well.
+You will need a modern IDE to work with Java. We recommend IntelliJ (you can download the Community Edition, which is free, https://www.jetbrains.com/idea/download[from here]. But Eclipse will work fine as well.
 
 === A Build Tool
 
-You will also need a build tool, either Gradle or Maven, to run your tests and generate your reports. Make sure you have either [Gradle 3.x or higher](http://www.gradle.org/downloads) or [Maven 3.3.x or higher](https://maven.apache.org/download.cgi) installed.
+You will also need a build tool, either Gradle or Maven, to run your tests and generate your reports. Make sure you have either http://www.gradle.org/downloads[Gradle 3.x or higher] or https://maven.apache.org/download.cgi[Maven 3.3.x or higher] installed.
 
 == Getting Started
 
-The quickest way to create a new project is to take one of the starter projects on Github. You can find the starter project for JUnit at [https://github.com/serenity-bdd/serenity-junit-starter](https://github.com/serenity-bdd/serenity-junit-starter).
+The quickest way to create a new project is to take one of the starter projects on Github. You can find the starter project for JUnit at https://github.com/serenity-bdd/serenity-junit-starter[https://github.com/serenity-bdd/serenity-junit-starter].
 
 You can clone this repository:
 
@@ -26,9 +26,9 @@ git clone https://github.com/serenity-bdd/serenity-junit-starter.git
 cd serenity-junit-starter
 ----
 
-Or simply [download a zip file from here](https://github.com/serenity-bdd/serenity-junit-starter/archive/master.zip).
+Or simply https://github.com/serenity-bdd/serenity-junit-starter/archive/master.zip[download a zip file from here].
 
-If you are using Maven, you can also create a new project using one of the Serenity [Maven Archetypes](https://maven.apache.org/guides/introduction/introduction-to-archetypes.html).
+If you are using Maven, you can also create a new project using one of the Serenity https://maven.apache.org/guides/introduction/introduction-to-archetypes.html[Maven Archetypes].
 
 == So far so good?
 

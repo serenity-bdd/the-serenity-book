@@ -1,0 +1,227 @@
+= Working with AngularJS applications
+
+AngularJS applications have their own challenges when it comes to WebDriver test automation. The asycnhronous nature of Angular apps makes testing these applications particularly tricky when using traditional WebDriver-based technologies.
+
+In the JavaScript world, http://www.protractortest.org/#/[Protractor] provides an elegant solution to the problem of testing AngularJS apps. Protractor supports angular-specific locators and knows how to wait for  Angular to finish processing pending tasks before proceeding to the next step of the test.
+
+Serenity BDD integrates with https://github.com/paul-hammant/ngWebDriver[ngWebDriver] to leverage the power of Protractor from within your Serenity BDD test suites.
+
+== Waiting for Angular to finish asynchronous activities
+
+Sometimes you need to wait until Angular has finished it's application processing activities before interacting with an element or moving to the next step of a test. You can do this in a Serenity Page Object by calling the `waitForAngularRequestsToFinish()` method, like this:
+
+```
+	waitForAngularRequestsToFinish()
+```
+If you are using Screenplay, you can use the `WaitUntil` class (from the `net.serenitybdd.screenplay.waits` package), as shown here:
+
+[source,java]
+----
+    actor.attemptsTo(
+		Click.on(ADD_TO_CART),
+		WaitUntil.angularRequestsHaveFinished(),
+		Click.on(PURCHASE)
+	)
+----
+
+= Working with AngularJS locators
+
+Protractor provides a number of Angular-specific locators, such as `by.model`, `by.binding` and `by.repeater` (note that the `binding` and `model` locators are not supported in Angular 2). The _ngWebDriver_ library from Paul Hammant allows you to call Protractor locators from your Java test code.
+
+_ngWebDriver_ provides a special `ByAngular` class that you can use in the place of the Selenium `By` class, and that provides access to a number of Angular-specific locators.
+
+In Serenity BDD, you can use the ngWebDriver locators anywhere you would use normal Webdriver locators. This includes the `find()` and `findAll()` methods of the Serenity `PageObject` base class, but also in any Screenplay target locator.
+
+Some examples are shown in the following sections.
+
+== Binding and Model
+
+In Angular 1.x apps, you can use Protractor's `binding` and `model` locators using the `ByAngular.binding()` and `ByAngular.model()` methods. In a Serenity Page Object, you could retrieve an element using the `find()` method:
+
+[source,java]
+----
+public class TodoListApp extends PageObject {
+    public void addTodo(String item) {
+	    find(ByAngular.model("todo")).sendKeys(item, Keys.ENTER);
+	}
+}
+----
+
+Or you could define a Screenplay `Target`like this:
+
+[source,java]
+----
+    Target TODO_INPUT_FIELD = Target.the("Todo input field")
+                                    .located(ByAngular.model("todo"));
+----
+
+
+Note that these won't work with Angular 2.x or above.
+
+== Button text
+
+Often it is useful to identify button by it's text label. Traditionally this calls for XPath. But Protractor gives us a more elegant approach. Suppose you have the following HTML element on your page.
+
+[source,html]
+----
+<button>Save</button>
+----
+
+You can locate this element using the `buttonText()` method:
+
+[source,java]
+----
+    find(ByAngular.buttonText("Save")).click();
+----
+
+For more flexibility, you can also use the `partialButtonText()` method.
+
+== CSS Containing Text
+
+Another useful trick is to fine elements that match a given CSS selector, _and_ which contain a specific string. This is not usually possible with CSS in WebDriver, so you need to resort to chained selectors or cumbersome XPath expressions.
+
+Suppose you have an Angular app with the following code:
+
+[source,html]
+----
+<div id="product">
+  <ul>
+    <li class="colour">Red</li>
+    <li class="colour">Blue</li>
+  </ul>
+</div>
+----
+
+You could locate the `Red` entry in this list by using the following code:
+
+[source,java]
+----
+    find(ByAngular.cssContainingText("#product .colour", "Red"))
+----
+
+== Using repeaters
+
+You can use `ByAngular.repeater()` to retrieve elements that have been implemented on the page using `ng-repeat`. For example, in the http://todomvc.com/examples/angularjs/#/[TodoMVC App], a list of todo items is represented using the `ng-repeat` attribute:
+
+[source,html]
+----
+<li ng-repeat="todo in todos"...>
+----
+
+We could retrieve these items using the following method in a `PageObject` class:
+
+[source,java]
+----
+public class TodoListApp extends PageObject {
+    public List<String> visibleTodoItems() {
+	    return findAll(ByAngular.repeater("todo in todos"))
+                  .stream()
+			      .map(WebElement::getText)
+			      .collect(Collectors.toList());
+	}
+}
+----
+
+== Angular/JS and Serenity Screenplay
+
+Serenity Screenplay provides seamless integration with Angular/JS locators.
+The `Target` class accepts `ByAngular` locators, so you can define element locators with no additional work.
+
+For example, in the Todo application, we could write a `Target` object that uses the `ByAngular` locator to find the list of todo items:
+
+[source,java]
+----
+private static Target NEW_TODO
+    = Target.the("New Todo")
+            .located(ByAngular.model("newTodo"));
+----
+
+You can use an Angular Target like any other Target object:
+
+[source,java]
+----
+Actor tim = Actor.named("Tim")
+                 .describedAs("A todo-list enthusiast");
+tim.can(BrowseTheWeb.with(driver));
+
+tim.attemptsTo(
+        Open.url("http://todomvc.com/examples/angularjs/#/"),
+        Enter.theValue("Walk the dog").into(NEW_TODO)
+             .thenHit(Keys.ENTER),
+        WaitUntil.angularRequestsHaveFinished()
+);
+----
+
+You can also use Angular locators directly in your Interaction classes (though this is generally not recommended practice except for experimental work):
+
+[source,java]
+----
+tim.attemptsTo(
+        Enter.theValue("Feed the cat")
+             .into(ByAngular.model("newTodo"))
+             .thenHit(Keys.ENTER),
+        WaitUntil.angularRequestsHaveFinished()
+);
+----
+
+Angular locators are not limited to individual elements. You can also use `repeater` locators to retrieve lists of values.
+In the code below, we fetch the list of todo items:
+
+[source,java]
+----
+private static Target ITEMS
+    = Target.the("The visible todo items")
+            .located(ByAngular.repeater("todo in todos"));
+...
+tim.should(
+    seeThat(TheTarget.textValuesOf(ITEMS),
+            hasItems("Walk the dog","Feed the cat"))
+);
+----
+
+A full sample test case using Screenplay and Angular/JS can be seen below:
+[source,java]
+----
+@RunWith(SerenityRunner.class)
+public class WhenManagingMyTodoList {
+
+    private static Target NEW_TODO
+        = Target.the("New Todo")
+                .located(ByAngular.model("newTodo"));
+
+    private static Target ITEMS
+        = Target.the("The visible todo items")
+                .located(ByAngular.repeater("todo in todos"));
+
+    @Managed(driver = "firefox")
+    private WebDriver driver;
+
+    @Test
+    public void iShouldBeAbleToAddNewTodoItems() {
+
+        Actor tim = Actor.named("Tim")
+                         .describedAs("A todo-list enthusiast");
+        tim.can(BrowseTheWeb.with(driver));
+
+        tim.attemptsTo(
+                Open.url("http://todomvc.com/examples/angularjs/#/"),
+                Enter.theValue("Walk the dog")
+                     .into(NEW_TODO)
+                     .thenHit(Keys.ENTER),
+                WaitUntil.angularRequestsHaveFinished()
+        );
+
+        tim.attemptsTo(
+                Enter.theValue("Feed the cat")
+                     .into(ByAngular.model("newTodo"))
+                     .thenHit(Keys.ENTER),
+                WaitUntil.angularRequestsHaveFinished()
+        );
+
+        tim.should(seeThat(TheTarget.textValuesOf(ITEMS),
+                   hasItems("Walk the dog","Feed the cat")));
+    }
+}
+----
+
+You can learn more about the available locators on https://github.com/paul-hammant/ngWebDriver[the ngWebDriver website].

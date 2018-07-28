@@ -14,3 +14,12 @@ _book
 *.epub
 *.mobi
 *.pdf
+
+# Sample Java projects
+build
+target
+*.iml
+.idea
+.gradle
+**/.gradle
+**/.idea

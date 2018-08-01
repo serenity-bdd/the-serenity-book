@@ -2,7 +2,7 @@
 
 If you are working with WebDriver web tests, you will be familiar with the concept of Page Objects. Page Objects are a way of isolating the implementation details of a web page inside a class, exposing only business-focused methods related to that page. They are an excellent way of making your web tests more maintainable.
 
-In Serenity, page objects can be just ordinary WebDriver page objects, on the condition that they have a constructor that accepts a WebDriver parameter. However, the Serenity `PageObject` class provides a number of utility methods that make page objects more convenient to work with, so a Serenity Page Object generally extends this class.
+In Serenity, page objects are just ordinary classes that extend the `PageObject` class. Serenity automatically injects a WebDriver instance into the page object that you can access via the `getDriver()` method, although you rarely need to use the WebDriver directly. The Serenity `PageObject` class provides a number of convenient methods that make accessing and manipulating web elements much easier than with conventional WebDriver test scripts.
 
 Here is a simple example:
 
@@ -18,10 +18,6 @@ public class FindAJobPage extends PageObject {
 
     WebElementFacade keywords;
     WebElementFacade searchButton;
-
-    public FindAJobPage(WebDriver driver) {
-        super(driver);
-    }
 
     public void look_for_jobs_with_keywords(String values) {
         typeInto(keywords, values);

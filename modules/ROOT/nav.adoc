@@ -8,8 +8,8 @@
 * xref:angularjs.adoc[Testing AngularJS applications]
 
 .Working with REST APIs
-* xref:serenity-rest.adoc[REST API Tesing in Serenity]
-* xref:serenity-screenplay-rest.adoc[REST API Tesing with Screenplay]
+* xref:serenity-rest.adoc[REST API Testing in Serenity]
+* xref:serenity-screenplay-rest.adoc[REST API Testing with Screenplay]
 
 .Reporting and Living documentation
 * xref:living-documentation.adoc[Living Documentation]

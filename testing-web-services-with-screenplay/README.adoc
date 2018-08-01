@@ -1,9 +1,63 @@
-= Serenity Step Libraries
+= Testing Web Services with Screenplay
 
-In Serenity, tests are broken down into reusable steps. An important principle behind Serenity is the idea that it is easier to maintain a test that uses several layers of abstraction to hide the complexity behind different parts of a test.
+Screenplay is most commonly associated with UI-centric testing, where we describe a user's journey through the system. (In fact, the original name of the Screenplay pattern, coined by Antony Marcano in the late 2000s, was the Journey Pattern).
 
-In an automated acceptance test, test steps represent the level of abstraction between the code that interacts with your application (for example, Page Objects in an automated web test, which are designed in terms of actions that you perform on a given page) and higher-level stories (sequences of more business-focused actions that illustrate how a given user story has been implemented).
-If your automated test is not UI-oriented (for example, if it calls a web service), steps orchestrate other more technical components such as REST clients. Steps can contain other steps, and are included in the Serenity reports. Whenever a step is executed, a screenshot is stored and displayed in the report.
+But Screenplay is a great way to create reusable components for your tests, components that can be used for both web and non-web testing. In this chapter, we will look at how you can use Serenity Screenplay and RestAssured to test web services in a particularly readable and fluent way. For example, to test a REST endpoint, your code could be a simple as this:
+
+[source,java]
+----
+@Test
+public void find_an_individual_user() {
+
+    Actor sam = Actor.named("Sam the supervisor")
+                     .whoCan(CallAnApi.at("https://reqres.in"));
+
+    sam.attemptsTo(
+            Get.resource("/api/users/1")
+    );
+
+    sam.should(
+            seeThatResponse(response -> response.body("first_name",
+                                                      equalTo("Steve")))
+    );
+}
+----
+
+Let's see how this works in more detail.
+
+== Adding Serenity Screenplay for REST to your project
+
+The Serenity Screenplay for REST libraries are bundled in the `serenity-screenplay-rest` dependency. You can add this to your project just as you would any other dependency. In Maven, the dependency looks like this:
+
+[source,xml]
+----
+```
+<dependency>
+    <groupId>net.serenity-bdd</groupId>
+    <artifactId>serenity-screenplay-rest</artifactId>
+    <version>${serenity.version}</version>
+    <scope>test</scope>
+</dependency>
+```
+
+[source,gradle]
+Or in Gradle:
+```
+dependencies {
+    compile "net.serenity-bdd:serenity-screenplay-rest:${serenityVersion}"
+    ...
+}
+```
+
+
+== Testing GETs
+
+== Testing POSTs
+
+== Testing other types of queries
+
+
+In an automated acceptance test, test steps represent the level of abstraction between the code that interacts with your application (for example, Page Objects in an automated web test, which are designed in terms of actions that you perform on a given page) and higher-level stories (sequences of more business-focused actions that illustrate how a given user story has been implemented). If your automated test is not UI-oriented (for example, if it calls a web service), steps orchestrate other more technical components such as REST clients. Steps can contain other steps, and are included in the Serenity reports. Whenever a step is executed, a screenshot is stored and displayed in the report.
 
 == Breaking down tests into steps
 
@@ -25,23 +79,19 @@ And the second can be broken into three steps:
 
 We could express these tests using Serenity in JUnit as follows:
 
-[source,java,indent=0]
-.WhenEarningFrequentFlyerStatus.java
-----
-include::../examples/frequent-flyer/src/test/java/flyer/WhenEarningFrequentFlyerStatus.java[]
-----
+[import:'classbody'](../samples/frequent-flyer/src/test/java/flyer/WhenEarningFrequentFlyerStatus.java)
 
 Notice how the second test reuses step methods used in the first to perform a slightly different test. This is a typical example of the way we reuse steps in similar tests, in order to avoid duplicated code and make the code easier to maintain.
 
 == Implementing Step Libraries
 
-The `TravellerEarningStatusPoints` class is what we call a _step library_. We use the `@Steps` class as shown above to indicate a step library in our test code: this annotation tells Serenity to instantiate and instrument this field, so that methods you call in this library also appear in the test reports, just like in the one you can see here:
+The `WhenEarningFrequentFlyerStatus` class is what we call a _step library_. We use the `@Steps` class as shown above to indicate a step library in our test code: this annotation tells Serenity to instantiate and instrument this field, so that methods you call in this library also appear in the test reports, just like in the one you can see here:
 
-image::earn-silver-after-10000-km.png[]
+image::/images/earn-silver-after-10000-km.png[]
 
 Step libraries contain the business tasks or actions that a user performs during a test. There are many ways to organise your step libraries, but a convenient way is to group methods in slices of business behaviour for a given type of user. In this case a _traveller_ who is _earning status points_.
 
-Notice that it was not necessary to explicitly instantiate the `Steps` class `TravellerEarningStatusPoints`. When you annotated a member variable of this class with the `@Steps` annotation, Serenity BDD will automatically instantiate it for you.
+Notice how we did not need to instantiate the `Steps` class `TravellerEarningStatusPoints`. When you annotated a member variable of this class with the `@Steps` annotation, Serenity BDD will automatically instantiate it for you.
 
 [NOTE]
 ====
@@ -50,11 +100,7 @@ You should never create instances of step libraries using the `new` keyword, as 
 
 Step methods are annotated with the @Step annotation:
 
-[source,java,indent=0]
-.TravellerEarningStatusPoints.java
-----
-include::../examples/frequent-flyer/src/test/java/flyer/steps/TravellerEarningStatusPoints.java[]
-----
+[import:'classbody'](../samples/frequent-flyer/src/test/java/flyer/steps/TravellerEarningStatusPoints.java)
 
 <1> Steps classes can extend any class, or none
 <2> If you include an `actor` field in your step library, Serenity will inject the name of the step.
@@ -70,11 +116,7 @@ Step libraries are often used to represent actors or persona who interact with t
 
 Methods that represent a business task or action (`joins_the_frequent_flyer_program()`), and that will appear in the reports as a separate step, are annotated with the `@Step` annotation.
 
-[source,java,indent=0]
-.TravellerEarningStatusPoints.java
-----
-include::../examples/frequent-flyer/src/test/java/flyer/steps/TravellerEarningStatusPoints.java[]
-----
+[import:'joins'](../samples/frequent-flyer/src/test/java/flyer/steps/TravellerEarningStatusPoints.java)
 
 Notice how the `@Step` attribute has a string value. This tells Serenity what to write in the reports when this step is executed. You don't need a value (if you don't have one, the name of the method will be used instead). But you can use this value to make your step names more meaningful.
 
@@ -117,17 +159,11 @@ This step would appear in the Serenity reports as "Tracy flies 10000 km".
 
 Sometimes we can use several step libraries of the same type to make our tests more readable. For example, the following test shows how point transfers between different travellers works.
 
-[source,java,indent=0]
-.TravellerEarningStatusPoints.java
-----
-include::../examples/frequent-flyer/src/test/java/flyer/WhenTransferringFrequentFlyerPoints.java[]
-...
-include::../examples/frequent-flyer/src/test/java/flyer/steps/TravellerEarningStatusPoints.java[]
-----
+[import:'classbody'](../samples/frequent-flyer/src/test/java/flyer/WhenTransferringFrequentFlyerPoints.java)
 
 This would produce a report where both actors (Tracy and Troy) appear in different roles:
 
-image::tracy-and-troy.png[]
+image::/images/tracy-and-troy.png[]
 
 Note that a more elegant way to do this is by using the Screenplay pattern, where each actor can have their own browser and abilities.
 

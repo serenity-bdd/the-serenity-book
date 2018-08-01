@@ -122,14 +122,104 @@ public class TodoListApp extends PageObject {
 }
 ----
 
-In Screenplay, we could write a `Target` object that uses the `ByAngular` locator to find the list of todo items:
+== Angular/JS and Serenity Screenplay
+
+Serenity Screenplay provides seamless integration with Angular/JS locators.
+For example, the `Target` class accepts `ByAngular` locators, so you can define element locators with no additional work. Let's see how this Angular/JS support comes together to make working with Angular applications easier with Screenplay.
+
+The first thing we need to do in our Todo application is to enter a new todo item by typing a value into the 'new todo' field. We could write a `Target` object that uses the `ByAngular` locator to find this input field as shown here:
 
 [source,java]
 ----
-public class TodoList {
-    public static Target ITEMS
-        = Target.the("List of todo items")
+private static Target NEW_TODO
+    = Target.the("New Todo")
+            .located(ByAngular.model("newTodo"));
+----
+
+In the context of a Screenplay test with an actor and a browser, we could use this target like this:
+
+[source,java]
+----
+Actor tim = Actor.named("Tim")
+                 .describedAs("A todo-list enthusiast");
+tim.can(BrowseTheWeb.with(driver));
+
+tim.attemptsTo(
+        Open.url("http://todomvc.com/examples/angularjs/#/"),
+        Enter.theValue("Walk the dog").into(NEW_TODO)
+             .thenHit(Keys.ENTER),
+        WaitUntil.angularRequestsHaveFinished()
+);
+----
+
+You can also use Angular locators directly in your Interaction classes (though this is generally not recommended practice except for experimental work):
+
+[source,java]
+----
+tim.attemptsTo(
+        Enter.theValue("Feed the cat")
+             .into(ByAngular.model("newTodo"))
+             .thenHit(Keys.ENTER),
+        WaitUntil.angularRequestsHaveFinished()
+);
+----
+
+Next we will need to see what items have been recorded. As we have seen, Angular locators are not limited to individual elements, and you can easily use `repeater` locators to retrieve lists of values. In the code below, we fetch the list of todo items using the Angular repeater. We also use the `TheTarget.textValuesOf()` method to turn the list of web elements into a corresponding list of text values:
+
+[source,java]
+----
+private static Target ITEMS
+    = Target.the("The visible todo items")
+            .located(ByAngular.repeater("todo in todos"));
+...
+tim.should(
+    seeThat(TheTarget.textValuesOf(ITEMS),
+            hasItems("Walk the dog","Feed the cat"))
+);
+----
+
+A full sample test case using Screenplay and Angular/JS can be seen below:
+[source,java]
+----
+@RunWith(SerenityRunner.class)
+public class WhenManagingMyTodoList {
+
+    private static Target NEW_TODO
+        = Target.the("New Todo")
+                .located(ByAngular.model("newTodo"));
+
+    private static Target ITEMS
+        = Target.the("The visible todo items")
                 .located(ByAngular.repeater("todo in todos"));
+
+    @Managed(driver = "firefox")
+    private WebDriver driver;
+
+    @Test
+    public void iShouldBeAbleToAddNewTodoItems() {
+
+        Actor tim = Actor.named("Tim")
+                         .describedAs("A todo-list enthusiast");
+        tim.can(BrowseTheWeb.with(driver));
+
+        tim.attemptsTo(
+                Open.url("http://todomvc.com/examples/angularjs/#/"),
+                Enter.theValue("Walk the dog")
+                     .into(NEW_TODO)
+                     .thenHit(Keys.ENTER),
+                WaitUntil.angularRequestsHaveFinished()
+        );
+
+        tim.attemptsTo(
+                Enter.theValue("Feed the cat")
+                     .into(ByAngular.model("newTodo"))
+                     .thenHit(Keys.ENTER),
+                WaitUntil.angularRequestsHaveFinished()
+        );
+
+        tim.should(seeThat(TheTarget.textValuesOf(ITEMS),
+                   hasItems("Walk the dog","Feed the cat")));
+    }
 }
 ----
 

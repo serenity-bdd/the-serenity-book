@@ -32,7 +32,7 @@ Scenario: Adding an item to a list with other items in Cucumber
   Then her todo list should contain Walk the dog,Put out the garbage,Buy some milk
 ----
 
-This https://www.agilealliance.org/glossary/gwt-2/[Given When Then] format is widely used for acceptance tests in Agile projects.
+This https://www.agilealliance.org/glossary/gwt/[Given When Then] format is widely used for acceptance tests in Agile projects.
 
 Note how this scenario is deliberately pitched at a fairly high level, in business terms, describing the business motivations behind the feature without committing to a particular implementation.
 

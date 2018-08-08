@@ -1,3 +1,10 @@
+= Custom Reporting
+
+In addition to the standard HTML reports, Serenity provides additional reports for more specific usages. These include
+
+  * Emailable HTML reports
+  * Archivable PDF reports (coming soon)
+
 == Serenity emailable reports
 
 Serenity BDD produces rich reports that act both as test reports and living documentation.
@@ -154,14 +161,6 @@ image::custom-reports-capabilities-and-features.png[]
 ==== Functional coverage by tag
 You can also configure functional coverage to report coverage by tags, rather than by requirements hierarchy. Suppose you are using a `@department` tag to define the key stakeholders for each feature. You could flag features to belong to different departments using tags like `@department:Trading`, `department:Sales` or `department:Marketing`.
 
-You could tell Serenity to produce coverage for these tags by including the following line in your `serenity.properties` file:
-
-----
-report.tagtypes=department
-----
-
-When you generate the summary report, the results will be aggregated by each tag value (Marketing, Sales and Trading), as shown here:
-
 [source,cucumber]
 ----
 @department:Trading
@@ -172,6 +171,14 @@ Feature: Buying and selling shares
   I want to be able to buy and sell shares to make a profit
   ...
 ----
+
+You could tell Serenity to produce coverage for these tags by including the following line in your `serenity.properties` file:
+
+----
+report.tagtypes=department
+----
+
+When you generate the summary report, the results will be aggregated by each tag value (Marketing, Sales and Trading), as shown here:
 
 [[alternative-functional-coverage]]
 .Functional coverage can be configured by tags

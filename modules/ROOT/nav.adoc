@@ -14,6 +14,7 @@
 
 .Reporting and Living documentation
 * xref:living-documentation.adoc[Living Documentation]
+* xref:extended-reports.adoc[Additional Reports]
 
 .Reference
 * link:glossary.adoc[Glossary]

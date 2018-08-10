@@ -55,6 +55,52 @@ The full configuration looks something like this:
 <1> Add a dependency to the serenity-emailer module
 <2> Produce the emailable summary report when we run the aggregate goal
 
+If you are using Maven, you can also generate these reports directly using the `reports` goal and by passing the `serenity.reports` system property:
+
+----
+mvn serenity:reports -Dserenity.reports=email
+----
+
+=== Setting up Gradle
+
+If you are using Gradle, you can use the `reports` task to generate any configured extended reports. First of all, you need to add the dependencies to the extended reports you want to run in the `buildscript` section of your `build.gradle` file, e.g.
+
+[source,gradle]
+----
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath "net.serenity-bdd:serenity-gradle-plugin:1.9.36"
+        classpath "net.serenity-bdd:serenity-emailer:1.9.36"
+    }
+}
+----
+
+Next, you need to configure the report you want to generate in your `build.gradle` file using the `serenity` section, as shown here:
+
+[source,gradle]
+----
+serenity {
+    reports = ["email"]
+}
+----
+
+Now you can generate these reports by invoking the `reports` task:
+
+----
+$gradle reports
+
+> Task :reports
+Generating Serenity Reports for bdd-bank to directory /Users/john/Projects/SerenityDojo/bdd-bank/target/site/serenity
+PROCESSING EXTENDED REPORTS: [email]
+
+BUILD SUCCESSFUL in 2s
+1 actionable task: 1 executed
+----
+
 === Custom field Reporting
 
 Custom fields can be included in the reports, using values that are either taken from the environment variables or passed into the build via system properties. This can be useful if you want to include the product or build version, the environment the tests were run on, or the test run date.

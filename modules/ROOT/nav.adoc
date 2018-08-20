@@ -16,5 +16,8 @@
 * xref:living-documentation.adoc[Living Documentation]
 * xref:extended-reports.adoc[Additional Reports]
 
+.Running Serenity tests
+* xref:serenity-parallel.adoc[Running Serenity tests in parallel]
+
 .Reference
 * link:glossary.adoc[Glossary]

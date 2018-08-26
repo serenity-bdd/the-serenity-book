@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class CartPage extends PageObject {
 
     public List<OrderCostSummary> getOrderCostSummaries() {
-        return findAll(".order-wrapper")
+        return findAll(".multi-shop-cart")
                 .stream()
                 .map(CartPage::convertToOrderCostSummary)
                 .collect(Collectors.toList());
@@ -26,18 +26,8 @@ public class CartPage extends PageObject {
     }
 
     public static OrderCostSummary convertToOrderCostSummary(WebElementFacade summaryElement) {
-        String name = summaryElement.find(net.serenitybdd.core.annotations.findby.By.tagName("h3")).getText();
-        double itemTotal = Double.parseDouble(summaryElement.findBy(".item-total .currency-value").getText());
-        double shipping = summaryElement.containsElements(".shipping .currency-value") ?
-                Double.parseDouble(summaryElement.findBy(".shipping .currency-value").getText()) : 0.0;
-
-        double grandTotal = summaryElement.containsElements(".grand-total .currency-value")
-                ? Double.parseDouble(summaryElement.findBy(".grand-total .currency-value").getText()) : 0.0;
-
-        return new OrderCostSummary(name, itemTotal, shipping, grandTotal);
-    }
-
-    public boolean isShowingShippingCosts() {
-        return containsElements(".shipping .currency-value");
+        String name = summaryElement.find(net.serenitybdd.core.annotations.findby.By.className("listing-title")).getAttribute("title");
+        double itemTotal = Double.parseDouble(summaryElement.findBy(".multi-shop-cart-single .currency-value").getAttribute("innerText"));
+        return new OrderCostSummary(name, itemTotal);
     }
 }

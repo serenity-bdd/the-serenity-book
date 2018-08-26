@@ -32,6 +32,9 @@ public class HomePage extends PageObject {              // <2>
             find(By.xpath("//button[text()='Accept']")).click();
         }
         waitForAbsenceOf("Update settings");
+        if (!findAll(By.xpath("//button[text()='I understand']")).isEmpty()) {
+            find(By.xpath("//button[text()='I understand']")).click();
+        }
     }
 
 // end::sear chByKeyword[]

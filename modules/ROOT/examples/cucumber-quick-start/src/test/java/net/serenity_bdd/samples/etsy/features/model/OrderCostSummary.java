@@ -6,14 +6,12 @@ package net.serenity_bdd.samples.etsy.features.model;
 public class OrderCostSummary {
     private final String name;
     private final double itemTotal;
-    private final double shipping;
-    private final double totalCost;
 
-    public OrderCostSummary(String name, double itemTotal, double shipping, double totalCost) {
+
+    public OrderCostSummary(String name, double itemTotal) {
         this.name = name;
         this.itemTotal = itemTotal;
-        this.shipping = shipping;
-        this.totalCost = totalCost;
+
     }
 
     public String getName() {
@@ -24,11 +22,4 @@ public class OrderCostSummary {
         return itemTotal;
     }
 
-    public double getShipping() {
-        return shipping;
-    }
-
-    public double getTotalCost() {
-        return totalCost;
-    }
 }

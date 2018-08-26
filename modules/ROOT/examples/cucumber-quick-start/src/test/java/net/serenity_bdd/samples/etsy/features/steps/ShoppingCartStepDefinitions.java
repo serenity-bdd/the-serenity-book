@@ -28,6 +28,6 @@ public class ShoppingCartStepDefinitions {
     @Then("the shipping cost should be included in the total price")
     public void shouldIncludeShippingCost() {
         ListingItem selectedItem = (ListingItem) Serenity.sessionVariableCalled(SELECTED_LISTING);
-        buyer.should_see_total_including_shipping_for(selectedItem);
+        buyer.should_see_total_for(selectedItem);
     }
 }

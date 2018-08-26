@@ -18,9 +18,6 @@ public class SearchResultsPage extends PageObject {
 // end::header[]
 // tag::searchByKeyword[]
 
-    //@FindBy(css=".v2-listing-card")
-    //List<WebElement> listingCards;
-
     public List<String> getResultTitles() {
         List<WebElementFacade> listingCards = findAll(".listing-link");
         return listingCards.stream()
@@ -29,18 +26,20 @@ public class SearchResultsPage extends PageObject {
     }
 // end::searchByKeyword[]
     public ListingItem selectItem(int itemNumber) {
-        List<WebElementFacade> listingCards = findAll(".n-listing-card__price");
-        ListingItem selectedItem = convertToListingItem(listingCards.get(itemNumber - 1));
-        listingCards.get(itemNumber - 1).findElement(By.tagName("a")).click();
+        List<WebElementFacade> listingCards = findAll(".v2-listing-card");
+        WebElementFacade selectedCard = listingCards.get(itemNumber - 1);
+        ListingItem selectedItem = convertToListingItem(selectedCard);
+        WebElement clickableElement = selectedCard.findElement(By.tagName("a"));
+        openAt(clickableElement.getAttribute("href"));
         return selectedItem;
     }
 
     private ListingItem convertToListingItem(WebElement itemElement) {
         NumberFormat format = NumberFormat.getInstance();
-        String price = itemElement.findElement(By.className("currency-value")).getText();
-
+        WebElement priceElement = itemElement.findElement(By.cssSelector(".currency-value"));
+        String price = priceElement.getAttribute("innerText");
         try {
-            return new ListingItem(itemElement.findElement(By.className("title")).getText(),
+            return new ListingItem(itemElement.findElement(By.tagName("a")).getAttribute("title"),
                                                            format.parse(price).doubleValue());
         } catch (ParseException e) {
             throw new AssertionError("Failed to parse item price: ",e);
@@ -49,10 +48,7 @@ public class SearchResultsPage extends PageObject {
 
     // tag::withTimeout[]
     public void filterByType(String type) {
-        //$("input[name='item_type'][data-path*=" + type +"]");
         withTimeoutOf(15, TimeUnit.SECONDS).find(("a[data-context='item_type'][data-path*=" + type +"]")).click();
-                //.then(By.partialLinkText(type)).click();
-        //withTimeoutOf(15, TimeUnit.SECONDS).find("#filter-marketplace").then(By.partialLinkText(type)).click();
     }
 // end::withTimeout[]
 

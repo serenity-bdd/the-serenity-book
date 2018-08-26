@@ -5,7 +5,7 @@
 
     <groupId>net.serenity_bdd.samples.cucumber</groupId>
     <artifactId>esty-tester</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2</version>
     <packaging>jar</packaging>
 
     <name>Etsy test suite</name>

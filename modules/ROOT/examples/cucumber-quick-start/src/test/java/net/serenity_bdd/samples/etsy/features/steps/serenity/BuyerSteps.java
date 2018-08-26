@@ -1,7 +1,6 @@
 package net.serenity_bdd.samples.etsy.features.steps.serenity;
 
 import com.google.common.base.Optional;
-import net.serenitybdd.core.Serenity;
 import net.serenity_bdd.samples.etsy.features.model.ListingItem;
 import net.serenity_bdd.samples.etsy.features.model.OrderCostSummary;
 import net.serenity_bdd.samples.etsy.features.model.SessionVariables;
@@ -9,8 +8,8 @@ import net.serenity_bdd.samples.etsy.pages.CartPage;
 import net.serenity_bdd.samples.etsy.pages.HomePage;
 import net.serenity_bdd.samples.etsy.pages.ItemDetailsPage;
 import net.serenity_bdd.samples.etsy.pages.SearchResultsPage;
+import net.serenitybdd.core.Serenity;
 import net.thucydides.core.annotations.Step;
-import org.assertj.core.data.Offset;
 import org.hamcrest.Matcher;
 
 import java.util.List;
@@ -68,7 +67,6 @@ public class BuyerSteps {
     public void selects_item_number(int number) {
         ListingItem selectedItem = searchResultsPage.selectItem(number);
         Serenity.setSessionVariable(SessionVariables.SELECTED_LISTING).to(selectedItem);
-
     }
 
     @Step
@@ -96,20 +94,13 @@ public class BuyerSteps {
     }
 
     @Step
-    public void should_see_total_including_shipping_for(ListingItem selectedItem) {
+    public void should_see_total_for(ListingItem selectedItem) {
         OrderCostSummary orderCostSummary
                 = cartPage.getOrderCostSummaryFor(selectedItem).get();
 
         double itemTotal = orderCostSummary.getItemTotal();
-        double shipping = orderCostSummary.getShipping();
-        double totalCost = orderCostSummary.getTotalCost();
-
+        
         assertThat(itemTotal).isEqualTo(selectedItem.getPrice());
-
-        if (cartPage.isShowingShippingCosts()) {
-            assertThat(shipping).isGreaterThan(0.0);
-            assertThat(totalCost).isCloseTo(itemTotal + shipping, Offset.offset(0.001));
-        }
     }
 
     @Step

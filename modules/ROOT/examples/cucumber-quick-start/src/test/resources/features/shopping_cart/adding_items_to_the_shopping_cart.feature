@@ -4,7 +4,7 @@ Feature: Adding items to the shopping cart
   I want to be able to add multiple items to the shopping cart
 
   Background:
-    Given I have searched for items containing 'felt' in my region
+    Given I have searched for items containing 'svg' in my region
     And I have selected an item
 
   Scenario: Should see total price including tax

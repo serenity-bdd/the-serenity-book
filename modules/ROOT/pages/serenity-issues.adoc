@@ -1,0 +1,90 @@
+Serenity BDD allows create links between stories/tests and issues. Sometimes it is useful for complex development workflow, and for organizing self-documented tests.
+
+Configuration of links is made by annotations and property `serenity.issue.tracker.url` that can be provided in serenity.params or using system variables. The URL provided by `serenity.issue.tracker.url` is used as "body of link", and issue name provided in annotations - last part of this link.
+
+Generally in annotations you should use name of issues according to mask #(NAME)(-)(NUMBER), link will be created to (NAME)(-)(NUMBER), below you can find example.
+
+==== Linking with issues for JUnit
+When tests created with JUnit you can use annotations `@Issue`, `@Issues`, `@Title`.
+
+* `@Issue` used for linking single issue. It should be initialised with name of referenced issue, started with `#`
+* `@Issues` used for linking multiple issues. It should be initialised with array with names of referenced issues, started with `#`
+* `@Title` used for providing readable name of test case (more in <<Human-readable method titles>>), also it can be used to linking multiple issues to this scenario - in title should be included name of issue started with `#`
+
+Here is little example with test cases linked to issues:
+
+serenity.properties contains:
+
+[source,gherkin]
+----
+include::{srcdir}/junit-tests-linked-to-issues/serenity.properties[]
+----
+
+
+test class looks like:
+
+[source,java]
+----
+include::{srcdir}/junit-tests-linked-to-issues/src/test/java/net/serenity/samples/retries/SampleTest.java[]
+----
+
+In this case report will look like:
+
+[[jbehave-requirements-report]]
+.Report with test cases linked to issues
+image::tests_with_references_to_issues.png[]
+
+Also, all references clickable and will be :
+----
+#PN-97:  https://example.server.com/cases/view/PN-97
+#KB-927: https://example.server.com/cases/view/KB-927
+#NO-97:  https://example.server.com/cases/view/NO-97
+----
+
+==== Linking with issues for JBehave
+Also you can use the `@issue` annotation or `#` in scenario name to link scenarios with issues when using JBehave, as illustrated here:
+
+[source,gherkin]
+----
+Meta:
+@issue #MYPROJ-1, #MYPROJ-2
+
+Scenario: A scenario that works according #MP-4
+Meta:
+@issues #MYPROJ-3,#MYPROJ-4
+@issue #MYPROJ-5
+
+Given I have an implemented JBehave scenario
+And the scenario works
+When I run the scenario
+Then I should get a successful result
+----
+
+In this case links will be created according same rules as for <<Linking with issues for JUnit>>
+
+
+==== Linking with issues for Cucumber
+The `@issue` or `@issues` annotations can be used in Cucumber `.feature` files to link scenarios with issues , as shown below:
+
+[source,gherkin]
+----
+
+@issues:ISSUE-123,ISSUE-789
+Feature: Basic Arithmetic
+  Calculating Additions
+
+  Background: A Calculator
+    Given a calculator I just turned on
+
+  @issues:ISSUE-456,ISSUE-001
+  Scenario: Addition
+    When I add 4 and 5
+    Then the result is 9
+
+  @issue:ISSUE-456
+  Scenario: Another Addition
+    When I add 4 and 7
+    Then the result is 11
+
+----
+

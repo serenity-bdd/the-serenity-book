@@ -1,0 +1,347 @@
+= Running Serenity tests in parallel
+
+Sometimes projects have a lot of tests, and executing of them takes a lot of time. Testing can be sped up significantly by running different tests in parallel. However, this is often harder to implement than it sounds.
+
+Some build automation tools have builtin parallel test execution, but this not so good for huge amount of tests and heavy tests. For example web tests are as a rule much slower than other types of tests, it make them good candidates for concurrent testing, in theory at least, but the implementation can be tricky. For example, although it is easy enough to configure running tests in parallel, on the other hand running several webdriver instances of Firefox/Chrome in parallel on the same display, tends to become unreliable.
+
+The natural solution in this case is to split the web tests into smaller batches, and to run each batch on a different machine and/or on a different virtual display. When each batch has finished, the results can be retrieved and aggregated into the final test reports.
+
+However splitting tests into manually batches by hand tends to be tedious and unreliable – it is easy to forget to add a new test to a batch, for example, or have unevenly-distributed batches.
+
+Serenity provides mechanisms to automatically split your test suite into slices at runtime, removing the need for any manual structuring of source files or maintenance of scripts. In practice, you decide on the number of batches you require, then run a job associated with each batch number which will deterministically run only tests that belong to that batch. When all jobs have completed running, the test result output is aggregated into the final serenity test report.
+
+== Splitting a Serenity suite into batches
+
+The following parameters affect Serenity's batching behaviour and can be provided at runtime as system parameters or be added to a serenity.properties or serenity.conf file:
+
+*serenity.batch.count*:: Refers to the total number of separately/concurrently running jobs that the whole test suite will be divided up into at runtime. So for instance if you had 8 build slaves available to run your tests, you would set this property to 8. This value would be the same for all jobs running each batch, The property needs to be greater than 1 in order for serenity to trigger its batching behaviour.
+
+*serenity.batch.number*:: This parameter should be different for each batch, and should be a value between 1 and `serenity.batch.count`.
+
+== JUnit-specific configuration
+
+*serenity.batch.strategy*:: Optional parameter for choosing batch weighting strategy (Junit tests only). Possible values are:
+ - `DIVIDE_EQUALLY`: Test classes are allocated to batches on a 'round-robin' basis without regard for the number of test methods in each class.
+ So for example if `serenity.batch.count` is 3 and we have classes `T1, T2, T3, T4, T5`, the first batch will contain `T1, T4,` the second will contain `T2, T5`, and the third will contain `T3`.
+ `DIVIDE_EQUALLY` is the default behaviour when no batch strategy parameter is explicitly set.
+ - `DIVIDE_BY_TEST_COUNT`. Classes are allocated to batches based on the number of test methods they contain.
+ So for example if `serenity.batch.count` is 2 and class `T1` contains 4 tests, `T2` contains 2 tests, `T3` contains 2 tests, both batches will contain 4 tests each, the first batch containing  `T1`, and the second one containing `T3` and `T2`.
+ `DIVIDE_BY_TEST_COUNT` tends to provide more evenly balanced batches than `DIVIDE_EQUALLY`.
+
+== Cucumber-specific configuration
+
+Batching a Cucumber test suite requires a different approach to that used in the JUnit implementation as there is often only a single test runner class used to run the entire suite, so the work cannot be split at the class or test method level.
+However, no changes are required to an existing test runner infrastructure, so test runner classes annotated with `@RunWith(CucumberWithSerenity.class)` can still be configured for parallel execution.
+Serenity achieves Cucumber test suite batching by analysing the features that are about to be run and splitting the contained scenarios based on their 'weight'.
+Serenity calculates scenario 'weight' into `TestStatistics` based on one of the following algorithms:
+
+  - `ScenarioLineCountStatistics`: the number of steps in each scenario (default).
+  - `MultiRunTestStatistics`: the historic duration of each scenario when it was run in your CI environment (using one or more Serenity results.csv files).
+  This algorithm provides the potential for very accurate slicing, ensuring that all parallel batches have equal run-times and all complete at virtually the same time.
+
+The following parameters can be used to configure Serenity's Cucumber batching behaviour:
+
+*serenity.test.statistics.dir*:: This parameter provides a relative path to the location where one or more serenity results CSV files can be found, taken from recent builds. Any number of results files can be placed in this location and serenity will calculate an averaged scenario weighting.
+For instance if you created a directory called `src/test/resources/aggregated` on the file system, the supplied parameter would be `/aggregated`.
+Note that if this parameter is omitted, the `ScenarioLineCountStatistics` algorithm will automatically be selected, however if it is supplied, then the path must exist or a runtime exception will be thrown.
+
+=== Subdividing a Cucumber batches within a machine
+
+If your build slaves are capable of reliably running tests on more than one browser concurrently, batching can be taken a step further
+and scenarios can be divided amongst multiple forked processes. Conceptually, a batch is allocated to machine by means of the `serenity.batch.count` and `serenity.batch.number` parameters described above,
+but then the following parameters are used to further subdivide this batch across local forked processes on the build slave:
+
+*serenity.fork.count*:: Refers to the total number of forks that will be created on the build slave. So for instance if you could reliably start 4 browsers on one of your build slaves, you would set this property to 4. This value would be the same for all jobs running each batch, The property needs to be greater than 1 in order for serenity to trigger its batching behaviour.
+
+*serenity.fork.number*:: This parameter will be different for each forked process and will be set automatically by the test runner when it creates the forked processes. It will be a value between 1 and `serenity.batch.count`.
+
+=== Configuring and running batched Cucumber test suites from Maven
+
+This section is easier to understand by means of a reference to a working example which can be found in the https://github.com/serenity-bdd/serenity-cucumber[serenity-cucumber] project.
+In this, the https://github.com/serenity-bdd/serenity-cucumber/tree/master/src/smoketests[smoke tests] module has been augmented to demonstrate Cucumber batching.
+All example commands should be executed after moving to the `src/smoketests` direct from the root of the project.
+
+==== Configuring test runners
+
+A test runner should be configured in such a way to include all features and scenarios that you wish to slit up into batches/forks. In our example, `SlicedTestRunner.java` has already been created as follows:
+
+```
+@RunWith(CucumberWithSerenity.class)
+@CucumberOptions(glue = "smoketests.stepdefinitions", features = "classpath:features")
+public class SlicedTestRunner {
+}
+```
+
+If you wish to subdivide Cucumber batches within a machine by forking, identical copies of the test runner will need to be created in the same location that add up the maximm number of forks.
+In the https://github.com/serenity-bdd/serenity-cucumber/tree/master/src/smoketests/src/test/java/smoketests[smoke tests module], the classes `SlicedTestRunner2`, `SlicedTestRunner3`, `SlicedTestRunner4` have been created in addition to `SlicedTestRunner.java` for this purpose.
+
+==== Configuring pom.xml
+
+The `pom.xml` for this project has `4` `<parallel.tests>` defined within the `<properties>` section as follows:
+
+```
+<properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <serenity.version>1.9.37</serenity.version>
+    <serenity.maven.version>1.9.6</serenity.maven.version>
+    <serenity.cucumber.version>1.9.16-SNAPSHOT</serenity.cucumber.version>
+    <encoding>UTF-8</encoding>
+    <parallel.tests>4</parallel.tests>
+</properties>
+```
+
+This means that when the tests are executed, up to 4 browsers will potentially be started simultaneously.
+
+In the `maven-failsafe-plugin` section, the `<parallel.tests>` property is referenced in the `<threadCount>` and `<forkCount>` nodes:
+
+```
+<plugin>
+    <artifactId>maven-failsafe-plugin</artifactId>
+    <version>2.22.0</version>
+    <configuration>
+        <includes>
+            <include>**/When*.java</include>
+        </includes>
+        <systemPropertyVariables>
+            <webdriver.base.url>${webdriver.base.url}</webdriver.base.url>
+        </systemPropertyVariables>
+        <parallel>classes</parallel>
+        <threadCount>${parallel.tests}</threadCount>
+        <forkCount>${parallel.tests}</forkCount>
+    </configuration>
+    <executions>
+        <execution>
+            <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
+In order to allow the suite to be run in both forked and an non-forked configurations, two profiles have been defined:
+
+```
+<profile>
+    <id>dontUseTheForks</id>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.20</version>
+                <configuration>
+                    <includes>
+                        <include>**/SlicedTestRunner.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</profile>
+```
+
+In the above profile:
+
+ . The name `dontUseTheForks` has been assigned.
+ . The wildcard `**/SlicedTestRunner.java` referenced in the `<include>` node of the `<includes>` section of `<configuration>` will only include a single test runner.
+
+```
+<profile>
+    <id>useTheForks</id>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.20</version>
+                <configuration>
+                    <includes>
+                        <include>**/SlicedTestRunner*.java</include>
+                    </includes>
+                    <systemPropertyVariables>
+                        <serenity.fork.count>0${parallel.tests}</serenity.fork.count>
+                        <serenity.fork.number>0${surefire.forkNumber}</serenity.fork.number>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</profile>
+```
+
+In the above profile:
+
+ . The name `useTheForks` has been assigned.
+ . `<serenity.fork.count>` is set to the value of `${parallel.tests}`.
+ . `<serenity.fork.number>` is set to the value of `${surefire.forkNumber}`. This is automatically set by maven at runtime and will be a value from 1 to `${parallel.tests}`.
+ . Note that both of the above two properties need to be prefixed by `0`, in order for https://maven.apache.org/surefire/maven-surefire-plugin/examples/fork-options-and-parallel-execution.html[maven property expansion] to return a value, rather than null.
+ . The wildcard `**/SlicedTestRunner *.java` referenced in the `<include>` node of the `<includes>` section of `<configuration>` will include all 4 test runner classes, one for each forked process.
+
+=== Adding automatic tagging to the Serenity HTML report
+
+Tags can be automatically be added to the HTML report which show the batch and the fork that each scenario was allocated to. This is really useful for showing how successful the slicing algorithm has been on your test suite.
+To make this work, add a hook into the package referred to in the test runner `glue` settings as follows:
+
+```
+package smoketests.stepdefinitions;
+
+import cucumber.api.java.Before;
+import net.serenitybdd.cucumber.suiteslicing.SerenityTags;
+
+public class Hooks {
+
+    @Before
+    public void before() {
+        SerenityTags.create().tagScenarioWithBatchingInfo();
+    }
+
+}
+```
+
+=== Running tests from Maven
+
+==== Non-forked execution
+
+To run smoke tests without forking, use the command:
+
+`mvn clean verify -P dontUseTheForks`
+
+You should see a single browser window open to run the suite. When it completes, if you view the html report in serenity-cucumber/src/smoketests/target/site/serenity/index.html,
+you should see that 41 tests have been run:
+
+[[fig-cucumber-batching-webtests-summary]]
+.Summary report statistics
+image::cucumber-batching-webtests-summary.png[width=700]
+
+
+==== Forked execution (line count statistics)
+
+To run smoke tests with forking based on `ScenarioLineCountStatistics`, use the command:
+
+`mvn clean verify -Dserenity.batch.count=1 -Dserenity.batch.number=1 -P useTheForks`
+
+You should see multiple browser windows open to run the suite. When it completes, if you view the html report you should see the following at the bottom of the Related Tags section:
+
+[[fig-cucumber-batching-with-line-count-stats]]
+.Test batches and forks tagging using line count stats
+image::cucumber-batching-with-line-count-stats.png[width=700]
+
+This shows that the 41 scenarios were reasonably equally spread across the 4 forks based on the number of scenarios.
+The execution time for each fork will not necessarily be equal however, as some scenarios will take longer than others.
+
+==== Forked execution (multi-run statistics)
+
+In order to provide the most finely balanced test slicing, "run statistics" from previous run(s) of the suite can be passed to the maven command using the parameter `serenity.test.statistics.dir`.
+
+In the smoke tests project, two example files have been added to demonstrate this capability:
+
+  - statistics/results-run-1.csv
+  - statistics/results-run-2.csv
+
+To run smoke tests with forking based on `MultiRunTestStatistics`, use the command:
+
+`mvn clean verify -Dserenity.batch.count=1 -Dserenity.batch.number=1 -Dserenity.test.statistics.dir=/statistics -P useTheForks`
+
+Again, you should see multiple browser windows open to run the suite. When it completes, if you view the html report you should see the following at the bottom of the Related Tags section:
+
+[[fig-cucumber-batching-with-multi-run-stats]]
+.Test batches and forks tagging using multi-run stats
+image::cucumber-batching-with-multi-run-stats.png[width=700]
+
+This shows that now the 41 scenarios are allocated to each fork very differently - based on the sum total of durations in each scenario.
+You can verify this by clicking on links associated with Fork 1, 2, 3, or 4 and you should see that the execution times are much more evenly balanced than in the previous example.
+This allocation gets even more 'smoother' for test suites with a larger number of scenarios than the smoke tests example project.
+
+==== Combining batching and forking
+
+This is simply a matter of combining the previously described `pom.xml` configuration with the correct batch parameters.
+So, for example instance if you have 3 build slaves available to run your tests each of which could run 4 forks, you would set `${parallel.tests}` to `4` on the project pom, then run the following commands:
+
+* slave 1: `mvn clean verify -Dserenity.batch.count=3 -Dserenity.batch.number=1 -P useTheForks`
+* slave 2: `mvn clean verify -Dserenity.batch.count=3 -Dserenity.batch.number=2 -P useTheForks`
+* slave 3: `mvn clean verify -Dserenity.batch.count=3 -Dserenity.batch.number=3 -P useTheForks`
+
+Then a total of 12 browser sessions would be created during the test execution.
+
+=== Configuring parallel batch execution with Jenkins 1
+This approach is easy to set up on Jenkins using a multi-configuration build. In the following screenshot, we are running a multi-configuration build to run web tests across three batches. We use a single user-defined parameter (BATCH_NUMBER) to define the batch being run, passing this parameter into the Maven build job properties we discussed above.
+
+[[fig-multi-configuration-build]]
+.Multi-configuration build to run web tests across three batches
+image::parallel-webtests-matrix-build.png[]
+
+The most robust way to aggregate the build results from the different batches is to set up a second build job that runs after the test executions, and retrieves the build results from the batch jobs. You can use the Jenkins Copy Artifacts plugin to do this. First, ensure that the multi-configuration build archives the Serenity reports, as shown here:
+
+[[fig-achieving-serenity-reports]]
+.Configuration archiving the Serenity reports
+image::parallel-webtests-post-build.png[]
+
+This build will then trigger another, freestyle build job. This job needs to copy the Serenity report artifacts from the matrix build jobs into the current workspace, and then run the mvn serenity:aggregate command to generate the Serenity aggregate reports. The matrix build job reports need to be copied one-by-one for each batch, as the current version of the Copy Artifacts plugin does not support copying from multiple projects in the same action.
+
+[[fig-copying-the-serenity-report-artifacts]]
+.Configuration copying the Serenity report artifacts and aggregating reports
+image::parallel-webtests-aggregate.png[]
+
+Then make sure you publish the generated HTML reports (which will be in the target/site/serenity directory) for easy access to the test results.
+
+This simple example shows a parallel test running 3 batches – this brought the test execution time from 9 minutes to slightly over 1 minute. Results will vary, of course, but a typical real-world set of web tests would have a larger number of batches
+
+=== Configuring parallel batch execution with Jenkins 2 (DSL)
+If your CI infrastructure runs on https://jenkins.io/2.0[Jenkins 2] that has the
+https://wiki.jenkins-ci.org/display/JENKINS/Pipeline+Plugin[Pipeline] and https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin[HTML Publisher] plugins installed,
+you can quickly define parallel pipelines via a JenkinsFile.
+
+-----
+int BATCH_COUNT = 8
+int FORK_COUNT = 8
+def serenityBatches = [:]
+
+for (int i = 1; i <= BATCH_COUNT; i++) {
+    def batchNumber = i
+    def batchName = "batch-${batchNumber}"
+
+    serenityBatches[batchName] = {
+        node {
+            checkout scm
+            try {
+                mvn "clean"
+                sh "rm -rf target/site/serenity"
+                mvn "verify -Dit.test=MyTestRunner* -Dparallel.tests=FORK_COUNT -Dserenity.batch.count=${BATCH_COUNT} -Dserenity.batch.number=${batchNumber} -Dserenity.test.statistics.dir=/statistics -f businessAcceptanceTests/pom.xml"
+            } catch (Throwable e) {
+                throw e
+            } finally {
+                stash name: batchName,
+                    includes: "target/site/serenity/**/*",
+                    allowEmpty: true
+            }
+        }
+    }
+}
+
+stage("automated tests") {
+    parallel serenityBatches
+}
+
+stage("report aggregation") {
+    node {
+        // unstash each of the batches
+
+        for (batchNumber in BATCH_COUNT) {
+            def batchName = "batch-${batchNumber}"
+            echo "Unstashing serenity reports for ${batchName}"
+            unstash batchName
+        }
+
+        // publish the Serenity report
+
+        publishHTML(target: [
+                reportName : 'Serenity',
+                reportDir:   'target/site/serenity',
+                reportFiles: 'index.html',
+                keepAll:     true,
+                alwaysLinkToLastBuild: true,
+                allowMissing: false
+        ])
+    }
+}
+-----

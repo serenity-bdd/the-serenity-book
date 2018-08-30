@@ -8,6 +8,10 @@
 * xref:page-objects.adoc[Working with Page Objects]
 * xref:angularjs.adoc[Testing AngularJS applications]
 
+.Serenity with BDD Frameworks
+* xref:jbehave.adoc[Working with JBehave]
+* xref:cucumber.adoc[Working with Cucumber JVM]
+
 .Working with REST APIs
 * xref:serenity-rest.adoc[REST API Testing in Serenity]
 * xref:serenity-screenplay-rest.adoc[REST API Testing with Screenplay]

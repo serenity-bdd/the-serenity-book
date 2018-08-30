@@ -1,0 +1,305 @@
+http://jbehave.org[JBehave] is an open source BDD framework originally written by Dan North, the inventor of BDD.
+It is strongly integrated into the JVM world, and widely used by Java development teams which implement BDD practices in their projects.
+
+In JBehave, you write automate your acceptance criteria by writing test stories and scenarios using the familiar BDD "given-when-then" notation, as shown in the following example:
+
+[source,gherkin]
+----
+include::../examples/jbehave-quick-start/src/test/resources/stories/search/search_by_keyword.story[]
+----
+
+Scenarios like this go in `.story` files: a story file is designed to contain all the scenarios (acceptance criteria) of a given user story.
+A story file can also have a narrative section at the top, which gives some background and context about the story being tested:
+
+You usually implement a JBehave story using classes and methods written in Java, Groovy or Scala.
+You implement the story steps using annotated methods to represent the steps in the text scenarios, as shown in the following example:
+
+[source,java]
+----
+include::../examples/jbehave-quick-start/src/test/java/net/serenitybdd/samples/etsy/features/steps/SearchByKeywordStepDefinitions.java[tags=header;woolscenario;tail]
+----
+
+= Working with JBehave and Serenity
+
+Serenity and JBehave work well together.
+Serenity uses simple conventions to make it easier to get started writing and implementing Serenity stories, and reports on both JBehave and Serenity steps, which can be seamlessly combined in the same class, or placed in separate classes, depending on your preferences.
+
+To get started, you will need to add the Serenity JBehave plugin to your project. In Maven, just add the following dependencies to your pom.xml file:
+
+[source,xml]
+----
+include::../examples/jbehave-quick-start/pom.xml[tags=dependencies]
+----
+
+The equivalent in Gradle is:
+
+[source,groovy]
+----
+include::../examples/jbehave-quick-start/build.gradle[tags=dependencies]
+----
+
+New versions come out regularly, so be sure to check the Maven Central repository (http://search.maven.org) to know the latest version numbers for each dependency.
+
+== Setting up your project and organizing your directory structure
+
+JBehave is a highly flexible tool. The downside of this is that, out of the box, JBehave requires quite a bit of bootstrap code to get started. Serenity tries to simplify this process by using a convention-over-configuration approach, which significantly reduces the amount of work needed to get started with your acceptance tests.
+In fact, you can get away with as little as an empty JUnit test case and a sensibly-organized directory structure for your JBehave stories.
+
+== The JUnit test runner
+
+The JBehave tests are run via a JUnit runner. This makes it easier to run the tests both from within an IDE or as part of the build process.
+All you need to do is to extend the SerenityStories, as shown here:
+
+[source,java]
+----
+include::../examples/jbehave-quick-start/src/test/java/net/serenitybdd/samples/etsy/AcceptanceTests.java[]
+----
+
+When you run this test, Serenity will run any JBehave stories that it finds in the default directory location.
+By convention, it will look for a `stories` folder on your classpath, so `src/test/resources/stories' is a good place to put your story files.
+
+== Organizing your requirements
+
+Placing all of your JBehave stories in one directory does not scale well; it is generally better to organize them in a directory structure that groups them in some logical way.
+In addition, if you structure your requirements well, Serenity will be able to provide much more meaningful reporting on the test results.
+
+By default, Serenity supports a simple directory-based convention for organizing your requirements.
+The standard structure uses three levels: capabilities, features and stories.
+A story is represented by a JBehave .story file so two directory levels underneath the `stories` directory will do the trick.
+An example of this structure is shown below:
+
+----------------------
++ src
+  + test
+    + resources
+      + stories
+        + grow_potatoes                     [a capability]
+          + grow_organic_potatoes           [a feature]
+            - plant_organic_potatoes.story  [a story]
+            - dig_up_organic_potatoes.story [another story]
+          + grow_sweet_potatoes             [another feature]
+          ...
+----------------------
+
+If you prefer another hierarchy, you can use the `serenity.requirement.types` system property to override the default convention.
+For example. if you prefer to organize your requirements in a hierarchy consisting of epics, theme and stories, you could set the `serenity.requirement.types` property to `epic,theme` (the story level is represented by the .story file).
+
+When you start a project, you will typically have a good idea of the high level capabilities you intent to implement, and probably some of the main features. If you simply store your .story files in the right directory structure, the Serenity reports will reflect these requirements, even if no tests have yet been specified for them. This is an excellent way to keep track of project progress. At the start of an iteration, the reports will show all of the requirements to be implemented, even those with no tests defined or implemented yet. As the iteration progresses, more and more acceptance criteria will be implemented, until acceptance criteria have been defined and implemented for all of the requirements that need to be developed.
+
+An optional but useful feature of the JBehave story format is the narrative section that can be placed at the start of a story to help provide some more context about that story and the scenarios it contains. This narrative will appear in the Serenity reports, to help give product owners, testers and other team members more information about the background and motivations behind each story. For example, if you are working on an online classifieds website, you might want users to be able to search ads using keywords. You could describe this functionality with a textual description like this one from the `locating_a_customer.story` story file:
+
+[source,gherkin]
+---------------------
+Narrative:
+In order to provide assistance to customers more quickly
+As a financial adviser
+I want to be able to locate a customer using a variety of different criteria
+---------------------
+
+However to make the reports more useful still, it is a good idea to document not only the stories, but to also do the same for your higher level requirements (Capabilities, Themes). In Serenity, you can do this by placing a text file called `narrative.txt` in each of the requirements directories you want to document (see below). These files follow the JBehave convention for writing narratives, with an optional title on the first line, followed by a narrative section started by the keyword `Narrative:`. When a title is provided it will replace the directory name in the reports.
+For example, for a search feature for an online classifieds web site, you might have a description along the following lines:
+
+---------------------
+Search for online ads
+
+Narrative:
+In order to increase sales of advertised articles
+As a seller
+I want potential buyers to be able to display only the ads for
+articles that they might be interested in purchasing.
+---------------------
+
+When you run these stories (without having implemented any actual tests), you will get a report containing lots of pending tests, but more interestingly, a list of the requirements that need to be implemented, even if there are no tests or stories associated with them yet.
+This makes it easier to plan an iteration: you will initially have a set of requirements with only a few tests, but as the iteration moves forward, you will typically see the requirements fill out with pending and passing acceptance criteria as work progresses.
+
+[[jbehave-requirements-report]]
+.You can see the requirements that you need to implement in the requirements report
+image::jbehave-requirements-report.png[]
+
+== Narrative in asciidoc format
+
+Narratives can be written in http://www.methods.co.nz/asciidoc/[Asciidoc] for richer formatting. Set the `narrative.format` property to `asciidoc` to allow Serenity to parse the narrative in `asciidoc` format.
+
+For example, the following narrative:
+----
+include::../examples/jbehave-quick-start/src/test/resources/stories/search/narrative.txt[]
+----
+
+will be rendered on the report as shown below.
+
+[[asciidoc_narrative]]
+.Narrative with asciidoc formatting
+image::jbehave-asciidoc_narrative.png[scaledwidth="80%", width=475]
+
+With Cucumber a Narrative.txt file can also be placed in any requirement directory and will be included in the Serenity reports just like with JBehave.
+
+
+== Story meta-data
+
+You can use the JBehave Meta tag to provide additional information to Serenity about the test. The @driver annotation lets you specify what WebDriver driver to use, eg.
+
+[source,gherkin]
+----
+include::../examples/jbehave-quick-start/src/test/resources/stories/shopping_cart/adding_items_to_the_shopping_cart.story[]
+----
+
+You can also use the `@issue` annotation to link scenarios with issues, more information can be found  under <<serenity-issues.adoc,Linking scenarios/tests with issues>>.
+
+You can also attribute tags to the story as a whole, or to individual scenarios:
+
+[source,gherkin]
+------------------
+Meta:
+@tag capability:a capability
+
+Scenario: A scenario that works
+Meta:
+@tags domain:a domain, iteration: iteration 1
+
+Given I have an implemented JBehave scenario
+And the scenario works
+When I run the scenario
+Then I should get a successful result
+------------------
+
+== Implementing the tests
+
+If you want your tests to actually do anything, you will also need classes in which you place your JBehave step implementations. If you place these in any package at or below the package of your main JUnit test, JBehave will find them with no extra configuration.
+
+Serenity makes no distinction between the JBehave-style @Given, @When and @Then annotations, and the Serenity-style @Step annotations: both will appear in the test reports. However you need to start with the  @Given, @When and @Then-annotated methods so that JBehave can find the correct methods to call for your stories. A method annotated with @Given, @When or @Then can call Serenity @Step methods, or call page objects directly (though the extra level of abstraction provided by the @Step methods tends to make the tests more reusable and maintainable on larger projects).
+
+A typical example is shown below. In this implementation of one of the scenarios we saw above, the high-level steps are defined using methods annotated with the JBehave @Given, @When and @Then annotations. These methods, in turn, use steps that are implemented in the BuyerSteps class, which contains a set of Serenity @Step methods. The advantage of using this two-leveled approach is that it helps maintain a degree of separation between the definition of what is being done in a test, and how it is being implemented. This tends to make the tests easier to understand and easier to maintain.
+
+[source,java]
+----
+include::../examples/jbehave-quick-start/src/test/java/net/serenitybdd/samples/etsy/features/steps/ShoppingCartStepDefinitions.java[]
+----
+
+The Serenity steps can be found in the BuyerSteps class. This class in turn uses Page Objects to interact with the actual web application, as illustrated here:
+
+[source,java]
+----
+include::../examples/jbehave-quick-start/src/test/java/net/serenitybdd/samples/etsy/features/steps/serenity/BuyerSteps.java[header,shoppingCartSteps,tail]
+----
+
+The Page Objects are similar to those you would find in any Serenity project, as well as most WebDriver projects. An example is listed below:
+
+[source,java]
+----
+include::../examples/jbehave-quick-start/src/test/java/net/serenitybdd/samples/etsy/pages/ItemDetailsPage.java[]
+----
+
+When these tests are executed, the JBehave steps combine with the Serenity steps to create a narrative report of the test results.
+
+== Comments in scenario
+
+In case if you use comments in scenario, Serenity will ignore a commented condition, but it will be displayed in the generated report like this:
+
+[[jbehave_comments_report]]
+.Report with commented conditions in scenario
+image::jbehave_comments_report.png[]
+
+You can comment particular conditions or the whole scenario. Here are some examples for different cases.
+
+Commenting one condition:
+
+-----
+Narrative:
+In order to provide some business value
+As a user
+I want to perform some simple action, but I commented then condition
+
+Scenario: Single scenario with commented then condition
+Given I have prepared environment for simple action one
+When I perform "simple action one"
+!-- Then I expect result for "simple action one" should be "success"
+-----
+
+Report:
+
+[[jbehave_one_condition_commented]]
+.Report with commented Then condition
+image::jbehave_one_condition_commented.png[]
+
+Commenting all conditions:
+
+-----
+Narrative:
+In order to provide some business value
+As a user
+I want to perform some simple action, but I commented all conditions
+
+Scenario: Single scenario with all commented conditions
+!-- Given I have prepared environment for simple action one
+!-- When I perform "simple action one"
+!-- Then I expect result for "simple action one" should be "success"
+-----
+
+Report:
+
+[[jbehave_all_conditions_commented]]
+.Report with commented all conditions
+image::jbehave_all_conditions_commented.png[]
+
+Commenting a whole scenario:
+
+-----
+Narrative:
+In order to provide some business value
+As a user
+I want to perform some simple action, but I commented scenario
+
+!-- Scenario: Single commented scenario
+!-- Given I have prepared environment for simple action one
+!-- When I perform "simple action one"
+!-- Then I expect result for "simple action one" should be "success"
+-----
+
+Report:
+
+[[jbehave_scenario_commented]]
+.Report with commented scenario
+image::jbehave_scenario_commented.png[]
+
+=== JBehave Maven Archetype
+
+A JBehave archetype is available to help you jumpstart a new project. As usual, you can run `mvn archetype:generate -Dfilter=serenity` from the command line and then select the `net.serenity-bdd:serenity-jbehave-archetype` archetype from the proposed list of archetypes.
+Or you can use your favorite IDE to generate a new Maven project using an archetype.
+
+This archetype creates a project directory structure similar to the one shown here:
+
+----
++ main
+    + java
+       + SampleJBehave
+           + pages
+               - DictionaryPage.java
+           + steps
+               - EndUserSteps.java
++ test
+    + java
+       + SampleJBehave
+           + jbehave
+               - AcceptanceTestSuite.java
+               - DefinitionSteps.java
+    + resources
+        + SampleJBehave
+            + stories
+                + consult_dictionary
+                    - LookupADefinition.story
+----
+
+== Running all tests in a single browser window
+
+All web tests for one story can be run in a single browser window using either by setting the 'restart.browser.each.scenario' system property or programmatically using runSerenity().inASingleSession() inside the JUnit runner. It is default behaving - to run all scenarios in same story in one browser.
+
+[source,java]
+----
+import net.serenitybdd.jbehave.SerenityStories;
+
+public class JBehaveTestCase extends SerenityStories {
+    public JBehaveTestCase() {
+      runSerenity().inASingleSession();
+    }
+}
+----

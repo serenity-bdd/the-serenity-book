@@ -28,7 +28,30 @@ For instance, the following scenario illustrates how you can search for differen
     | wool     | Craft Supplies |
 ----
 
-==== Writing executable specifications with Cucumber and Serenity
+== Getting Started with Cucumber-JVM and Serenity
+
+To get started, you will need to add the Serenity Cucumber plugin to your project. In Maven, just add the following dependencies to your pom.xml file:
+
+[source,xml]
+----
+include::../examples/cucumber-quick-start/pom.xml[tags=dependencies]
+----
+
+The equivalent in Gradle is:
+
+[source,groovy]
+----
+include::../examples/cucumber-quick-start/build.gradle[tags=dependencies]
+----
+
+New versions come out regularly, so be sure to check the Maven Central repository (http://search.maven.org) to know the latest version numbers for each dependency.
+
+=== Cucumber Maven Archetype
+
+A Cucumber archetype is available to help you jumpstart a new project. As usual, you can run `mvn archetype:generate -Dfilter=serenity` from the command line and then select the `net.serenity-bdd:serenity-cucumber-archetype` archetype from the proposed list of archetypes.
+Or you can use your favorite IDE to generate a new Maven project using an archetype.
+
+=== Writing executable specifications with Cucumber and Serenity
 
 In Cucumber, scenarios are stored in 'Feature Files', which contain an overall description of a feature as well as a number of scenarios.
 The Feature File for the example above is called `search_by_keyword.feature`, and looks something like this:
@@ -62,7 +85,7 @@ However in this case, you need to specify the `thucydides.requirements.dir` prop
 thucydides.requirements.dir=src/test/resources/net/serenity_bdd/samples/etsy/features
 ----
 
-==== The Scenario Runner
+=== The Scenario Runner
 
 Cucumber runs the feature files via JUnit, and needs a dedicated test runner class to actually run the feature files.
 When you run the tests with Serenity, you use the `CucumberWithSerenity` test runner.
@@ -76,7 +99,7 @@ include::../examples/cucumber-quick-start/src/test/java/net/serenity_bdd/samples
 
 If your feature files are stored in or under the same package as your scenario runner class (in `src/test/resources`) as discussed in the previous section, then you don't need to use `@CucumberOptions` to provide the root directory.
 
-==== Step definitions
+=== Step definitions
 
 In Cucumber, each line of the Gherkin scenario maps to a method in a Java class, known as a 'Step Definition'.
 These use annotations like `@Given`, `@When` and `@Then` match lines in the scenario to Java methods.
@@ -116,6 +139,6 @@ Step definition files need to go in or underneath the package containing the sce
 <3> Step definitions for the scenario runners
 <4> Serenity Step Libraries are placed in a different sub-package
 
-==== Serenity Step Libraries and Page Objects
+=== Serenity Step Libraries and Page Objects
 
 Both scenario step libraries (annotated with the `@Steps` annotation) and Page Objects that are declared inside the Cucumber step definition classes will be automatically instantiated.

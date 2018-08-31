@@ -19,7 +19,7 @@ You implement the story steps using annotated methods to represent the steps in 
 include::../examples/jbehave-quick-start/src/test/java/net/serenitybdd/samples/etsy/features/steps/SearchByKeywordStepDefinitions.java[tags=header;woolscenario;tail]
 ----
 
-= Working with JBehave and Serenity
+== Getting Started with JBehave and Serenity
 
 Serenity and JBehave work well together.
 Serenity uses simple conventions to make it easier to get started writing and implementing Serenity stories, and reports on both JBehave and Serenity steps, which can be seamlessly combined in the same class, or placed in separate classes, depending on your preferences.
@@ -39,6 +39,34 @@ include::../examples/jbehave-quick-start/build.gradle[tags=dependencies]
 ----
 
 New versions come out regularly, so be sure to check the Maven Central repository (http://search.maven.org) to know the latest version numbers for each dependency.
+
+=== JBehave Maven Archetype
+
+A JBehave archetype is available to help you jumpstart a new project. As usual, you can run `mvn archetype:generate -Dfilter=serenity` from the command line and then select the `net.serenity-bdd:serenity-jbehave-archetype` archetype from the proposed list of archetypes.
+Or you can use your favorite IDE to generate a new Maven project using an archetype.
+
+This archetype creates a project directory structure similar to the one shown here:
+
+----
++ main
+    + java
+       + SampleJBehave
+           + pages
+               - DictionaryPage.java
+           + steps
+               - EndUserSteps.java
++ test
+    + java
+       + SampleJBehave
+           + jbehave
+               - AcceptanceTestSuite.java
+               - DefinitionSteps.java
+    + resources
+        + SampleJBehave
+            + stories
+                + consult_dictionary
+                    - LookupADefinition.story
+----
 
 == Setting up your project and organizing your directory structure
 
@@ -261,33 +289,6 @@ Report:
 .Report with commented scenario
 image::jbehave_scenario_commented.png[]
 
-=== JBehave Maven Archetype
-
-A JBehave archetype is available to help you jumpstart a new project. As usual, you can run `mvn archetype:generate -Dfilter=serenity` from the command line and then select the `net.serenity-bdd:serenity-jbehave-archetype` archetype from the proposed list of archetypes.
-Or you can use your favorite IDE to generate a new Maven project using an archetype.
-
-This archetype creates a project directory structure similar to the one shown here:
-
-----
-+ main
-    + java
-       + SampleJBehave
-           + pages
-               - DictionaryPage.java
-           + steps
-               - EndUserSteps.java
-+ test
-    + java
-       + SampleJBehave
-           + jbehave
-               - AcceptanceTestSuite.java
-               - DefinitionSteps.java
-    + resources
-        + SampleJBehave
-            + stories
-                + consult_dictionary
-                    - LookupADefinition.story
-----
 
 == Running all tests in a single browser window
 

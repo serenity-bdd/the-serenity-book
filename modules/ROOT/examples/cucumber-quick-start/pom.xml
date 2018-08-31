@@ -20,6 +20,7 @@
     </properties>
 
     <dependencies>
+        <!-- tag::dependencies[] -->
         <dependency>
             <groupId>net.serenity-bdd</groupId>
             <artifactId>serenity-core</artifactId>
@@ -30,6 +31,7 @@
             <artifactId>serenity-cucumber</artifactId>
             <version>${serenity.cucumber.version}</version>
         </dependency>
+        <!-- end::dependencies[] -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>

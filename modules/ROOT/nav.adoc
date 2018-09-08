@@ -8,6 +8,13 @@
 * xref:page-objects.adoc[Working with Page Objects]
 * xref:angularjs.adoc[Testing AngularJS applications]
 
+.Serenity with JUnit
+* xref:junit-basic.adoc[JUnit Basic Integration]
+* xref:junit.adoc[JUnit WebDriver Support]
+* xref:junit-skipping.adoc[Skipping Tests]
+* xref:junit-data-driven.adoc[Data Driven Tests]
+* xref:junit-requirements.adoc[Modelling JUnit Requirements]
+
 .Serenity with BDD Frameworks
 * xref:jbehave.adoc[Working with JBehave]
 * xref:cucumber.adoc[Working with Cucumber JVM]

@@ -1,0 +1,93 @@
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="serenity-junit-quickstart" basedir="." default="serenity.reports">
+
+    <property name="build.dir" value="${basedir}/target"/>
+    <property name="reports.tests" value="${build.dir}/test-reports"/>
+    <property name="reports.dir" value="${build.dir}/site/thucydides"/>
+    <property name="src.main" value="${basedir}/src/main/java"/>
+    <property name="src.test" value="${basedir}/src/test/java"/>
+
+    <target name="resolve" description="--> retrieve dependencies with ivy">
+        <ivy:retrieve/>
+    </target>
+
+    <path id="lib.path">
+        <fileset dir="${basedir}/lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="class.path">
+        <path refid="lib.path"/>
+        <pathelement location="${build.dir}/classes"/>
+    </path>
+
+    <path id="test.path">
+        <path refid="class.path"/>
+        <pathelement location="${build.dir}/test-classes"/>
+    </path>
+
+    <target name="define.tasks">
+        <taskdef name="serenityreport"
+                 classname="net.serenity_bdd.ant.SerenityReportingTask"
+                 classpathref="lib.path"/>
+
+        <taskdef name="junit"
+                 classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"
+                classpathref="lib.path">
+        </taskdef>
+
+    </target>
+
+    <!-- Deletes the existing docs, build and dist directory-->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${reports.dir}"/>
+    </target>
+
+    <!-- Creates the docs, build and dist directory-->
+    <target name="makedir">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.dir}/classes"/>
+        <mkdir dir="${build.dir}/test-classes"/>
+    </target>
+
+    <target name="compile" depends="clean, makedir, resolve">
+        <javac srcdir="${src.main}" destdir="${build.dir}/classes" classpathref="lib.path"></javac>
+    </target>
+
+    <target name="test-compile" depends="compile">
+        <javac srcdir="${src.test}" destdir="${build.dir}/test-classes" classpathref="class.path"></javac>
+    </target>
+
+    <target name="test" depends="test-compile, define.tasks">
+
+        <!--<junit printsummary="yes" haltonfailure="no">-->
+            <!--<classpath refid="lib.path"/>-->
+            <!--<formatter type="plain"/>-->
+            <!--<formatter type="xml"/>-->
+
+            <!--<junit>-->
+                <!--<classpath refid="lib.path"/>-->
+                <!--<formatter type="plain" usefile="false" />-->
+                <!--<formatter type="plain" />-->
+                <!--<batchtest>-->
+                    <!--<fileset dir="${build.dir}/test-classes" includes="**/junit/*.class" />-->
+                <!--</batchtest>-->
+            <!--</junit>-->
+        <!--</junit>-->
+        <junit>
+            <classpath refid="test.path"/>
+            <batchtest>
+                <fileset dir="${build.dir}/test-classes">
+                    <include name="**/junit/*" />
+                </fileset>
+            </batchtest>
+            <formatter type="brief" usefile="false"/>
+        </junit>
+    </target>
+
+    <target name="serenity" depends="resolve, define.tasks, test">
+        <serenityreport sourceDirectory="${reports.dir}"
+                outputDirectory="${reports.dir}"/>
+    </target>
+</project>

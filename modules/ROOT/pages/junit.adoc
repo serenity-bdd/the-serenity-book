@@ -1,62 +1,36 @@
 In this section we will look at how to run your Serenity tests using JUnit in more detail.
 
-=== Basic JUnit integration
-
-We have already seen a simple example of a JUnit Serenity test shown earlier on (<<First Steps with Serenity BDD>>):
-
-[source,java]
-----
-include::{srcdir}/junit-quick-start/src/test/java/net/serenitybdd/samples/junit/features/earning_points/WhenCalculatingFrequentFlyerPoints.java[tags=testcase]
-----
-<1> You run the JUnit test using the 'Serenity' test runner
-<2> The `@Steps` annotation marks a Serenity step library
-
-The most important thing here is the 'SerenityRunner' test runner. This class instruments any step libraries in your class, and ensures that the test results will be recorded and reported on by the Serenity reporters.
-
-=== Human-readable method titles
-
-By default, Serenity will convert the test method names into a readable form in the reports. This will convert both camelCasedMethods and methods_with_underscores into a form with spaces. So both 'shouldCalculateCorrectOutcome()' and 'should_calculate_correct_outcome()' will appear as "Should calculate correct outcome" in the test reports.
-
-You can override this convention by adding a `@Title` annotation onto the test method, as shown here:
-
-[source,java]
-----
-include::{srcdir}/junit-quick-start/src/test/java/net/serenitybdd/samples/junit/features/earning_points/WhenEarningFrequentFlyerStatus.java[tags=header;earnGoldAfter5000Points;endTest]
-----
-<1> The `@Title` annotation lets you provide your own title for this test in the test reports
-
-Also `@Title` can be used for providing information about issues for this test, you can find more info in <<Linking scenarios/tests with issues>>
-
 === Serenity WebDriver support in JUnit
 
 Serenity BDD also provides strong support for Selenium WebDriver and the Page Objects model. We will look at these features in detail later on. But while we are on the topic of JUnit integration, let's look at how this integration fits in with a JUnit Serenity test.
 
-Serenity will manage your WebDriver instance, including opening the appropriate driver at the start of each test, and shutting it down when the test is finished. You just need to provide a 'WebDriver' variable in your test, as shown here:
+Serenity will manage your WebDriver instance, including opening the appropriate driver at the start of each test, and shutting it down when the test is finished. You just need to provide a `WebDriver` variable in your test, as shown here:
 
 [source,java]
 ----
-include::{srcdir}/junit-quick-start/src/test/java/net/serenitybdd/samples/junit/features/searching/WhenSearchingOnGoogle.java[tags=header;simpletest;endTest]
+include::../examples/junit-web-quick-start/src/test/java/net/serenitybdd/samples/junit/features/searching/WhenSearchingOnGoogle.java[tags=header;simpletest;endTest]
 ----
 <1> Declare a WebDriver instance that will be managed by Serenity
 <2> The WebDriver instance will be initialized automatically
 
-The `@Managed` annotation also provides several useful parameters. The 'driver' parameter lets you define what WebDriver driver you want to run these tests in. Possible values include 'firefox', 'chrome','iexplorer','phantomjs', and 'htmlunit':
+The `@Managed` annotation also provides several useful parameters. The `driver` parameter lets you define what WebDriver driver you want to run these tests in.
+Possible values include *firefox*, *chrome*, *iexplorer*, *phantomjs*, *appium*, *safari*, *edge* and *htmlunit* :
 
 [source,java]
 ----
 @Managed(driver="chrome")
 ----
 
-Default value for `driver` is `""`, and Serenity BDD will use Firefox in this case. List of supported drivers by this annotation: **Firefox**, **Chrome**, **Opera**, **HtmlUnit**, **PhantomJS**, **IExplorer**, **Edge**, **Safari**, **Appium**.
+Default value for `driver` is *firefox*.
 
-You can also get Serenity to open the browser at the start of the tests, and leave it open until all of the tests in this test case have been executed, using the 'uniqueSession' parameter:
+You can also get Serenity to open the browser at the start of the tests, and leave it open until all of the tests in this test case have been executed, using the `uniqueSession` parameter:
 
 [source,java]
 ----
 @Managed(uniqueSession=true)
 ----
 
-Default value for `uniqueSession` is `false`
+Default value for `uniqueSession` is *false*
 
 To make Serenity BDD clear cookies for each test or never clear cookies you can use property `clearCookies`:
 
@@ -64,8 +38,7 @@ To make Serenity BDD clear cookies for each test or never clear cookies you can 
 ----
 @Managed(clearCookies=BeforeEachTest)
 ----
-Default value for `clearCookies` is `BeforeEachTest`, possible values are: **BeforeEachTest**, **Never**.
-
+Default value for `clearCookies` is *BeforeEachTest*, possible values are: *BeforeEachTest*, *Never*.
 
 
 === Serenity PageObjects in JUnit
@@ -75,205 +48,21 @@ The WebDriver test in the previous example will work, but it is poorly written f
   - In particular, it exposes too much WebDriver-specific details about how the test is executed, which as a result obscures the intent of the test
   - It will also be harder to maintain, as it contains WebDriver logic that would be repeated and maintained in other tests
 
-A better approach is to hide the WebDriver logic in "Page Objects". Serenity provides excellent built-in support for Page Objects, as we will learn in the chapter dedicated to Serenity WebDriver support (<<Writing Serenity Page Objects>>).
+A better approach is to hide the WebDriver logic in "Page Objects". Serenity provides excellent built-in support for Page Objects, as described in the chapter dedicated to Serenity WebDriver support <<page-objects.adoc,Working with Page Objects>> .
 
 The JUnit Serenity integration provides some special support for Serenity Page Objects. In particular, Serenity will automatically instantiate any PageObject fields in your JUnit test. For example, the following Page Object would perform the same operations as the test shown above:
 
 [source,java]
 ----
-include::{srcdir}/junit-quick-start/src/test/java/net/serenitybdd/samples/junit/pages/GooglePage.java[]
+include::../examples/junit-web-quick-start/src/test/java/net/serenitybdd/samples/junit/pages/GooglePage.java[]
 ----
-
-Now, when you declare a field of type 'GooglePage' in your test, Serenity will instatiate it for you:
 
 [source,java]
 ----
-include::{srcdir}/junit-quick-start/src/test/java/net/serenitybdd/samples/junit/features/searching/WhenSearchingOnGoogle.java[tags=header;pageObjects;pageObjectTest;endTest]
+include::../examples/junit-web-quick-start/src/test/java/net/serenitybdd/samples/junit/features/searching/WhenSearchingOnGoogle.java[tags=pageObjects;pageObjectTest;endTest]
 ----
-
-=== Skipping tests
-
-Sometimes it can be useful to flag a test as "work-in-progress". In Serenity, you use the `@Pending` annotation, either for a test or for a `@Step`-annotated method, to incidate that the scenario is still being implemented and that the results should. These tests appear as 'Pending' (shown in blue) in the test reports.
-
-[source,java]
-----
-include::{srcdir}/junit-quick-start/src/test/java/net/serenitybdd/samples/junit/features/earning_points/WhenEarningFrequentFlyerStatus.java[tags=header;ignoredTest;pendingTest;endTest]
-----
-
-As can be seen here, Serenity also honors the JUnit `@Ignore` annotation. Tests marked with `@Ignore` will appear as 'Ignored' (shown in grey) in the test reports.
-
-[[fig-ignored-tests]]
-.A test report showing ignored (yellow) and pending (blue) tests
-image::junit-ignored-and-pending-tests.png[]
-
-=== Handling failing assumptions
-
-Sometimes it can be useful to define a pre-condition for a test. For example, suppose a series of integration tests depend on a mainframe server being running. If the mainframe is unavailable (for example, if it only runs during office hours), you may want to ignore these tests entirely. The test might look like this:
-
-[source,java]
-----
-include::{srcdir}/junit-quick-start/src/test/java/net/serenitybdd/samples/junit/features/managing_member_accounts/WhenUpdatingMemberAccounts.java[tags=testcase]
-----
-
-The assumption is encapsulated in the `assuming_the_mainframe_is_available()` method:
-
-[source,java]
-----
-include::{srcdir}/junit-quick-start/src/test/java/net/serenitybdd/samples/junit/steps/TravellerHistorySteps.java[tags=header;assumptionSteps]
-----
-<1> Ensure that the mainframe is available
-<2> Do whatever needs to be done to check the availability of the mainframe
-
-The `assuming_the_mainframe_is_available()` method uses the JUnit Assume class, which behaves in a very similar way to Hamcrest matchers. If this check fails, the test will not be executed, and the test result will be reported as 'Ignored'.
-
-=== Data-driven tests
-
-Serenity provides some features to support simplified Data-Driven testing. In JUnit 4, you can use the Parameterized test runner to perform data-driven tests. In Serenity, you use the SerenityParameterizedRunner. This runner is very similar to the JUnit Parameterized test runner, except that you use the `@TestData` annotation to provide test data, and you can use all of the other Serenity annotations (`@Managed`, `@Steps` and so on). This test runner will also generate proper serenity reports for the executed tests.
-
-An example of a data-driven Serenity test is shown below. In this test, we check the number of status points a Frequent Flyer member needs to obtain a new status. To test this, we use several combinations of points and status levels, specified by the testData() method. These values are represented as instance variables in the test class, and instantiated via the constructor.
-
-[source,java]
-----
-include::{srcdir}/junit-quick-start/src/test/java/net/serenitybdd/samples/junit/features/earning_points/WhenEarningFrequentFlyerStatusUpgrades.java[tags=testcase]
-----
-<1> Test data
-<2> The test data is injected into these member variables
-<3> You need a constructor with the parameters in the correct order for this to work.
-<4> Then use these member variables to perform your test
-
-For slow-running tests, you may be able to speed up your tests using the `@Concurrent` annotation, as shown here:
-
-[source,java]
-----
-include::{srcdir}/junit-quick-start/src/test/java/net/serenitybdd/samples/junit/features/searching/WhenSearchingForDifferentTermsOnGoogle.java[tags=testcase]
-----
-<1> Run these tests in parallel
-<2> Use test data from this method
-<3> Inject test data into this field through the constructor
-
-By default, this will run your tests concurrently, by default using two threads per CPU core. If you want to fine-tune the number of threads to be used, you can specify the threads annotation property.
-
-[source,java]
-----
-@RunWith(SerenityParameterizedRunner.class)
-@Concurrent(threads="4")
-----
-
-You can also express this as a value relative to the number of available processors. For example, to run 4 threads per CPU, you could specify the following:
-
-[source,java]
-----
-@RunWith(SerenityParameterizedRunner.class)
-@Concurrent(threads="4x")
-----
-
-=== Using test data from CSV files
-
-Serenity lets you perform data-driven testing using test data in a CSV file. You store your test data in a CSV file (by default with columns separated by commas), with the first column acting as a header:
-
-[source,csv]
-----
-include::{srcdir}/junit-quick-start/src/test/resources/testdata/status-levels.csv[]
-----
-
-Next, create a test class containing properties that match the columns in the test data, as you did for the data-driven test in the previous example. The test class will typically contain one or more tests that use these properties as parameters to the test step or Page Object methods.
-
-The class will also contain the `@UseTestDataFrom` annotation to indicate where to find the CSV file (this can either be a file on the classpath or a relative or absolute file path - putting the data set on the class path (e.g. in `src/test/resources`) makes the tests more portable).
-
-An example of a test running against the CSV data listed above is shown here:
-
-[source,java]
-----
-include::{srcdir}/junit-quick-start/src/test/java/net/serenitybdd/samples/junit/features/earning_points/WhenEarningFrequentFlyerStatusUpgradesUsingCSV.java[tags=testcase]
-----
-
-You can also specify multiple file paths separated by path separators – colon, semi-colon or comma. For example:
-
-[source,java]
-----
-@UseTestDataFrom("test-data/simple-data.csv,test-data-subfolder/simple-data.csv")
-----
-
-You can also configure an arbitrary directory using system property serenity.data.dir and then refer to it as `$DATADIR` variable in the annotation.
-
-[source,java]
-----
-@UseTestDataFrom("$DATADIR/simple-data.csv")
-----
-
-Each row of test data needs to be distinguished in the generated reports. By default, Serenity will call the toString() method. If you provide a public method returning a String that is annotated by the `@Qualifier` annotation, then this method will be used to distinguish data sets. It should return a value that is unique to each data set.
-
-The test runner will create a new instance of this class for each row of data in the CSV file, assigning the properties with corresponding values in the test data.
-
-There are a few points to note. The columns in the CSV files are converted to camel-case property names (so for example `KILOMETERS TRAVELLED` becomes `kilometersTravelled`). All of the fields should be strings or primitive types.
-
-If some of the field values contain commas, you will need to use a different separator. You can use the separator attribute of the `@UseTestDataFrom` annotation to specify an alternative separator.
-
-[source,java]
-----
-@UseTestDataFrom(value="test-data/simple-semicolon-data.csv", separator=';')
-----
-
-=== Modelling requirements in JUnit
-
-As we have seen previously, Serenity produces reports that summarize the test results, going into details about the steps that were executed within each test. Serenity also produces an overall list of the test results, as shown below:
-
-[[fig-test-report]]
-.Test results reported in Serenity
-image::junit-overall-test-results.png[]
-
-But Serenity also lets you group your tests in terms of features or user stories, in order to get a better high-level picture of the state of your application. The 'Requirements' tab provides a high-level overview of your requirements.
-
-For this to work, you need to organize your JUnit tests into meaningful packages. For example, you might group create packages for high-level features, and group your test cases by feature. By default, a test case is considered to represent a User Story in agile terms, and the tests within the test case correspond to the acceptance criteria for that user story.
-
-[[fig-test-report]]
-.Test cases can be grouped by high level features
-image::junit-feature-report.png[]
-
-Serenity uses the test package structure to discover the requirements organization. For example, suppose your package structure looks like this:
-
-[[fig-test-package-structure]]
-.Test results reported in Serenity
-image::junit-overall-test-results.png[]
-
-In this structure, the test cases are organized by feature, in a number of directories under the `features` parent directory.
-
-For this to work properly, you need to tell Serenity the root package that you are using, and what terms you use for your requirements. You do this in a special file called `serenity.properties`, which lives in the root directory of your project, e.g.
-
-[source,properties]
-----
-include::{srcdir}/junit-quick-start/thucydides.properties[]
-----
-
-The way Serenity will report your requirements depends on the depth of the directory structure you use to store your requirements. By default, if you group your test cases in a single level of directories (as in the example above), Serenity will treat each directory as a `feature`. If there are two levels, the first level directories will be considered `capabilities`, and the second `features`.
-
-You can define your own way of naming your requirements using the `serenity.requirement.types` property. For example, if you wanted top-level directories to represent "themes", and have a second level "epics" that actually contains the test cases, you could set this property to the following value:
-
-[source,properties]
-----
-serenity.requirement.types=theme,epic
-----
-
-You can provide extra information about stories and requirements in several ways. One is to use the `@Narrative` annotation in the test case, as shown here:
-
-[source,java]
-----
-include::{srcdir}/junit-quick-start/src/test/java/net/serenitybdd/samples/junit/features/searching/WhenSearchingFlights.java[tags=narrative;testcase]
-----
-<1> A narrative text, represented as an array of Strings
-
-This will produce a report like the following:
-
-[[fig-test-report-with-narrative]]
-.The `@Narrative` annotation lets you add a narrative text to story reports
-image::story-with-narrative.png[]
-
-You can also add the `@Narrative` annotation to a `package-info.java` file. This will add a narrative to the requirement represented by this package in the requirements reports, e.g.
-
-[source,java]
-----
-include::{srcdir}/junit-quick-start/src/test/java/net/serenitybdd/samples/junit/features/searching/package-info.java[]
-----
+<3> When you declare a field of type `GooglePage` in your test, Serenity will instantiate it for you
+<4> The page is automatically instantiated and ready to be used.
 
 
 

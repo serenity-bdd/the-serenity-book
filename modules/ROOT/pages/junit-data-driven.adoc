@@ -1,0 +1,87 @@
+=== Data-driven tests
+
+Serenity provides some features to support simplified Data-Driven testing. In JUnit 4, you can use the Parameterized test runner to perform data-driven tests. In Serenity, you use the `SerenityParameterizedRunner`. This runner is very similar to the JUnit Parameterized test runner, except that you use the `@TestData` annotation to provide test data, and you can use all of the other Serenity annotations (`@Managed`, `@Steps` and so on). This test runner will also generate proper serenity reports for the executed tests.
+
+An example of a data-driven Serenity test is shown below. In this test, we check the number of status points a Frequent Flyer member needs to obtain a new status. To test this, we use several combinations of points and status levels, specified by the testData() method. These values are represented as instance variables in the test class, and instantiated via the constructor.
+
+[source,java]
+----
+include::../examples/junit-web-quick-start/src/test/java/net/serenitybdd/samples/junit/features/earning_points/WhenEarningFrequentFlyerStatusUpgrades.java[tags=testcase]
+----
+<1> Test data
+<2> The test data is injected into these member variables
+<3> You need a constructor with the parameters in the correct order for this to work.
+<4> Then use these member variables to perform your test
+
+For slow-running tests, you may be able to speed up your tests using the `@Concurrent` annotation, as shown here:
+
+[source,java]
+----
+include::../examples/junit-web-quick-start/src/test/java/net/serenitybdd/samples/junit/features/searching/WhenSearchingForDifferentTermsOnGoogle.java[tags=testcase]
+----
+<1> Run these tests in parallel
+<2> Use test data from this method
+<3> Inject test data into this field through the constructor
+
+By default, this will run your tests concurrently, by default using two threads per CPU core. If you want to fine-tune the number of threads to be used, you can specify the threads annotation property.
+
+[source,java]
+----
+@RunWith(SerenityParameterizedRunner.class)
+@Concurrent(threads="4")
+----
+
+You can also express this as a value relative to the number of available processors. For example, to run 4 threads per CPU, you could specify the following:
+
+[source,java]
+----
+@RunWith(SerenityParameterizedRunner.class)
+@Concurrent(threads="4x")
+----
+
+=== Using test data from CSV files
+
+Serenity lets you perform data-driven testing using test data in a CSV file. You store your test data in a CSV file (by default with columns separated by commas), with the first column acting as a header:
+
+[source,csv]
+----
+include::../examples/junit-web-quick-start/src/test/resources/testdata/status-levels.csv[]
+----
+
+Next, create a test class containing properties that match the columns in the test data, as you did for the data-driven test in the previous example. The test class will typically contain one or more tests that use these properties as parameters to the test step or Page Object methods.
+
+The class will also contain the `@UseTestDataFrom` annotation to indicate where to find the CSV file (this can either be a file on the classpath or a relative or absolute file path - putting the data set on the class path (e.g. in `src/test/resources`) makes the tests more portable).
+
+An example of a test running against the CSV data listed above is shown here:
+
+[source,java]
+----
+include::../examples/junit-web-quick-start/src/test/java/net/serenitybdd/samples/junit/features/earning_points/WhenEarningFrequentFlyerStatusUpgradesUsingCSV.java[tags=testcase]
+----
+
+You can also specify multiple file paths separated by path separators – colon, semi-colon or comma. For example:
+
+[source,java]
+----
+@UseTestDataFrom("test-data/simple-data.csv,test-data-subfolder/simple-data.csv")
+----
+
+You can also configure an arbitrary directory using system property `serenity.data.dir` and then refer to it as `$DATADIR` variable in the annotation.
+
+[source,java]
+----
+@UseTestDataFrom("$DATADIR/simple-data.csv")
+----
+
+Each row of test data needs to be distinguished in the generated reports. By default, Serenity will call the toString() method. If you provide a public method returning a String that is annotated by the `@Qualifier` annotation, then this method will be used to distinguish data sets. It should return a value that is unique to each data set.
+
+The test runner will create a new instance of this class for each row of data in the CSV file, assigning the properties with corresponding values in the test data.
+
+There are a few points to note. The columns in the CSV files are converted to camel-case property names (so for example `KILOMETERS TRAVELLED` becomes `kilometersTravelled`). All of the fields should be strings or primitive types.
+
+If some of the field values contain commas, you will need to use a different separator. You can use the separator attribute of the `@UseTestDataFrom` annotation to specify an alternative separator.
+
+[source,java]
+----
+@UseTestDataFrom(value="test-data/simple-semicolon-data.csv", separator=';')
+----

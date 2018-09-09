@@ -1,0 +1,27 @@
+=== Basic JUnit integration
+
+We have already seen a simple example of a JUnit Serenity test shown earlier on <<first-steps.adoc,First Steps>>:
+
+[source,java]
+----
+include::../examples/junit-quick-start/src/test/java/starter/ASimpleTest.java[tags=testcase]
+----
+<1> You run the JUnit test using the Serenity test runner
+<2> The `@Steps` annotation marks a Serenity step library
+<3> Create the test following the Given/When/Then pattern and using step methods from the step library
+
+The most important thing here is the `SerenityRunner` test runner. This class instruments any step libraries in your class, and ensures that the test results will be recorded and reported on by the Serenity reporters.
+
+=== Human-readable method titles
+
+By default, Serenity will convert the test method names into a readable form in the reports. This will convert both camelCasedMethods and methods_with_underscores into a form with spaces. So both 'shouldCalculateCorrectOutcome()' and 'should_calculate_correct_outcome()' will appear as "Should calculate correct outcome" in the test reports.
+
+You can override this convention by adding a `@Title` annotation onto the test method, as shown here:
+
+[source,java]
+----
+include::../examples/junit-web-quick-start/src/test/java/net/serenitybdd/samples/junit/features/earning_points/WhenEarningFrequentFlyerStatus.java[tags=header;earnGoldAfter5000Points;endTest]
+----
+<1> The `@Title` annotation lets you provide your own title for this test in the test reports
+
+Also `@Title` can be used for providing information about issues for this test, you can find more info in  <<serenity-issues.adoc,Linking scenarios/tests with issues>>

@@ -1,0 +1,116 @@
+Parallel tests with Cucumber and Serenity
+
+=== Configure the cucumber-jvm-parallel-plugin
+
+Note that only the FEATURE execution mode works correctly with Serenity BDD:
+
+----
+<plugin>
+     <groupId>com.github.temyers</groupId>
+     <artifactId>cucumber-jvm-parallel-plugin</artifactId>
+     <version>4.0.0</version>
+     <executions>
+         <execution>
+             <id>generateRunners</id>
+             <phase>generate-test-sources</phase>
+             <goals>
+                 <goal>generateRunners</goal>
+             </goals>
+             <configuration>
+                 <glue>
+                     <package>features</package>
+                 </glue>
+                 <featuresDirectory>src/test/resources/features/</featuresDirectory>
+                 <cucumberOutputDir>target/cucumber-parallel</cucumberOutputDir>
+                 <plugins>
+                     <plugin>
+                         <name>json</name>
+                     </plugin>
+                     <plugin>
+                         <name>html</name>
+                     </plugin>
+                 </plugins>
+                 <!--<tags>-->
+                 <!--<tag>${tags}</tag>-->
+                 <!--</tags>-->
+
+                 <strict>true</strict>
+                 <!-- Generate TestNG runners instead of JUnit ones. -->
+                 <useTestNG>false</useTestNG>
+                 <!-- The naming scheme to use for the generated test classes. One
+                   of 'simple' or 'feature-title' -->
+                 <namingScheme>pattern</namingScheme>
+                 <!-- The class naming pattern to use. Only required/used if naming
+                   scheme is 'pattern'. -->
+                 <namingPattern>Parallel{c}CT</namingPattern>
+                 <!-- One of [SCENARIO, FEATURE]. SCENARIO generates one runner per
+                   scenario. FEATURE generates a runner per feature. -->
+                 <parallelScheme>${parallelScheme}</parallelScheme>
+                 <!-- Specify a custom template for the generated sources (this is a path relative to the project base directory) -->
+                 <customVmTemplate>src/test/resources/cucumber-symch-junit-runner.vm</customVmTemplate>
+                 <packageName>net.bddtrader</packageName>
+             </configuration>
+         </execution>
+     </executions>
+ </plugin>
+----
+
+=== Add a template for the parallel tests
+
+Add a template file in src/test/resources (called `cucumber-symch-junit-runner.vm` in the configuration given above):
+
+----
+#parse("/array.java.vm")
+#if ($packageName)
+package $packageName;
+
+#end##
+
+import org.junit.runner.RunWith;
+import cucumber.api.CucumberOptions;
+import net.serenitybdd.cucumber.CucumberWithSerenity;
+
+@RunWith(CucumberWithSerenity.class)
+@CucumberOptions(
+strict = $strict,
+features = {"$featureFile"},
+plugin = #stringArray($plugins),
+monochrome = $monochrome,
+#if(!$featureFile.contains(".feature:") && $tags)
+tags = #stringArray($tags),
+#end
+glue = #stringArray($glue))
+public class $className {
+
+}
+----
+
+
+=== Configure the Failsafe plugin to run the generated tests
+
+----
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-failsafe-plugin</artifactId>
+    <version>2.22.0</version>
+    <configuration>
+        <includes>
+            <include>**/*CT.java</include>
+        </includes>
+        <systemProperties>
+            <webdriver.base.url>${webdriver.base.url}</webdriver.base.url>
+        </systemProperties>
+        <parallel>classes</parallel>
+        <threadCount>${parallel.tests}</threadCount>
+        <forkCount>${parallel.tests}</forkCount>
+    </configuration>
+    <executions>
+        <execution>
+            <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+----

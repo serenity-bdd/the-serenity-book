@@ -1,0 +1,35 @@
+=== Skipping tests
+
+Sometimes it can be useful to flag a test as "work-in-progress". In Serenity, you use the `@Pending` annotation, either for a test or for a `@Step`-annotated method, to indicate that the scenario is still being implemented and that the results are not available yet.
+These tests appear as 'Pending' (shown in blue) in the test reports.
+
+[source,java]
+----
+include::../examples/junit-web-quick-start/src/test/java/net/serenitybdd/samples/junit/features/earning_points/WhenEarningFrequentFlyerStatus.java[tags=header;ignoredTest;pendingTest;endTest]
+----
+
+As can be seen here, Serenity also honors the JUnit `@Ignore` annotation. Tests marked with `@Ignore` will appear as 'Ignored' (shown in grey) in the test reports.
+
+[[fig-ignored-tests]]
+.A test report showing ignored (grey) and pending (blue) tests
+image::junit-ignored-and-pending-tests-new.png[]
+
+=== Handling failing assumptions
+
+Sometimes it can be useful to define a pre-condition for a test. For example, suppose a series of integration tests depend on a mainframe server being running. If the mainframe is unavailable (for example, if it only runs during office hours), you may want to ignore these tests entirely. The test might look like this:
+
+[source,java]
+----
+include::../examples/junit-web-quick-start/src/test/java/net/serenitybdd/samples/junit/features/managing_member_accounts/WhenUpdatingMemberAccounts.java[tags=testcase]
+----
+
+The assumption is encapsulated in the `assuming_the_mainframe_is_available()` method:
+
+[source,java]
+----
+include::../examples/junit-web-quick-start/src/test/java/net/serenitybdd/samples/junit/steps/TravellerHistorySteps.java[tags=header;assumptionSteps]
+----
+<1> Ensure that the mainframe is available
+<2> Do whatever needs to be done to check the availability of the mainframe
+
+The `assuming_the_mainframe_is_available()` method uses the JUnit Assume class, which behaves in a very similar way to Hamcrest matchers. If this check fails, the test will not be executed, and the test result will be reported as 'Ignored'.

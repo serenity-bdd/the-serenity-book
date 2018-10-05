@@ -1,0 +1,32 @@
+// tag::simple[]
+repositories {
+    mavenLocal()
+    jcenter()
+}
+
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath("net.serenity-bdd:serenity-gradle-plugin:1.1.1")     // <1>
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'net.serenity-bdd.aggregator'                             // <2>
+
+dependencies {
+    testCompile 'net.serenity-bdd:serenity-core:1.1.1'                  // <3>
+    testCompile 'net.serenity-bdd:serenity-junit:1.1.1'                // <4>
+    testCompile('junit:junit:4.12')
+    testCompile('org.assertj:assertj-core:1.7.0')
+    testCompile('org.slf4j:slf4j-simple:1.7.7')
+}
+// end::simple[]
+// tag::advanced[]
+gradle.startParameter.continueOnFailure = true                          // <5>
+// end::advanced[]

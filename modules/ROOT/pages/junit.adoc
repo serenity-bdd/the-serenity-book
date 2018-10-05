@@ -1,0 +1,69 @@
+In this section we will look at how to run your Serenity tests using JUnit in more detail.
+
+=== Serenity WebDriver support in JUnit
+
+Serenity BDD also provides strong support for Selenium WebDriver and the Page Objects model. We will look at these features in detail later on. But while we are on the topic of JUnit integration, let's look at how this integration fits in with a JUnit Serenity test.
+
+Serenity will manage your WebDriver instance, including opening the appropriate driver at the start of each test, and shutting it down when the test is finished. You just need to provide a `WebDriver` variable in your test, as shown here:
+
+[source,java]
+----
+include::../examples/junit-web-quick-start/src/test/java/net/serenitybdd/samples/junit/features/searching/WhenSearchingOnGoogle.java[tags=header;simpletest;endTest]
+----
+<1> Declare a WebDriver instance that will be managed by Serenity
+<2> The WebDriver instance will be initialized automatically
+
+The `@Managed` annotation also provides several useful parameters. The `driver` parameter lets you define what WebDriver driver you want to run these tests in.
+Possible values include *firefox*, *chrome*, *iexplorer*, *phantomjs*, *appium*, *safari*, *edge* and *htmlunit* :
+
+[source,java]
+----
+@Managed(driver="chrome")
+----
+
+Default value for `driver` is *firefox*.
+
+You can also get Serenity to open the browser at the start of the tests, and leave it open until all of the tests in this test case have been executed, using the `uniqueSession` parameter:
+
+[source,java]
+----
+@Managed(uniqueSession=true)
+----
+
+Default value for `uniqueSession` is *false*
+
+To make Serenity BDD clear cookies for each test or never clear cookies you can use property `clearCookies`:
+
+[source,java]
+----
+@Managed(clearCookies=BeforeEachTest)
+----
+Default value for `clearCookies` is *BeforeEachTest*, possible values are: *BeforeEachTest*, *Never*.
+
+
+=== Serenity PageObjects in JUnit
+
+The WebDriver test in the previous example will work, but it is poorly written for a number of reasons as below:
+
+  - In particular, it exposes too much WebDriver-specific details about how the test is executed, which as a result obscures the intent of the test
+  - It will also be harder to maintain, as it contains WebDriver logic that would be repeated and maintained in other tests
+
+A better approach is to hide the WebDriver logic in "Page Objects". Serenity provides excellent built-in support for Page Objects, as described in the chapter dedicated to Serenity WebDriver support <<page-objects.adoc,Working with Page Objects>> .
+
+The JUnit Serenity integration provides some special support for Serenity Page Objects. In particular, Serenity will automatically instantiate any PageObject fields in your JUnit test. For example, the following Page Object would perform the same operations as the test shown above:
+
+[source,java]
+----
+include::../examples/junit-web-quick-start/src/test/java/net/serenitybdd/samples/junit/pages/GooglePage.java[]
+----
+
+[source,java]
+----
+include::../examples/junit-web-quick-start/src/test/java/net/serenitybdd/samples/junit/features/searching/WhenSearchingOnGoogle.java[tags=pageObjects;pageObjectTest;endTest]
+----
+<3> When you declare a field of type `GooglePage` in your test, Serenity will instantiate it for you
+<4> The page is automatically instantiated and ready to be used.
+
+
+
+

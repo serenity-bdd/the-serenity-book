@@ -1,0 +1,6 @@
+KILOMETERS TRAVELLED,   EXPECTED STATUS
+0,                      Bronze
+9999,                   Bronze
+10000,                  Silver
+49999,                  Silver
+50000,                  Gold

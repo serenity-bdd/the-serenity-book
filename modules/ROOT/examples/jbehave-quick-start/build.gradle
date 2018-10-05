@@ -1,0 +1,42 @@
+repositories {
+    mavenLocal()
+    jcenter()
+}
+
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath("net.serenity-bdd:serenity-gradle-plugin:1.9.31")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'net.serenity-bdd.aggregator'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    testCompile 'org.slf4j:slf4j-api:1.7.5'
+
+    testCompile 'junit:junit:4.11'
+    testCompile 'org.assertj:assertj-core:1.7.0'
+    // tag::dependencies[]
+    testCompile 'net.serenity-bdd:core:1.9.36'
+    testCompile 'net.serenity-bdd:serenity-jbehave:1.42.0'
+    // end::dependencies[]
+}
+
+tasks.withType(Test) {
+    systemProperty 'webdriver.driver', System.getProperty('webdriver.driver', 'chrome')
+    systemProperty 'tags', System.getProperty('tags', '')
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.1'
+}

@@ -33,7 +33,7 @@ Living Documentation, on the other hand, is written collaboratively by many diff
 
 Testers are also the primary consumers of test reports. In many projects, other team members will only ever see test report summaries or overviews.
 
-Living Documentation is for the whole team. It describes what the application should do before a feature is implemented (in the form of pending scenarios), and demonstrates that the implemented feature behaves as expected (in the form of passing scenarios). For this reason, living documentation scenarios need to be written in business terms, in a way that is easily understandable by non-testers.
+Living Documentation is for the whole team, including product owners, stakeholders and users involved in the project. It describes what the application should do before a feature is implemented (in the form of pending scenarios), and demonstrates (and gives evidence) that the implemented feature behaves as expected (in the form of passing scenarios). For this reason, living documentation scenarios need to be written in business terms, in a way that is easily understandable by non-testers.
 
 === Purpose and scope
 Produced by testers and for testers, a test report naturally has a very strong testing focus. The emphasis is primarily on knowing whether a test passes or fails, and, at a higher level, knowing what proportion of tests pass or fail.
@@ -46,7 +46,7 @@ These differences can be summed up in the following table:
 
 [width="80%",frame="topbot",options="header"]
 |=====
-| Test Reports                            | Living Documentation
+| Test Reports                          | Living Documentation
 | Produced after development is done    | Written before development starts
 | Written by testers                    | Written collaboratively by the whole team
 | Written mostly for testers            | For the whole team and beyond
@@ -59,9 +59,19 @@ Living Documentation is designed to work together with lower-level unit and inte
 
 In highly regulated environments, on the other hand, living documentation will often be more exhaustive and detailed, as it may be used for audits or regulatory reporting.
 
+In Serenity, living documentation can be "layered", so that the most important details are presented first, and the more exhaustive scenarios presented further down.
+
 = Organising requirements for living documentation
 
-In Serenity BDD, living documentation is organised in a requirements hierarchy. This hierarchy is usually implemented as a directory tree (for JBehave and Cucumber) or as a package structure (for JUnit).
+In Serenity BDD, living documentation is organised in a requirements hierarchy. This hierarchy is usually implemented as a directory tree (for Cucumber or JBehave) or as a package structure (for JUnit). You can view the requirements hierarchy of any Serenity project in the _Requirements_ tab, as shown here:
+
+[[fig-living-documentation]]
+.The Requirements overview in a serenity report
+image::reports-overview-page.png[]
+
+This sort of hierarchy can be implemented very simply by organising your feature or story files in a structure that reflects the organisation you want.
+
+Before we look at how to do this in more detail, let's look at a few options for organising requirements.
 
 == Common Requirements Structures
 The exact organisation varies from project to project, but some common structures include:
@@ -85,7 +95,7 @@ A _Feature_ is a concrete solution or implementation that delivers a capability.
 In Scrum, an _Epic_ is simply a big user story, one that can't be delivered in a sprint. A _Theme_ is just another way to group related User Stories, though many teams use Themes as groups of related epics. (Another way to implement the original idea of themes in Serenity BDD is to use tags).
 
 === User Stories
-User Stories are commonly used in Agile as a way to organise work, but they are not always very useful when it comes to Living Documentation. This is because they reflect how a feature was sliced  That's why Cucumber prefers to group scenarios in Feature Files (which describe a feature). JBehave still uses the older convention of "Story Files", which were meant to contain the acceptance criteria of a given story).
+User Stories are commonly used in Agile as a way to organise work, but they are not always very useful when it comes to Living Documentation. This is because they reflect how a feature was sliced up when it was built. But once a feature is delivered, no one cares how it was broken down during the development phase - all that matters is what was delivered. That's why Cucumber prefers to group scenarios in Feature Files (which describe a feature). For this reason, User Stories are generally considered to be not a great way to structure living documentation. (Note that JBehave still uses the older convention of "Story Files", which were meant to contain the acceptance criteria of a given story).
 
 === Configuring your requirements structure in Serenity BDD
 
@@ -176,9 +186,65 @@ src
 
 By default the Story files represent stories, and the directories above them are rendered as Features.
 
+= The Requirements view
+
+Serenity's requirements view is a core part of the Serenity reporting approach, and understanding how it works is key to producing great living documentation. The Serenity living documentation goes far beyond traditional test reporting, and aims to . In mature BDD teams working in large organisations, stakeholders regularly use the living documentation produced by Serenity to validate and document new releases.
+
+You can see an example of this report in the figure below.
+
+[[fig-requirements-tab]]
+.The Requirements overview in a serenity report
+image::reports-overview-page.png[]
+
+Let's look at the various parts of this report, to better understand you might configure them in your own projects.
+
+== The Requirements Hierarchy
+
+In Serenity, you organise your requirements
+
+== The Requirement description
+
+The requirements description is the first thing you see on a typical living documentation report - you can see it below in the white box at the top of the report:
+
+[[fig-requirements-tab]]
+.The Requirements Description
+image::reports-overview-summary.png[]
+
+This text is a bit like an introduction to a book or to a chapter in a book - it should present the application or high level functionality that is described in detail in the rest of the report.
+
+You can add this introductory text at any level of your requirements hierarchy by adding a `readme.md` file at the appropriate level of your requirements hierarchy. A well-documented set of living documentation will have `readme.md` files at each level of the hierarchy, to explain the purpose and background of each functional area in the application.
+
+Markdown (https://daringfireball.net/projects/markdown/) is a convenient lightweight format that you can use to make your living documentation more readable. The markdown used in the illustration above looks like this:
+
+[source, markdown]
+----
+## Regulatory Reporting Controls
+
+This project illustrates Serenity's living documentation capabilities, through a set of requirements for an imaginary investment bank.
+ * The _Customer Due Diligence_ requirements, which are partially implemented (a mixture of pending and passing requirements), and
+ * The _Reporting controls_, which contain a variety of different kinds of failing acceptance tests.
+ ----
+
+
+
+== The Requirements Overview
+
+The Requirements Overview is the first thing
+
+== The Test Results tab
+
+== High Level Overviews
+
+== Feature Overviews
+
+- The requirements hierarchy - item count and status, collapse and expand
+- The test results tab - results by status, functional coverage, automated and manual tests
+- The overview - markdown summary, referring to scenarios, referring to tables
+- Feature level summary
+
 = Adding more details
 
-You can add a special markdown file called `overview.md` at any level in the requirements hierarchy. This file will be rendered on the corresponding page in the Requirements report.
+You can add a special markdown file called `readme.md` or `overview.md` at any level in the requirements hierarchy. This file will be rendered on the corresponding page in the Requirements report.
 
 An `overview.md` file placed in the root requirements directory (`src/test/resources/features` or `src/test/resources/stories`) will be rendered on the Requirements home page in the report. Overview files can also be called `narrative.md` or `narrative.txt` (a convention used in older versions of Serenity).
 

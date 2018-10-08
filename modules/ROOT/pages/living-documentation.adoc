@@ -61,232 +61,116 @@ In highly regulated environments, on the other hand, living documentation will o
 
 In Serenity, living documentation can be "layered", so that the most important details are presented first, and the more exhaustive scenarios presented further down.
 
-= Organising requirements for living documentation
-
-In Serenity BDD, living documentation is organised in a requirements hierarchy. This hierarchy is usually implemented as a directory tree (for Cucumber or JBehave) or as a package structure (for JUnit). You can view the requirements hierarchy of any Serenity project in the _Requirements_ tab, as shown here:
-
-[[fig-living-documentation]]
-.The Requirements overview in a serenity report
-image::reports-overview-page.png[]
-
-This sort of hierarchy can be implemented very simply by organising your feature or story files in a structure that reflects the organisation you want.
-
-Before we look at how to do this in more detail, let's look at a few options for organising requirements.
-
-== Common Requirements Structures
-The exact organisation varies from project to project, but some common structures include:
-
-* Capabilities > Features
-* Capabilities > Features > Stories
-* Goals > Capabilities > Features
-* Epics > Stories
-* Themes > Epics > Stories
-
-A two-level requirements hierarchy works well for most projects. A small project (for example, a micro-service) might need only a short list of features. Only very large or complex projects would typically need three or more levels.
-
-=== Goals, Capabilities and Features
-
-The aim of any software project is to help our stakeholders achieve their _goals_ by providing them with _capabilities_. In BDD, a _Capability_ is something that allows users to do something that they couldn't do previously, or to do something that they could do previously, but do it more efficiently. A capability is technology-agnostic: it does not commit to a particular solution or implementation. An example of a capability might be the ability to pay online with a credit card.
-
-A _Feature_ is a concrete solution or implementation that delivers a capability. Some possible features that deliver the capability we mentioned earlier might be to pay via PayPal, via Stripe or to pay by integrating with a merchant banking platform.
-
-=== Themes and Epics
-
-In Scrum, an _Epic_ is simply a big user story, one that can't be delivered in a sprint. A _Theme_ is just another way to group related User Stories, though many teams use Themes as groups of related epics. (Another way to implement the original idea of themes in Serenity BDD is to use tags).
-
-=== User Stories
-User Stories are commonly used in Agile as a way to organise work, but they are not always very useful when it comes to Living Documentation. This is because they reflect how a feature was sliced up when it was built. But once a feature is delivered, no one cares how it was broken down during the development phase - all that matters is what was delivered. That's why Cucumber prefers to group scenarios in Feature Files (which describe a feature). For this reason, User Stories are generally considered to be not a great way to structure living documentation. (Note that JBehave still uses the older convention of "Story Files", which were meant to contain the acceptance criteria of a given story).
-
-=== Configuring your requirements structure in Serenity BDD
-
-You can configure the way Serenity names the different levels in your own requirements structure using the `serenity.requirements.types` property. For example, if you want to describe your requirements in terms of themes, epics and stories, you would add the following to your Serenity configuration file:
-
------
-serenity.requirements.types=theme,epic,story
------
-
-If you don't configure this parameter, Serenity will decide on a sensible default hierarchy. This hierarchy depends on whether you are using JUnit, Cucumber or JBehave, and on the depth of your requirements hierarchy:
-
-[width="80%",frame="topbot",options="header"]
-|=====
-| Test Framework    | Default Hierarchy
-| JUnit             | capability > feature > story
-| Cucumber          | theme > capability > feature
-| JBehave           | capability > feature > story
-|=====
-
-Requirements configuration applies to the container levels, not to the feature or story files themselves. If you are using Cucumber, feature files will always be represented as features. If you are using JBehave, story files will always be represented as stories.
-
-== Requirements Hierarchies for JUnit Tests
-
-Many teams write automated acceptance tests with Serenity BDD using JUnit. The Screenplay Pattern in particular makes it easy to write highly maintainable tests using a business-readable DSL that produces excellent living documentation.
-
-JUnit acceptance tests should be organised in a package structure that reflects your requirements hierarchy. Note that this means that they may not reflect the package structure in your application, as is usually done for unit and integration tests.
-
-A simple two-level hierarchy is illustrated here:
------
-com
-└── acme
-    └── myapps
-        └── specs
-            ├── multiple_todo_lists
-            ├── sharing_lists
-            └── simple_todo_lists
-                ├── AddingNewItems.java
-                ├── DeletingItems.java
-                ├── FilteringItemsByStatus.java
-                └── MarkingItemsAsComplete.java
------
-
-You need to tell Serenity where to find the requirements hierarchy in your package structure, using the `serenity.test.root` property. For the example shown above, the root package is `com.acme.myapp.specs`:
-
------
-serenity.test.root=com.acme.myapp.specs
------
-
-In this case, the Serenity living documentation will treat the JUnit test cases ("Adding New Items", "Deleting Items" etc.) as Stories, and the packages directly underneath the `com.acme.myapp.specs` package ("Multiple Todo Lists", "Sharing Lists" etc.) as Features.
-
-== Requirements Hierarchies for Cucumber
-
-When you use Cucumber, Serenity expects your feature files to be stored in the `src/test/resources/features` directory. Your requirements hierarchy goes directly underneath this directory:
-
-----
-src
-└── test
-    └── resources
-        └── features
-            ├── multiple_todo_lists
-            ├── sharing_lists
-            └── simple_todo_lists
-                ├── adding_new_items.feature
-                ├── deleting_items.feature
-                ├── filtering_items_by_status.feature
-                └── marking_items_as_complete.feature
-----
-
-When Cucumber is used with the default configuration, the feature files always represent Features, and the directories containing the features represent Capabilities. A Feature is typically bigger than a user story, and can contain the acceptance criteria (scenarios) from several user stories.
-
-== Requirements Hierarchies for JBehave
-
-When you use JBehave, Serenity expects your Story files to be stored in the `src/test/resources/stories` directory. Your requirements hierarchy goes directly underneath this directory:
-
-----
-src
-└── test
-    └── resources
-        └── stories
-            ├── multiple_todo_lists
-            ├── sharing_lists
-            └── simple_todo_lists
-                ├── adding_new_items.story
-                ├── deleting_items.feature
-                ├── filtering_items_by_status.story
-                └── marking_items_as_complete.story
-----
-
-By default the Story files represent stories, and the directories above them are rendered as Features.
+At the heart of this reporting is the _Requirements_ tab. Let's see what you will find there.
 
 = The Requirements view
 
-Serenity's requirements view is a core part of the Serenity reporting approach, and understanding how it works is key to producing great living documentation. The Serenity living documentation goes far beyond traditional test reporting, and aims to . In mature BDD teams working in large organisations, stakeholders regularly use the living documentation produced by Serenity to validate and document new releases.
-
-You can see an example of this report in the figure below.
-
-[[fig-requirements-tab]]
-.The Requirements overview in a serenity report
-image::reports-overview-page.png[]
+Serenity's requirements view is a core part of the Serenity reporting approach, and understanding how it works is key to producing great living documentation. The Serenity living documentation goes far beyond traditional test reporting: in mature BDD teams working in large organisations, stakeholders regularly use the living documentation produced by Serenity not only to validate and document new releases, but also to explain and document how the system works.
 
 Let's look at the various parts of this report, to better understand you might configure them in your own projects.
 
 == The Requirements Hierarchy
 
-In Serenity, you organise your requirements
+In Serenity, requirements are organised in a hierarchy. You can see this hierarchy in the tree structure in the bottom part of the Requirements tab shown in <<fig-requirements-tab>>.
+
+There are a few ideas of how you can organise this hierarchy at the end of this chapter. You can break your requirements down by high level capabilities down into more granular features, or it might make more sense to organise things in terms of some cross-cutting business functionality.
+
+In all cases, the requirements hierarchy is implemented as a nested directory structure (for Cucumber or JBehave) or as a package structure (for JUnit).
+
+The Requirements hierarchy can be any depth, though it can be confusing if different branches have different depths. At the bottom level are the feature files (for Cucumber), story files (for JBehave) or test classes (for JUnit). The directories that contain these files represent the higher level requirements.
+
+You can get an idea of the full directory structure (in the `src/test/features` directory) for the project shown in <<fig-requirements-tab>> here:
+
+----
+├── customer_due_diligence
+│   ├── customer_acceptance_policy
+│   │   ├── business_activities.feature
+│   │   ├── country_risk_ratings.feature
+│   │   ├── customer_risk_profiles.feature
+│   │   ├── enhanced_due_diligence.feature
+│   │   ├── non-face-to-face-customers.feature
+│   │   ├── pep.feature
+│   │   ├── readme.md
+│   │   └── standard_due_diligence.feature
+│   ├── customer_identification
+│   │   └── readme.md
+│   ├── ongoing_monitoring
+│   │   └── readme.md
+│   └── readme.md
+├── readme.md
+└── reporting_controls
+    ├── eligibility
+    │   ├── cftc_eligibility.feature
+    │   ├── mifid2_eligibility.feature
+    │   └── readme.md
+    ├── readme.md
+    └── reportability
+        ├── readme.md
+        └── reportable_state.feature
+----
+
+If you expand the nodes of the requirement tree view, you will get a similar structure in the Requirements tab (see <<fig-requirements-expanded>>).
+
+[[fig-requirements-expanded]]
+.An expanded requirements tree
+image::requirements-expanded.png[]
+
+The tree view also gives you some useful extra information. The little icon on the right hand side of the requirements line tells you the overall result of any executed tests (requirements with no implemented tests are marked as pending). The tree also tells you how many sub-requirements there are underneath each requirement.
 
 == The Requirement description
 
 The requirements description is the first thing you see on a typical living documentation report - you can see it below in the white box at the top of the report:
 
-[[fig-requirements-tab]]
+[[fig-requirements-description]]
 .The Requirements Description
 image::reports-overview-summary.png[]
 
 This text is a bit like an introduction to a book or to a chapter in a book - it should present the application or high level functionality that is described in detail in the rest of the report.
 
-You can add this introductory text at any level of your requirements hierarchy by adding a `readme.md` file at the appropriate level of your requirements hierarchy. A well-documented set of living documentation will have `readme.md` files at each level of the hierarchy, to explain the purpose and background of each functional area in the application.
+You can add this introductory text at any level of your requirements hierarchy by adding a `readme.md` file at the appropriate level of your requirements hierarchy. A well-documented set of living documentation will have `readme.md` files at each level of the hierarchy, to explain the purpose and background of each functional area in the application. You can see these files in the directory structure we looked at in the previous section.
 
-Markdown (https://daringfireball.net/projects/markdown/) is a convenient lightweight format that you can use to make your living documentation more readable. The markdown used in the illustration above looks like this:
-
-[source, markdown]
-----
-## Regulatory Reporting Controls
-
-This project illustrates Serenity's living documentation capabilities, through a set of requirements for an imaginary investment bank.
- * The _Customer Due Diligence_ requirements, which are partially implemented (a mixture of pending and passing requirements), and
- * The _Reporting controls_, which contain a variety of different kinds of failing acceptance tests.
- ----
-
-
-
-== The Requirements Overview
-
-The Requirements Overview is the first thing
-
-== The Test Results tab
-
-== High Level Overviews
-
-== Feature Overviews
-
-- The requirements hierarchy - item count and status, collapse and expand
-- The test results tab - results by status, functional coverage, automated and manual tests
-- The overview - markdown summary, referring to scenarios, referring to tables
-- Feature level summary
-
-= Adding more details
-
-You can add a special markdown file called `readme.md` or `overview.md` at any level in the requirements hierarchy. This file will be rendered on the corresponding page in the Requirements report.
-
-An `overview.md` file placed in the root requirements directory (`src/test/resources/features` or `src/test/resources/stories`) will be rendered on the Requirements home page in the report. Overview files can also be called `narrative.md` or `narrative.txt` (a convention used in older versions of Serenity).
-
-Markdown (https://daringfireball.net/projects/markdown/) is a convenient lightweight format that you can use to make your living documentation more readable. An example of a simple Markdown overview file is shown here:
+Markdown (https://daringfireball.net/projects/markdown/) is a convenient lightweight format that you can use to make your living documentation more readable. The markdown used in the report shown above looks like this:
 
 [source, markdown]
 ----
-## A fantastic Todo application.
+    ## Regulatory Reporting Controls
 
-This application lets you do **great things**, like:
-
-* Add new todo items
-* Mark your items as complete
-* Share your todo lists with your friends
+    This project illustrates Serenity's living documentation capabilities, through a set of requirements for an imaginary investment bank.
+     * The _Customer Due Diligence_ requirements, which are partially implemented (a mixture of pending and passing requirements), and
+     * The _Reporting controls_, which contain a variety of different kinds of failing acceptance tests.
 ----
 
-If you place this `overview.md` file in the requirements root directory, the generated report will include this text on the main Requirements page:
+For any `readme.md` in a nested requirements directory (so any `readme.md` file other than the top level one), the first line should contain the name of the requirement. An example for the _Customer Due Diligence_ capability is shown below:
 
-[[fig-requirements-tab]]
-.A rendered application overview
-image::overview-example.png[]
+[source, markdown]
+----
+    Customer Due Diligence
 
-= Report assets
+    Banks are required to "have in place adequate policies, practices and procedures that promote high ethical and professional standards and prevent the bank from being used, intentionally or unintentionally, by criminal elements".
 
-You can also include images in the `overview.md` files. By default, Serenity will copy any files in the `src/test/resources/assets` directory into the `target/site/serenity/assets` directory when it generates the reports.
+    Certain key elements should be included by banks in the design of KYC programmes. Such essential elements should start from the banks’ risk management and control procedures and should include
+
+    1) customer acceptance policy,
+    2) customer identification, and
+    3) on-going monitoring of high risk accounts
+----
+
+=== Adding images to the requirement description
+
+You can also include images in the `readme.md` files. By default, Serenity will copy any files in the `src/test/resources/assets` directory into the `target/site/serenity/assets` directory when it generates the reports.
 
 You can place any images you want to include in your living documentation here, and then refer to them using the Markdown image syntax, like this:
 
 [source, markdown]
 ----
-
-The application architecture is as shown below:
-
-![Application architecture ](assets/architecture.png)
+![Customer Due Diligence](assets/customer-due-diligence.png)
 ----
 
 This image would then appear in your reports, as illustrated here:
 
 [[fig-requirements-tab]]
 .A rendered application overview including an image
-image::illustrated-overview.png[]
-
+image::requirements-overview-image.png[]
 
 If you need to override the location of the `assets` directory, you can do so using the `report.assets.directory` property, as shown here:
 
@@ -295,3 +179,119 @@ report.assets.directory=src/test/resources/my-special-resources
 ----
 
 Note that the target directory in the `target/site/serenity` directory will always be called `assets`.
+
+== The Test Results tab
+
+The _Test Results_ tab (shown below) tells you about the acceptance tests that were executed for this set of requirements. Both automated and manual tests appear in the summary donut chart and table (the manual results are the same color as the equivalent automated results, but in a lighter tone).
+
+[[fig-requirements-test-result-tab]]
+.The test results for a given requirement
+image::requirements-results.png[]
+
+You can also find the full list of automated and manual test results in the bottom part of the screen.
+
+=== Functional Coverage
+
+The Functional Coverage section shows the test results broken down by functional area.
+
+[[fig-functional-coverage]]
+.Functional Coverage
+image::requirements-functional-coverage-stats.png[]
+
+For example, in the illustration shown above, the _Customer Due Diligence_ high level requirement has three child requirements:
+
+  * Customer Acceptance Policies
+  * Customer Identification, and
+  * Ongoing Monitoring
+
+The functional coverage view shows the breakdown of test results for each of these child requirements. This is a useful way to get an idea of the stability or release-readiness of different parts of an application.
+
+=== Test Results
+
+At the bottom of the `Test Results` tab, you will find the actual test results - the list of all the tests, automated and manual, that were executed for this requirement.
+
+[[fig-requirements-test-results]]
+.The test results for a given requirement
+image::requirements-test-results.png[]
+
+== Feature Overviews
+
+Features are an important part of the Serenity living documentation model. Features correspond to the contents of a feature file in Cucumber, a story file in JBehave, or a test case in JUnit. A feature represents a coherent piece of functionality that customers value; as a rule of thumb, a feature is something we could deploy by itself and the users would stil find it useful.
+
+A feature contains a set of acceptance criteria, automated scenarios that demonstrate and verify how the feature works. But often the acceptance criteria are not enough in themselves to fully explain what a feature does. We need some extra information, which we provide at the top of the feature or story file. For example, in the following feature file, we give some additional business context about the _Business Activities_ feature before diving into individual scenarios:
+
+[source, gherkin]
+----
+Feature: Business Activities
+
+  Some business activities are considered more risk-prone than others,
+  and certain customers and entities may pose specific risks.
+
+  Scenario Outline: The business activity risk factor for an industry
+
+  The industry risk factor is a value from 0 to 10.
+
+    When a customer works in <Business Category>
+    Then their base business activity risk factor should be <Risk Factor>
+
+    Examples:
+      | Business Category        | Risk Factor |
+      | Casino                   | 10          |
+      | Precious Metals Exchange | 9           |
+      | Currency Exchange        | 9           |
+      | Jewellery Store          | 8           |
+      | Convenience Store        | 7           |
+      | Real Estate Broker       | 6           |
+      | Software Development     | 3           |
+
+  Scenario Outline: The business activity risk factor for an established business
+      Established businessess have been in activity for 2 years or more
+
+        When a customer with a business risk factor of <Risk Factor>, such as for a <Business Category> business
+        And the business been operation for more than two years
+        Then their business activity risk rating should be <Risk Rating>
+
+        Examples:
+          | Risk Factor | Business Category    | Risk Rating |
+          | 7 or above  | Casino               | High        |
+          | 5 to 7      | Jewellery Store      | Medium      |
+          | Under 5     | Software Development | Low         |
+    ...
+----
+
+The requirements page for this feature is shown in <<fig-requirements-feature-overview>>.
+Here we see the introductory text from the top of the feature file,
+the list of scenarios (or acceptance criteria) defined for this feature,
+and a detailed description of each scenario.
+Icons indicate whether a scenario passed or failed, and if you click on the title bar of one of the scenarios, you will go to the test results page for that scenario.
+
+[[fig-requirements-feature-overview]]
+.The requirements page for a feature
+image::requirements-feature-overview.png[]
+
+=== Enhanced Feature Documentation
+
+When you use Serenity with Cucumber, you can turn this feature overview into a rich living document that mixes business rules with examples and scenarios drawn from the acceptance tests. This lets you design a requirements overview that product owners and stakeholders can review quickly and easily, while still keeping the details on hand if they want to know more.
+
+T> Enhanced feature documentation is currently only supported for Cucumber.
+
+For example, we could improve the _Business Activities_ feature overview by embedding the tables (but not the "Given..When..Then" texts which essentially act as text fixtures in this case). To do this, we use the `{Examples}` tag along with the name of the scenario outline that we want to use:
+
+[source, gherkin]
+----
+Feature: Business Activities
+
+  Some business activities are considered more risk-prone than others,
+  and certain customers and entities may pose specific risks.
+  The business activity risk factor for an industry is determined by the potential risk they present to the bank. For example:
+
+  {Examples} The business activity risk factor for an industry
+----
+
+When the report is generated, Serenity will include the example table from the _The business activity risk factor for an industry_ scenario in the feature description (see <<fig-requirements-embedded-table>>).
+
+[[fig-requirements-embedded-table]]
+.Example tables from the scenarios can be included in the feature overview
+image::requirements-embedded-table.png[]
+
+If the tests for this table have been executed, the result for each row will be indicated in the table.

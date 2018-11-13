@@ -1,0 +1,322 @@
+= Testing Web Applications with Serenity
+
+Serenity BDD provides excellent integration with Selenium, which allows you to avoid a lot of the boilerplate and infrastructure code you normally need to deal with in automated web tests. In particular, Serenity manages the driver lifecycle for you (so you don't need to create your own driver instances, or close them at the end of the tests). Serenity can also be configured to automatically take screenshots throughout the tests, creating rich documentation of how each test played out. When you write your tests in a fluent, readable manner, these screenshots become part of the "living documentation" of your application.
+
+== Selenium versions
+
+Serenity versions are tied to Selenium versions, and the latest version of Serenity almost always uses the latest version of WebDriver. For this reason, it is usually easier to include only a dependency on `serenity-core`, and let Serenity pull in the Selenium dependency it works with.
+
+== A simple Selenium web test
+
+Serenity reduces the amount of code you need to write and maintain when you write web tests. For example, it takes care of creating WebDriver instances, and of opening and closing the browser for you. The following is a very simple Selenium web test using Serenity:
+
+[source,java,indent=0]
+.WhenManagingUsers.java
+----
+include::../examples/junit-web-quick-start/src/test/java/net/serenitybdd/samples/junit/features/searching/WhenWritingWebTestsInSerenity.java[tags=webtest]
+----
+<1> To benefit from the Serenity WebDriver integration, you need to run your test as a Serenity test
+<2> You use the @Managed annotation to declare a Serenity-managed WebDriver instance
+<3> Serenity will create the driver instance and open the browser the first time you use the Serenity-managed instance
+<4> At the end of the test, Serenity will close the browser and shut down the driver
+
+This test would not scale well for a real application. In the following chapters, we will see how to use patterns such as Page Objects and Screenplay to make your web tests easier to maintain as they grow in number. But in this chapter, we will just focus on configuring your WebDriver setup.
+
+== Configuring the driver
+
+It is very rare to need to create a WebDriver instance in Serenity - in most cases, you can do all the configuration you need using the Serenity system properties.
+
+=== The webdriver.driver property
+The most fundamental property is the `webdriver.driver`. This tells Serenity which browser to use. You can configure this in several locations.
+
+==== Using the serenity.properties file
+
+You can add the `webdriver.driver` property to your `serenity.properties` file in the root of your project, e.g.
+
+[source,properties]
+----
+webdriver.driver=chrome
+----
+
+You can also create a `serenity.conf` file, which uses the Typesafe Config notation, and add this to your classpath (for example in `src/test/resources`).
+
+[source,json]
+----
+webdriver {
+    driver=chrome
+}
+----
+
+==== Using the command line
+
+You can override the driver specified in the properties or configuration file from the command line. For Maven, you would use the `-D` option, e.g.
+
+----
+mvn clean verify -Dwebdriver.driver=firefox
+----
+
+For Gradle, you use the `-P` option:
+
+----
+gradle clean test -Pwebdriver.driver=firefox
+----
+
+==== Using the @Managed annotation
+
+If you always need a test to be run with a particular browser, and you are using JUnit, you can use the `browser` option in the `@Managed` annotation, e.g.
+
+[source,java]
+----
+@Managed(driver = "firefox")
+WebDriver driver;
+----
+
+The Managed annotation take priority over driver values passed in on the command line.
+
+===== Using the @driver tag
+
+If you are using Cucumber or JBehave, you can override the driver for a particular feature or scenario by using the `@driver tag`, e.g.
+
+[source,gherkin]
+----
+@driver:chrome
+Feature: Completing todos
+
+  In order to make me feel a sense of accomplishment
+  As a forgetful person
+  I want to be to view all of things I have completed
+
+  Scenario: Mark a task as completed in Cucumber
+    Given that Jane has a todo list containing Buy some milk, Walk the dog
+    When she completes the task called 'Walk the dog'
+    And she filters her list to show only Completed tasks
+    Then her todo list should contain Walk the dog
+----
+
+In JBehave, you can use the `Meta` tag instead:
+
+----
+Meta:
+@driver chrome
+
+Scenario: Mark a task as completed in Cucumber
+  Given that Jane has a todo list containing Buy some milk, Walk the dog
+  When she completes the task called 'Walk the dog'
+  And she filters her list to show only Completed tasks
+  Then her todo list should contain Walk the dog
+----
+
+=== Configuring Drivers
+When you run a WebDriver test against almost any driver, you need an OS-specific binary file to act as an intermediary between your test and the browser you want to manipulate. The main drivers, and where you can download them from, are listed below:
+
+[cols="2*", options="header"]
+|===
+|Browser
+|Driver
+|Location
+|System Property
+
+|Firefox
+|geckodriver
+|https://github.com/mozilla/geckodriver/releases
+|`webdriver.gecko.driver`
+
+|Chrome
+|chromedriver
+|http://chromedriver.chromium.org
+|`webdriver.chrome.driver`
+
+|Internet Explorer
+|IEDriverServer
+|https://github.com/SeleniumHQ/selenium/wiki/InternetExplorerDriver
+|`webdriver.ie.driver`
+
+|===
+
+To run your web tests with a given driver, you need to either have the correct driver binary on your system path, or provide the path to the binary using the system property shown in the table above. For example, your `serenity.properties` file might contain the following:
+
+[source,properties]
+----
+webdriver.gecko.driver=/path/to/my/geckodriver
+----
+
+However, adding a system path to your `serenity.properties` file is poor practice, as it means your tests will only run if the specified directory and binary exists, and that you are running the tests on tshe correct operating system. This obviously makes little sense if you are running your tests both locally, and on a CI environment.
+
+A more robust approach is to have your drivers in your source code, but have different drivers per OS. Serenity allows you to pass driver-specific properties to a driver, as long as they are prefixed with `drivers.<os>`. For example, the following line will configure the `webdriver.chrome.driver` if you are running your tests under windows.
+
+[source,properties]
+----
+drivers.windows.webdriver.chrome.driver = src/test/resources/webdriver/windows/chromedriver.exe
+----
+
+You can easily configure different binaries for different operating systems like this:
+
+[source,properties]
+----
+drivers.windows.webdriver.chrome.driver = src/test/resources/webdriver/windows/chromedriver.exe
+drivers.mac.webdriver.chrome.driver = src/test/resources/webdriver/mac/chromedriver
+drivers.linux.webdriver.chrome.driver = src/test/resources/webdriver/linux/chromedriver
+----
+
+Or in the `serenity.conf` file, you can put:
+
+[source,properties]
+----
+drivers {
+  windows {
+    webdriver.chrome.driver = src/test/resources/webdriver/windows/chromedriver.exe
+  }
+  mac {
+    webdriver.chrome.driver = src/test/resources/webdriver/mac/chromedriver
+  }
+  linux {
+    webdriver.chrome.driver = src/test/resources/webdriver/linux/chromedriver
+  }
+}
+----
+
+This approach also works when you have more than one driver to configure. Suppose you need to run tests on three environments, using Firefox or Windows. One convenient approach is to store your drivers in a directory structure under `src/test/resources` similar to the following:
+
+[]
+---
+src/test/resources
+└── webdriver
+    ├── linux
+    │   ├── chromedriver
+    │   └── geckodriver
+    ├── mac
+    │   ├── chromedriver
+    │   └── geckkodriver
+    └── windows
+        ├── chromedriver.exe
+        └── geckodriver.exe
+---
+
+This means that your tests will not need the webdriver binaries to be installed on every machine.
+
+The corresponding `serenity.conf` configuration for both browsers and each operating system would look like this:
+
+[source,json]
+----
+drivers {
+  windows {
+    webdriver.chrome.driver = src/test/resources/webdriver/windows/chromedriver.exe
+    webdriver.gecko.driver = src/test/resources/webdriver/windows/geckodriver.exe
+  }
+  mac {
+    webdriver.chrome.driver = src/test/resources/webdriver/mac/chromedriver
+    webdriver.gecko.driver = src/test/resources/webdriver/mac/geckodriver
+  }
+  linux {
+    webdriver.chrome.driver = src/test/resources/webdriver/linux/chromedriver
+    webdriver.gecko.driver = src/test/resources/webdriver/linux/geckodriver
+  }
+}
+----
+
+==== Configuring Chrome
+
+ChromeDriver gives you a few ways to configure it’s options, which are described here. Serenity lets you configure most of these options via the Serenity properties. We will see how to do this in the rest of the article.
+
+===== Chrome arguments
+When you create a ChromeDriver instance by hand, you can pass in arguments to the ChromeDriver using the addArguments() method:
+
+[source,java]
+----
+ChromeOptions options = new ChromeOptions();
+options.addArguments("--no-first-run");
+options.addArguments("--homepage=about:blank");
+options.addArguments("--test-type");
+----
+
+In Serenity, the —test-type switch is provided automatically. For the others, you would pass them in using the chrome.switches property, e.g.
+
+[source,properties]
+----
+chrome.switches=--homepage=about:blank,--no-first-run
+----
+
+===== Chrome preferences
+You can also provide more advanced options using the setExperimentalOption() method:
+
+[source,java]
+----
+Map<String, Object> chromePrefs = new HashMap<String, Object>();
+chromePrefs.put("download.default_directory", downLoadDirectory);
+chromePrefs.put("profile.default_content_settings.popups", 0);
+chromePrefs.put("pdfjs.disabled", true);
+ChromeOptions options = new ChromeOptions();
+options.setExperimentalOption("prefs", chromePrefs);
+----
+
+In Serenity, you would pass these using properties prefixed with the chrome_preferences prefix, e.g.
+
+[source,properties]
+----
+chrome_preferences.download.default_directory = /my/download/directory
+chrome_preferences.profile_default_content_settings.popups = 0
+chrome_preferences.pdfjs.disabled=true
+----
+
+If you are using the TypeSafe configuration file format, you could write the following:
+
+[source,json]
+----
+chrome_preferences {
+    download.default_directory = /my/download/directory
+    profile_default_content_settings.popups = 0
+}
+----
+
+===== General capabilities
+You can also add custom capabilities like this:
+
+
+[source,java]
+----
+DesiredCapabilities cap = DesiredCapabilities.chrome();
+cap.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+cap.setCapability(CapabilityType.SUPPORTS_ALERTS, true);
+----
+
+Serenity lets you pass arbitrary capability properties to the Chrome driver using the chrome.capabilities. prefix, e.g
+
+[source,properties]
+----
+chrome.capabilities.acceptSslCerts = true
+chrome.capabilities.handlesAlerts = true
+----
+
+Or using the Typesafe Config format:
+
+[source,json]
+----
+chrome {
+    capabilities {
+        acceptSslCerts = true
+        handlesAlerts = true
+    }
+}
+----
+
+==== Configuring Firefox
+
+COMING SOON
+
+==== Configuring Internet Explorer
+
+COMING SOON
+
+==== Configuring Edge
+
+COMING SOON
+
+==== Configuring Proxy settings
+
+You can set proxy settings with any driver by using the `serenity.proxy.*` properties:
+
+  * `serenity.proxy.http` - The HTTP proxy address
+  * `serenity.proxy.user` - The proxy username
+  * `serenity.proxy.password` - The proxy password
+  * `serenity.proxy.ssl` - the SSL Proxy configuration
+  * `serenity.proxy.sslProxyPort` - the SSL Proxy port configuration

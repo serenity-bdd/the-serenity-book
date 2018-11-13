@@ -5,6 +5,7 @@
 * xref:step-libraries.adoc[Working with Step Libraries]
 
 .Testing Web Applications
+* xref:web-testing-in-serenity.adoc[Testing Web Applications]
 * xref:page-objects.adoc[Working with Page Objects]
 * xref:angularjs.adoc[Testing AngularJS applications]
 

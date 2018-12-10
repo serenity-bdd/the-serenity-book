@@ -1,0 +1,52 @@
+= Email and PDF Reports
+
+== Email Reports
+
+=== Custom fields
+
+The email report contains a section where you can define custom field values. You configure these in your Serenity properties or config file, and can provide their values either in the configuration file itself, or via command line properties or environment variables.
+
+You define the fields and values you want to display using the special property prefix of `report.customfields`. For example, your `serenity.properties` file could have the following values:
+
+----
+report.customfields.application_version = 1.2.3
+report.customfields.environment = UAT
+----
+
+Or if you are using the `serenity.conf` JSON format:
+
+----
+report {
+    customfields {
+        application_version = 1.2.3
+        environment = UAT
+    }
+}
+----
+
+If you need to refer to a system environment variable, just use the `$` symbol and the corresponding system environment property will be used:
+
+----
+report.customfields.host = ${HOST}
+----
+
+You can also configure the order the fields will appear using the `report.customfields.order` field, like this:
+
+----
+report {
+    customfields {
+        application_version = 1.2.3
+        environment = UAT
+        host = ${HOST}
+        order = host,environment,application_version
+    }
+}
+----
+
+=== Highlighted results
+
+The summary report can also displays results for specific tags.
+
+----
+report.tagtypes = group
+----

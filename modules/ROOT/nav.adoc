@@ -25,6 +25,7 @@
 
 .Serenity and the Screenplay Pattern
 * xref:serenity-screenplay.adoc[Screenplay Fundamentals]
+* xref:screenplay-selenium-tasks.adoc[Web Testing with Screenplay]
 * xref:serenity-screenplay-rest.adoc[REST API Testing with Screenplay]
 
 .Reporting and Living documentation

@@ -1,0 +1,261 @@
+= Screenplay Selenium Webdriver tasks
+
+Serenity provides a large number of built-in Screenplay tasks that make interacting with a web application quicker and easier to write. In this chapter, we will look at everything you need to know to write web tests with Serenity Screenplay.
+
+== Screenplay WebDriver abilities
+
+Before a Screenplay actor can interact with a web page, we need to give them a WebDriver instance to work with. You do this with the `BrowseTheWeb` ability. In a JUnit test, this code could look like the following:
+
+[source,java]
+----
+@Managed
+WebDriver driver;
+...
+Actor sam = Actor.named("Sam");
+sam.can(BrowseTheWeb.with(driver));
+----
+
+If you are using Cucumber, Serenity will manage the WebDriver instances for you. You just need to define a `Cast` object, whose job it is to provide actors to the scenarios. A simple approach is to use the `OnlineCast`, which returns actors who can all browse the web with the default browser:
+
+[source,java]
+----
+@Before
+public void setTheStage() {
+    OnStage.setTheStage(new OnlineCast());
+}
+----
+
+You can also use the `whereEveryoneCan` method to provide additionla abilities, e.g.
+
+[source,java]
+----
+@Before
+public void setTheStage() {
+    OnStage.setTheStage(
+        OnlineCast.whereEveryoneCan(
+            CallAnApi.at("http://my.server.endpoint")
+        )
+    );
+}
+----
+
+This will provide actors who can both use WebDriver tasks and RestAssured tasks.
+
+== Opening a web page
+
+In Screenplay, you open a new page using the `Open` interaction. This can work with a URL, e.g:
+
+[source,java]
+-----
+sam.attemptsTo(Open.url("https://google.com"));
+-----
+
+If you have defined a Page Object with a default url, you can open a page object:
+
+[source,java]
+-----
+@DefaultUrl("https://google.com")
+public class GooglePage extends PageObject {}
+...
+
+GooglePage googlePage;
+...
+sam.attemptsTo(Open.browserOn().the(googlePage));
+-----
+
+Or you can use the class directly, e.g.
+
+[source,java]
+-----
+sam.attemptsTo(Open.browserOn().the(GooglePage.class));
+-----
+
+== Simple WebDriver interactions
+
+Common WebDriver actions are represented by their own Interaction classes in Serenity Screenplay.
+
+=== Clicking on an element
+
+The `Click` interaction class allows you to perform a WebDriver click on an element.
+
+[source,java]
+-----
+Target SUBMIT_BUTTON = Target.the("Submit button").located(By.cssSelector("input[value='Go']"))
+
+sam.attemptsTo(Click.on(SUBMIT_BUTTON));
+-----
+
+In addition to a `Target` object, the `Click.on(...)` method lets you click on a `By` locator, an XPath or CSS expression in String form, or a `WebElementFacade`. For example:
+
+[source,java]
+-----
+sam.attemptsTo(Click.on(By.cssSelector("input[value='Go']")));
+
+sam.attemptsTo(Click.on("#submit-button"));
+
+WebElementFacade submitButton = find(By.cssSelector("input[value='Go']"));
+sam.attemptsTo(Click.on(submitButton));
+-----
+
+You can also provide a list of locators, to progressively narrow down the search. For example, the following will click on the link with the text "Accounts" inside the main menu element:
+
+[source,java]
+-----
+sam.attemptsTo(Click.on(By.cssSelector("#mainMenu"), By.linkText("Accounts")));
+-----
+
+As with a standard Serenity click operation, if the target is a form element (`input`, `button`, `select`, `textarea`, `link`, `option`), Serenity will wait until the element is enabled before clicking.
+
+=== Typing values into fields
+
+To type values into fields (where a conventional Selenium test would use the `sendKeys()` method), you use the `Enter` interaction class. The `Enter` class uses a simple DSL
+
+[source,java]
+-----
+Target NEW_TODO = Target.the("New Todo input field").locatedBy(".new-todo");
+
+sam.attemptsTo(
+    Enter.theValue("Walk the dog").into(NEW_TODO)
+);
+-----
+
+You can also use the `thenHit()` method as a convenience to enter a text value and then send an individual key to the same element:
+
+[source,java]
+-----
+sam.attemptsTo(
+    Enter.theValue("Walk the dog").into(NEW_TODO).thenHit(Keys.ENTER)
+);
+-----
+
+Serenity waits until a field is enabled before typing a value into the field, and clear the field beforehand. For some UIs, this may not be necessary, or may even interfer with the screen behaviour. To precisely replicate the WebDriver `sendKeys()` behaviour, you can use the `keyValues()` method instead of `enterValues()`:
+
+[source,java]
+-----
+sam.attemptsTo(
+    Enter.keyValues("Walk the dog").into(NEW_TODO)
+);
+-----
+
+=== Hitting a key
+
+If you just want to hit a single key into a field, you can also use the `Hit` interaction class. This class also uses `sendKeys()` under the hood, but can sometimes be more readable:
+
+[source,java]
+-----
+sam.attemptsTo(
+    Hit.the(Keys.ENTER).into(NEW_TODO)
+);
+-----
+
+Or (for equivalent results):
+
+[source,java]
+-----
+Target SELECT_CITY = Target.the("City dropdown").locatedBy(".city-selection-list");
+
+sam.attemptsTo(
+    Hit.the(Keys.ARROW_DOWN).keyIn(SELECT_CITY)
+);
+-----
+
+=== Working with dropdowns
+
+We can use the `SelectFromOptions` interaction to select a value in a dropdown list, either by value, by visible text, or by index. An example is shown below:
+
+[source,java]
+-----
+sam.attemptsTo(
+    SelectFromOptions.byVisibleText("Paris").from(SELECT_CITY)
+);
+-----
+
+=== Moving the mouse
+
+Some tests need us to hover over an element, for example to display a menu or icon. In Serenity Screenplay you can use the `MoveMouse` interaction class to do this. Like the other interaction classes, this will work with an element, an XPath or CSS selector, a locator or a sequence of locators.
+
+[source,java]
+-----
+Target PROFILE_BUTTON = Target.the("Profile Button").locatedBy("#profile");
+
+sam.attemptsTo(
+    MoveMouse.to(PROFILE_BUTTON)
+);
+-----
+
+Often when we move the mouse over an element, we want to perform another action afterwards. The `MoveMouse` interaction class lets us do this using the `andThen()` method, which takes a lambda expression as a parameter. The lambda takes an `Actions` object as a parameter, which can be used to define subsequent actions. For example to move over a button and then doubleclick, we could write the following:
+
+[source,java]
+-----
+sam.attemptsTo(
+    MoveMouse.to(PROFILE_BUTTON).andThen( actions -> actions.doubleClick() )
+);
+-----
+
+Or we could shorten the code to a method reference:
+
+
+[source,java]
+-----
+sam.attemptsTo(
+    MoveMouse.to(PROFILE_BUTTON).andThen( Actions::doubleClick() )
+);
+-----
+
+=== JavaScript Clicks
+
+On some sites, a normal WebDriver click does not work, and we need to use JavaScript directly. We can do this using the `JavaScriptClick` interaction class. This has an identical usage as `Click`, as shown here:
+
+[source,java]
+-----
+sam.attemptsTo(JavaScriptClick.on(SUBMIT_BUTTON));
+-----
+
+=== Scrolling
+
+The `ScrollTo` interaction class lets you scroll to a specified element:
+
+[source,java]
+-----
+sam.attemptsTo(Scroll.to(SUBMIT_BUTTON));
+-----
+
+You can also specify whether to align the scrolling with the top or bottom of the target element by `andAlignToTop()` and `andAlignToBottom()` methods:
+
+[source,java]
+-----
+sam.attemptsTo(Scroll.to(SUBMIT_BUTTON).andAlignToTop());
+-----
+
+=== Switching Frames
+
+You can switch to another window or frame using the `Switch` interaction, e.g.
+
+[source,java]
+-----
+sam.attemptsTo(Switch.toFrame(2));
+-----
+
+This works for all of the `WebDriver` _switchTo()_ methods. For example to switch to an alert:
+
+[source,java]
+-----
+sam.attemptsTo(Switch.toAlert());
+-----
+
+=== Writing custom interaction classes
+
+It is easy to write your own interaction class using the `BrowseTheWeb` ability.
+
+== Querying a web UI
+
+Serenity Screenplay also gives you a large number of options when it comes to querying a web UI. Most involve special types of `Question` class. We look at these in this section.
+
+=== Reading the value of a field
+
+Reading a value from an element is one of the most common ways we interact with a web page.
+
+[source,java]
+-----
+sam.attemptsTo(Switch.toAlert());
+-----

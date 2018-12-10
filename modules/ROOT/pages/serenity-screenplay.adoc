@@ -1,0 +1,3 @@
+= Writing User-centric tests using Serenity Screenplay
+
+The Screenplay pattern is an approach to writing automated acceptance tests that helps us write cleaner, more maintainable, more scalable automation code. A Screenplay test talks first and foremost about the tasks a user performs, in business language, rather than diving into the details about buttons, clicks and input fields. Focusing on the business tasks makes our tests more readable, more maintainable, and easier to scale.

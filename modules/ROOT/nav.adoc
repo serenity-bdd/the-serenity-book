@@ -21,6 +21,9 @@
 
 .Working with REST APIs
 * xref:serenity-rest.adoc[REST API Testing in Serenity]
+
+.Serenity and the Screenplay Pattern
+* xref:serenity-screenplay.adoc[Screenplay Fundamentals]
 * xref:serenity-screenplay-rest.adoc[REST API Testing with Screenplay]
 
 .Reporting and Living documentation

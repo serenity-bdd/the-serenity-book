@@ -1,0 +1,398 @@
+The Screenplay Pattern is an approach to writing high quality automated acceptance tests based on good software engineering principles such as the Single Responsibility Principle, the Open-Closed Principle, and effective use of Layers of Abstraction. It encourages good testing habits and well-designed test suites that are easy to read, easy to maintain and easy to extend, enabling teams to write more robust and more reliable automated tests more effectively.
+
+In this section we will look at how to use the Screenplay Pattern with Serenity BDD. We will be illustrating the Screenplay Pattern using the AngularJS implementation of the well-known TodoMVC (http://todomvc.com) project (see <<fig-todomvc-app>>). You can experiment with this application at http://todomvc.com/examples/angularjs/#/.
+
+[[fig-todomvc-app]]
+.The Screenplay Pattern will be illustrated by some tests against the TodoMVC application
+image::journey-todo-app.png[]
+
+You can use the Screenplay Pattern with Serenity BDD in JUnit, Cucumber or JBehave. For simplicity, the examples will be using JUnit.
+
+=== Introducing the Screenplay Pattern ===
+
+Suppose we are implementing the “Add new todo items” feature of the ToDo MVC application. This feature could have an acceptance criteria along the lines of “Should be able to add a new todo item”. If we were testing these scenarios manually, we could create test plans like the following:
+
+ * Should be able to add a new todo item
+ ** Open the application
+ ** Add an item called ‘Buy some milk’
+ ** The ‘Buy some milk’ item should appear in the todo list
+
+Using the Screenplay Pattern, we could write this code very naturally like this:
+
+[source,java]
+----
+include::{srcdir}/journey-pattern-sample/src/test/java/net/serenitybdd/demos/todos/features/record_todos/AddNewTodos.java[tags=should_be_able_to_add_a_todo_item]
+----
+
+One of the motivations behind the Screenplay Pattern is the highly readable test code that it produces. Even if you are not familiar with how this code is implemented under the hood, it should be quite obvious what the test is trying to demonstrate, and how it is going about it.
+
+In addition, the Serenity reports produced for this test also reflect this narrative structure, making it easier for testers, business analysts and business people to understand what the tests are actually demonstrating. A typical Screenplay Pattern report is shown in <<fig-todomvc-report>>.
+
+[[fig-todomvc-report]]
+.The Serenity report documents both the intent and the implementation of the test
+image::journey-report.png[]
+
+The code listed above certainly reads cleanly, but it may leave you wondering how it actually works under the hood. Let’s see how it all fits together.
+
+=== Screenplay Pattern tests runs like any other Serenity test ===
+
+The Serenity Screenplay Pattern currently integrates with both JUnit and Cucumber. In JUnit, you use the SerenityRunner JUnit runner, as for any other Serenity JUnit tests. The full source code of the test we saw earlier is shown here:
+
+[source,java]
+----
+include::{srcdir}/journey-pattern-sample/src/test/java/net/serenitybdd/demos/todos/features/record_todos/AddNewTodos.java[tags=add_new_todos_start]
+include::{srcdir}/journey-pattern-sample/src/test/java/net/serenitybdd/demos/todos/features/record_todos/AddNewTodos.java[tags=should_be_able_to_add_a_todo_item]
+include::{srcdir}/journey-pattern-sample/src/test/java/net/serenitybdd/demos/todos/features/record_todos/AddNewTodos.java[tags=add_new_todos_end]
+----
+
+It’s not hard to guess what this test does just by reading the code. There are however a few things here that are new. In the following sections, we will take a closer look at the details.
+
+=== Layers of abstraction ===
+
+Experienced automated testers use layers of abstraction to separate the intent of the test (what you are trying to achieve) from the implementation details (how you achieve it). By separating the what from the how, the intent from the implementation, layers of abstraction help make tests easier to understand and to maintain. Indeed, well defined layers of abstraction are perhaps the single most important factor in writing high quality automated tests.
+
+In User Experience (UX) Design, we break down the way a user interacts with an application into goals, tasks and actions:
+
+  * The goal describes what the user is trying to achieve in business terms
+  * The tasks describe the high level steps the user needs to perform to achieve this goal, and
+  * The actions correspond to how a user interacts with the system to perform a particular task, such as by clicking on a button or entering a value into a field.
+
+The Screenplay Pattern in Serenity BDD provides a clear distinction between tasks and actions, which makes it easier for teams to write layered tests more consistently.
+
+=== Actors and the Screenplay Pattern ===
+
+Tests describe how a user interacts with the application to achieve a goal. For this reason, tests read much better if they are presented from the point of view of the user.
+
+In the Screenplay Pattern, we call a user interacting with the system an _Actor_. Actors are at the heart of the Screenplay Pattern (see <<fig-journey-actors>>). Each actor has a certain number of _Abilities_, such as the ability to browse the web or to query a restful web service. Actors can also perform _Tasks_ such as adding an item to the Todo list. To achieve these tasks, they will typically need to interact with the application, such as by entering a value into a field or by clicking on a button. We call these interactions _Actions_. Actors can also ask _Questions_ about the state of the application, such as by reading the value of a field on the screen or by querying a web service.
+
+[[fig-journey-actors]]
+.The Screenplay Pattern uses an actor-centric model
+image::journey-actors.png[]
+
+In Serenity, creating an actor is as simple as creating an instance of the Actor class and providing a name:
+
+[source,java]
+----
+Actor james = Actor.named("James");
+----
+
+We find it useful to give the actors real names, rather than just to use a generic one such as "the user". Different names can be a short-hand for different user roles or personas, and make the scenarios easier to relate to.
+
+=== Actors have abilities ===
+
+Actors need to be able to do things to perform their assigned tasks. So we give our actors “abilities”, a bit like the superpowers of a super-hero, but in more mundane. If this is a web test, for example, we need James to be able to browse the web using a browser.
+
+Serenity BDD plays well with Selenium WebDriver, and is happy to manage the browser lifecycle for you. All you need to do is to use the @Managed annotation with a WebDriver member variable, as shown here:
+
+[source,java]
+----
+@Managed
+WebDriver hisBrowser;
+----
+
+We can then let James use this browser like this:
+
+[source,java]
+----
+james.can(BrowseTheWeb.with(hisBrowser));
+----
+
+To make it clear that this is a precondition for the test (and could very well go in a JUnit `@Before` method), we can use the syntactic sugar method givenThat():
+
+[source,java]
+----
+givenThat(james).can(BrowseTheWeb.with(hisBrowser));
+----
+
+Each of the actor’s abilities is represented by an Ability class (in this case, `BrowseTheWeb`) which keeps track of the things the actor needs to perform this ability (for example, the `WebDriver` instance used to interact with the browser). Keeping the things an actor can do (browse the web, invoke a web service...) separate from the actor makes it easier to extend the actor’s abilities. For example, to add a new custom ability, you just need to implement a new `Ability` class.
+
+=== Actors perform tasks ===
+
+An actor needs to perform a number of tasks to achieve a business goal. A fairly typical example of a task is “adding a todo item”, which we could write as follows:
+
+[source,java]
+----
+james.attemptsTo(AddATodoItem.called("Buy some milk"))
+----
+
+Or, if the task is a precondition, rather than the main subject of the test, we could write something like this:
+
+[source,java]
+----
+james.wasAbleTo(AddATodoItem.called("Buy some milk"))
+----
+
+For more readability, we can also wrap the actor in a static method from the `GivenWhenThen` class:
+
+ * givenThat()
+ * andThat()
+ * when()
+ * then()
+ * and()
+ * but()
+
+For example, we could have written the last line of code like this:
+[source,java]
+----
+givenThat(james).wasAbleTo(AddATodoItem.called("Buy some milk"))
+----
+
+Let’s break it down to understand what is going on. At the heart of the Screenplay Pattern, an actor performs a sequence of tasks. In Serenity, this mechanism is implemented in the Actor class using a variation of the Command Pattern, where the actor executes each task by invoking a special method called performAs() on the corresponding Task object (see <<fig-journey-command-pattern>>).
+
+[[fig-journey-command-pattern]]
+.The actor invokes the `performAs()` method on a sequence of tasks
+image::journey-command-pattern.png[]
+
+Tasks are just objects that implement the `Task` interface, and need to implement the `performAs(actor)` method. In fact, you can think of any Task class as basically a `performAs()` method alongside a supporting cast of helper methods.
+
+=== Tasks can be created using annotated fields or builders ===
+
+To do its reporting magic, Serenity BDD needs to instrument the task and action objects used during the tests. The simplest way to do arrange this is to let Serenity create it for you, just like any other Serenity step library, using the @Steps annotation. In the following code snippet, Serenity will instantiate the openTheApplication field for you, so that James can use it to open the application:
+
+[source,java]
+----
+@Steps
+OpenTheApplication openTheApplication;
+…
+james.attemptsTo(openTheApplication);
+----
+
+This works well for very simple tasks or actions, for example ones that take no parameters. But for more sophisticated tasks or actions, a builder pattern like the one used with the AddATodoItem earlier on is more convenient. Experienced practitioners generally like to make the builder method and the class name combine to read like an English sentence, so that the intent of the task remains crystal clear:
+
+[source,java]
+----
+AddATodoItem.called("Buy some milk"))
+----
+
+Serenity BDD provides the special Instrumented class that makes it easy to create task or action objects using the builder pattern. For example, the `AddATodoItem` class has an immutable field called `thingToDo`, that contains the text to go in the new Todo item.
+
+[source,java]
+----
+public class AddATodoItem implements Task {
+
+    private final String thingToDo;
+
+    protected AddATodoItem(String thingToDo) { this.thingToDo = thingToDo; }
+}
+----
+
+We can invoke this constructor using the `Instrumented.instanceOf().withProperties()` methods, as shown here:
+
+[source,java]
+----
+public class AddATodoItem implements Task {
+
+    private final String thingToDo;
+
+    protected AddATodoItem(String thingToDo) { this.thingToDo = thingToDo; }
+
+    public static AddATodoItem called(String thingToDo) {
+        return Instrumented.instanceOf(AddATodoItem.class).withProperties(thingToDo);
+    }
+}
+----
+
+=== High level tasks rely on other lower-level tasks or actions ===
+
+To get the job done, a high level business task will usually need to call either lower level business tasks or actions that interact more directly with the application. In practice, this means that the `performAs()` method of a task typically executes other, lower level tasks or interacts with the application in some other way. For example, adding a todo item requires two UI actions:
+  1. Enter the todo text in the text field
+  2. Press Return
+
+[source,java]
+----
+include::{srcdir}/journey-pattern-sample/src/main/java/net/serenitybdd/demos/todos/tasks/AddATodoItem.java[tags=performAs]
+----
+
+The actual implementation uses pre-defined `Action` classes (such as `Enter` and `Hit `shown here) that come with Serenity.  `Action` classes are very similar to `Task` classes, except that they focus on interacting directly with the application. Serenity provides a small number of basic Action classes for core UI interactions such as entering field values, clicking on elements, or selecting values from drop-down lists. You can find these in the `net.serenitybdd.screenplay.actions` package. In practice, these provide a convenient and readable DSL that let you describe common low-level UI interactions needed to perform a task.
+
+For example, the UI Action to enter the text defined in the `thingToDo` field into the input field with an ID value of “new-todo” would look like this:
+
+[source,java]
+----
+Enter.theValue(thingToDo).into("#new-todo")
+----
+
+However, hard-coding the CSS selector could lead to duplication. A better practice would be to refactor the selector into a simple Page Object class, like this one:
+
+[source,java]
+----
+public class NewTodoForm extends PageObject {
+    public static String NEW_TODO_FIELD = "#new-todo";
+}
+----
+
+Alternatively, we could use the Serenity Target class to associate a meaningful label with a CSS selector. These labels appear in the test reports and make them more readable:
+
+[source,java]
+----
+public class NewTodoForm extends PageObject {
+    public static Target NEW_TODO_FIELD  = Target.the("New Todo Field").locatedBy("#new-todo");
+}
+----
+
+The `@Step` annotation on the performAs() method is used to provide information about how the task will appear in the test reports:
+
+[source,java]
+----
+@Step("{0} adds a todo item called #thingToDo")
+public <T extends Actor> void performAs(T actor) {...}
+----
+
+Any member variables can be referred to in the @Step annotation by name using the hash (‘#’) prefix (like "#thingToDo" in the example). You can also reference the actor itself using the special
+"{0} placeholder. The end result is a blow-by-blow account of how each business task was performed (see <<fig-journey-action-report>>).
+
+[[fig-journey-action-report]]
+.Test reports show details about both tasks and UI interactions
+image::journey-action-report.png[]
+
+=== Action classes can access the Serenity WebDriver integration ===
+
+You can also write your own `Action` classes. If the actor has the `BrowseTheWeb` ability, the Action class can integrate with the Serenity WebDriver support in several ways.
+
+One approach is to use the `BrowseTheWeb` class to access the WebDriver instance associated with an actor. To do this, you use the `BrowseTheWeb.as(theActor)` method, as shown here:
+
+[source,java]
+----
+public <T extends Actor> void performAs(T theActor) {
+    WebElement deleteButton = BrowseTheWeb.as(theActor).findBy(pathTo(target));
+    BrowseTheWeb.as(theActor).evaluateJavascript("arguments[0].click()", deleteButton);
+}
+----
+
+=== Tasks can be used as building blocks by other tasks ===
+
+It is easy to reuse tasks in other, higher level tasks. For example, the sample project uses a AddTodoItems task to add a number of todo items to the list, like this:
+
+[source,java]
+----
+givenThat(james).wasAbleTo(AddTodoItems.called("Walk the dog", "Put out the garbage"));
+----
+
+This task is defined using the AddATodoItem class, as shown here:
+
+[source,java]
+----
+include::{srcdir}/journey-pattern-sample/src/main/java/net/serenitybdd/demos/todos/tasks/AddTodoItems.java[tags=class]
+----
+
+It is quite frequent to reuse existing tasks to build up more sophisticated business tasks in this way.
+
+=== Actors can ask questions about the state of the application ===
+
+A typical automated acceptance test has three parts:
+1. Set up some test data and/or get the application into a known state
+2. Perform some action
+3. Compare the new application state with what is expected.
+
+From a testing perspective, the third step is where the real value lies – this is where we check that the application does what it is supposed to do.
+
+In a traditional Serenity test, we would write an assertion using a library like Hamcrest or AssertJ to check an outcome against an expected value. Using the Serenity Screenplay Pattern, we express assertions using a flexible, fluent API quite similar to the one used for Tasks and Actions. In the test shown above, the assertion looks like this:
+
+[source,java]
+----
+then(james).should(seeThat(theDisplayedItems, hasItem("Buy some milk")));
+----
+
+The structure of this code is illustrated in <<fig-journey-breakdown>>
+
+[[fig-journey-breakdown]]
+.A Serenity Screenplay Pattern assertion
+image::journey-breakdown.png[]
+
+As you might expect, this code checks a value retrieved from the application (the items displayed on the screen) against an expected value (described by a Hamcrest expression). However, rather than passing an actual value, we pass a Question object. The role of a Question object is to answer a precise question about the state of the application, from the point of view of the actor, and typically using the abilities of the actor to do so.
+
+=== Actors use their abilities to interact with the system ===
+
+Let’s see this principle in action in another test. The Todo application has a counter in the bottom left hand corner indicating the remaining number of items (see <<fig-journey-remaining-count>>).
+
+[[fig-journey-remaining-count]]
+.The number of remaining items is displayed in the bottom left corner of the list
+image::journey-remaining-count.png[]
+
+The test to describe and verify this behavior could look like this:
+
+[source,java]
+----
+include::{srcdir}/journey-pattern-sample/src/test/java/net/serenitybdd/demos/todos/features/completing_todos/CompleteATodo.java[tags=items_left_counter_should_be_decremented_when_an_item_is_completed]
+----
+
+The test needs to check that the number of remaining items is 1. The corresponding assertion is in the last line of the test:
+
+[source,java]
+----
+then(james).should(seeThat(TheRemainingItemCount.value(), is(1)));
+----
+
+The Question object here is defined by the `TheRemainingItemCount` class.  This class has one very precise responsibility: to read the number in the remaining item count text displayed at the bottom of the todo list.
+
+The static `value()`` method is a simple factory method that returns a new instance of the `TheRemainingItemCount` class.  This is simply to make the code read more fluently.
+
+`Question` objects are similar to `Task` and `Action` objects. However, instead of the `performAs()` used for Tasks and Actions, a Question class needs to implement the `answeredBy(actor)` method, and return a result of a specified type. The `TheRemainingItemCount` class is configured to return an Integer. Since it will be querying the web interface, we can extend the WebQuestion class to give us access to the powerful Serenity WebDriver API.
+
+[source,java]
+----
+public class TheRemainingItemCount extends WebQuestion implements Question<Integer> {
+    @Override
+    public Integer answeredBy(Actor actor) {...}
+}
+----
+
+Serenity provides a number of Interaction classes that let you query the web page using a fluent API. A simple implementation using this approach might be the following:
+
+[source,java]
+----
+    public Integer answeredBy(Actor actor) {
+        return Text.of(TodoCounter.ITEM_COUNT)
+                   .onTheScreenOf(actor)
+                   .asInteger();
+    }
+----
+
+There are interaction classes for most WebDriver calls, including:
+
+ * Attribute
+ * CSSValue
+ * CurrentlyEnabled
+ * CurrentVisibility
+ * Enabled
+ * JavaScript
+ * Presence
+ * SelectedOptions
+ * SelectedStatus
+ * SelectedValue
+ * SelectedVisibleTextValue
+ * Text
+ * TheCoordinates
+ * TheLocation
+ * TheSize
+ * Value
+ * Visibility
+
+A few examples of these methods are shown here:
+
+
+Read the visible text value of a the `COUNTRY` dropdown list:
+[source,java]
+----
+String country = SelectedVisibleTextValue.of(ProfilePage.COUNTRY).onTheScreenOf(actor).value();
+----
+
+Determine whether the `completeItemButton` checkbox is checked:
+[source,java]
+----
+Boolean itemChecked = SelectedStatus.of(completeItemButton).onTheScreenOf(actor).as(Boolean.class);
+----
+
+Determine whether the `completeItemButton` checkbox is checked:
+[source,java]
+----
+Boolean itemChecked = SelectedStatus.of(completeItemButton).onTheScreenOf(actor).as(Boolean.class);
+----
+
+Return a list of all the elements matching the `TODO_ITEMS` target:
+[source,java]
+----
+return Text.of(ToDoList.TODO_ITEMS)
+           .onTheScreenOf(actor)
+           .asList();
+----

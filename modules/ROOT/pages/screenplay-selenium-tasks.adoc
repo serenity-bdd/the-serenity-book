@@ -249,13 +249,341 @@ It is easy to write your own interaction class using the `BrowseTheWeb` ability.
 
 == Querying a web UI
 
-Serenity Screenplay also gives you a large number of options when it comes to querying a web UI. Most involve special types of `Question` class. We look at these in this section.
+Serenity Screenplay also gives you a large number of options when it comes to querying a web UI. Most involve special types of `Question` class.
 
-=== Reading the value of a field
+In Screenplay web tests, you can simply implement a question which returns the object type you are interested, and then query the UI in a conventional Webdriver way. For example, suppose we want to read the user name on a page, which can be located with the ".user-name" CSS selector.
 
-Reading a value from an element is one of the most common ways we interact with a web page.
+A Screenplay assertion to check the user name might look like this:
 
 [source,java]
 -----
-sam.attemptsTo(Switch.toAlert());
+sam.should(seeThat(TheUserName.value(), equalTo("sam")));
+-----
+
+We could create a `TheUserName` question class to query this field as follows:
+
+[source,java]
+-----
+@Subject("the displayed username")
+public class TheUserName implements Question<String> {
+    @Override
+    public String answeredBy(Actor actor) {
+        return BrowseTheWeb.as(actor).findBy(".user-name").getText();
+    }
+
+    public static Question<String> value() { return new TheUserName(); }
+}
+-----
+
+Here we use `BrowseTheWeb.as(actor)` to get the Serenity WebDriver API for the actor's webdriver instance, which gives access to the full range of Serenity Page Object methods.
+
+We could also use a Target to locate the user name, which we could store in a separate Page Compenent class:
+
+```
+public static Target USER_NAME = Target.the("User name").locatedBy(".user-name");
+```
+
+We can then use the `resolveFor()` method to find the element matching that target in the actor's browser:
+
+[source,java]
+-----
+@Subject("the displayed username")
+public class TheUserName implements Question<String> {
+
+    @Override
+    public String answeredBy(Actor actor) {
+        return USER_NAME.resolveFor(actor).getText();
+    }
+
+    public static Question<String> value() { return new TheUserName(); }
+}
+-----
+
+Alternatively, we could write this class as a factory, and use a lambda expression instead of a fully blown Qeustion class:
+
+[source,java]
+-----
+public class TheUserName {
+
+    public static Question<String> value() {
+        return actor -> USER_NAME.resolveFor(actor).getText();
+    }
+}
+-----
+
+In this case, the `@Subject` annotation will have no effect, so we need to pass in the name of the object we are checking in the Screenplay assertion:
+
+[source,java]
+-----
+sam.should(seeThat("the displayed username", TheUserName.value(), equalTo("sam")));
+-----
+
+Serenity also provides a number of shortcuts related to querying web pages, which you will find in the `net.serenitybdd.screenplay.questions` package. In the following sections we look at how these work.
+
+=== Reading text
+
+Reading a value from an element is one of the most common ways we interact with a web page. The `Text` class can be used to read text values in a more fluent style. The basic usage pattern looks something like this:
+
+[source,java]
+----
+Text.of(<target>).viewedBy(actor).as<Type>();
+----
+
+Using this style, we could rewrite the user name question from the previous section like this:
+
+[source,java]
+-----
+public class TheUserName {
+
+    public static Question<String> value() {
+        return actor -> Text.of(USER_NAME).viewedBy(actor).asString();
+    }
+}
+-----
+
+==== Reading numbers
+This would not be a very strong use case by itself. But the `Text` class makes it easy to do type conversions in a very readable way. For example, if we wanted to read an Integer value rather than a String, we can use the `asInteger()` method in the place of `asString()`. This might lead to a factory class like the following:
+
+[source,java]
+-----
+public class TheUser {
+
+    public static Question<String> name() {
+        return actor -> Text.of(USER_NAME).viewedBy(actor).asString();
+    }
+
+    public static Question<Integer> age() {
+        return actor -> Text.of(USER_AGE).viewedBy(actor).asInteger();
+    }
+
+}
+-----
+
+You can also use `asLong()`, `asDouble()`, `asFloat()` and `asBigDecimal()` to convert the value to other numerical types.
+
+==== Reading lists
+
+We can also return a list of values located by a given target, with the `asList()` method, illustrated in the following example:
+
+[source,java]
+-----
+@Subject("the displayed todo items")
+public class DisplayedItems implements Question<List<String>> {
+
+    @Override
+    public List<String> answeredBy(Actor actor) {
+        return Text.of(TodoList.ITEMS)
+                .viewedBy(actor)
+                .asList();
+    }
+}
+-----
+
+==== Reading dates
+
+You can convert a retrieved value to a `LocalDate` using the `asLocalDate()` method, e.g.
+
+[source,java]
+-----
+    public static Question<LocalDate> dateOfBirth() {
+        return actor -> Text.of(USER_DOB).viewedBy(actor).asLocalDate("dd-MMM-yyyy");
+    }
+-----
+
+==== Reading enums
+
+It is often convenient to convert displayed values directly to enums. You can do this by using the `asEnum()` method. For example, suppose we have the following enum class:
+
+[source,java]
+-----
+public enum TodoStatusFilter {
+    All, Active, Completed
+}
+-----
+
+We could write a class to convert a text value on a page to the `TodoStatusFilter` enum as shown here:
+
+[source,java]
+-----
+public class CurrentFilter implements Question<TodoStatusFilter> {
+
+    @Override
+    public TodoStatusFilter answeredBy(Actor actor) {
+        return Text.of(TodoList.SELECTED_FILTER)
+                .viewedBy(actor)
+                .asEnum(TodoStatusFilter.class);
+    }
+
+    public static CurrentFilter selected() {
+        return new CurrentFilter();
+    }
+}
+-----
+
+==== Reading off-screen text
+
+The WebDriver `getText()` method may fail in certain cases if the element being read is not visible on the screen. For example, if you have a long list, elements below the bottom of the screen may not be accessible.
+To get around this issue, you can scroll to the element before retrieving the text, but this can be slow and not always reliable.
+
+Another approach is to read th `textContent` attribute, which will return a value whether the element is displayed or not. You can use the `TextContent` class in the place of the `Text` class to achieve this. For example, you could read the full list of results, even if some where below the bottom of the page, like this:
+
+-----
+@Subject("the displayed todo items")
+public class DisplayedItems implements Question<List<String>> {
+
+    @Override
+    public List<String> answeredBy(Actor actor) {
+        return TextContent.of(TodoList.ITEMS)
+                .viewedBy(actor)
+                .asList();
+    }
+}
+-----
+
+=== Reading values
+
+For HTML form elements, we are often more interested in the `value` attribute than the text content. In native WebDriver, you would get the value by calling `element.getAttribute("value")`. In Serenity Screenplay, we can use the `Value` class to achieve this.
+
+For example, suppose we have a registration form
+
+[source,java]
+-----
+public class TheRegistrationForm {
+
+    public static Question<String> firstName() {
+        return actor -> Value.of(FIRST_NAME).viewedBy(actor).asString();
+    }
+}
+-----
+
+The `Value.of()` method follows the same pattern as `Text.of()`, so all of the conversion strategies discussed in the previous section also apply to `Value.of()`.
+
+=== Reading from dropdown lists
+
+You can read the selected value or values from a dropdown list using either the `SelectedValue` or `SelectedVisibleTextValue` class. For example, imagine our registration form had an age dropdown, with integer values. We could reead the selected value as follows:
+
+[source,java]
+-----
+public class TheRegistrationForm {
+
+    public static Question<Integer> age() {
+        return actor -> SelectedValue.of(AGE).viewedBy(actor).asInteger();
+    }
+}
+-----
+
+If you needed to return the displayed value, you could use `SelectedVisibleTextValue` instead:
+
+[source,java]
+-----
+public class TheRegistrationForm {
+
+    public static Question<String> age() {
+        return actor -> SelectedVisibleTextValue.of(AGE).viewedBy(actor).asString();
+    }
+}
+-----
+
+=== Reading attributes
+
+Sometimes you need to read values directly HTML or CSS attributes. You can do this using the `Attribute` and `CSSValue` classes. Some examples are shown below:
+
+[source,java]
+-----
+public class TheRegistrationForm {
+
+    public static Question<Boolean> hasOptedIn() {
+        return actor ->  Attribute.of(OPT_IN).named("checked").viewedBy(actor).as(Boolean)
+    }
+
+    public static Question<String> titleFont() {
+        return actor -> CSSValue.of(TITLE).named("font").viewedBy(actor).asString()
+    }
+}
+-----
+
+=== Checking UI state
+
+You can also ask about the _state_ of elements on the page. State includes things like visibiliy or presence on the page, whether a field is enabled or disabled, and whether a field is selected.
+
+The `WebElementStateMatchers` contains a set of Hamcrest matchers which can be used to check the state of an element, as well as whether the field contains a given text or value. Possible matchers include:
+
+  * isVisible()
+  * isNotVisible()
+  * isCurrentlyVisible()
+  * isNotCurrentlyVisible()
+  * isEnabled()
+  * isNotEnabled()
+  * isCurrentlyEnabled()
+  * isNotCurrentlyEnabled()
+  * isPresent()
+  * isNotPresent()
+  * isSelected()
+  * isNotSelected()
+  * containsText()
+  * containsOnlyText()
+  * containsSelectOption()
+  * hasValue()
+
+To check the state of an element, you first need to convert the locator used to locate the element into a `Question` about the state of the element. This locator can be a `Target`, a `By` locator, or an XPath or CSS expression.
+
+To convert a locator to a Question about the element's state, we use the `WebElementQuestion` class. This class has three static DSL methods, which are all equivalent (you just use the one that reads the most fluently):
+
+  * `WebElementQuestion.stateOf(locator)`
+  * `WebElementQuestion.valueOf(locator)`
+  * `WebElementQuestion.the(locator)`
+
+Once you have converted the locator to a question, you can combine this with a `WebElementStateMatchers` method to form a Screenplay assertion. For example, to check the visibility of a field, we could write the following:
+
+[source,java]
+-----
+sam.should(
+    seeThat(
+        WebElementQuestion.the(TITLE),
+        WebElementStateMatchers.isVisible()
+    )
+)
+-----
+
+Using static imports will make the code more readable:
+
+[source,java]
+-----
+import static net.serenitybdd.screenplay.matchers.WebElementStateMatchers.*;
+import static net.serenitybdd.screenplay.questions.WebElementQuestion.the;
+.
+.
+.
+sam.should(
+    seeThat(the(TITLE), isVisible())
+)
+-----
+
+The following example checks the value of the AGE field:
+
+[source,java]
+-----
+sam.should(
+    seeThat(the(AGE), hasValue("40"))
+)
+-----
+
+== Performing waits
+
+When writing web tests, you often need to wait for specific states or events. In Screenplay, you can use the `WaitUntil` interaction class to do this. This class lets you wait for a given state, using the same DSL as we saw in the previous section. For example, to wait until the title is visible, we could write the following:
+
+[source,java]
+-----
+sam.attemptsTo(
+    WaitUntil.the(TITLE, isVisible())
+)
+-----
+
+We could also specify a maximum wait time:
+
+[source,java]
+-----
+sam.attemptsTo(
+    WaitUntil.the(TITLE, isVisible()).forNoMoreThan(10).seconds()
+)
 -----

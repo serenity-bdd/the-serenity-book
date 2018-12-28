@@ -64,7 +64,6 @@ Scenario: Monitoring a new low risk customer
 
 This error message will then appear in the report:
 
-![](failing-with-message.png)
 .A failing manual test including an error message.
 image::failure-with-message.png[]
 

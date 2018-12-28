@@ -67,6 +67,11 @@ This error message will then appear in the report:
 .A failing manual test including an error message.
 image::failure-with-message.png[]
 
+Manual test results also appear in the overall test reports, where they are represented in a lighter shade of the normal test result colour:
+
+.Manual tests appearing in a summary report
+image::manual-overview.png[]
+
 Note that you should use this feature with caution, as marking a manual test as passing may be misleading: if you are running your Serenity tests on a CI server, you cannot safely say that they were manually tested with the version that was built on the build server. For this reason, manual test results should be considered as indicative, not definitive.
 
 Although Manual tests can have steps (like the one above), they are not really supposed to have step definitions. If Cucumber finds a step definition for a step, it will execute it, and this may not be what you intend if you mark a test as manual.

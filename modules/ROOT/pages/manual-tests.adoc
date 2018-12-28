@@ -1,0 +1,73 @@
+= Reporting Manual Test Results
+
+Serenity is primarily designed to report the results of _automated_ acceptance tests. However, there are times when some tests need to be done manually. And it is useful to report these tests in the overall test reports, to get a broader picture of test coverage.
+
+To make this easier, Serenity with Cucumber provides some support for recording and reporting manual test results.
+
+You can mark a test as a manual test using the `@manual` tag, e.g.
+
+```
+@Manual
+Scenario: Monitoring a new low risk customer
+  Given Joe is a new customer
+  And Joe is considered a low risk customer
+  When he is onboarded
+  Then his account should be scheduled for review in 3 months time
+```
+
+This will appear in the reports as a manual test, as shown below.
+
+.A manual test reported in Serenity
+image::manual-test-result.png[]
+
+By default, manual tests are reported as "pending", like the one above. The individual steps will be marked as ignored, as they are just there for documentation purposes.
+
+You can override this status, and mark a test explicitly as a passing or failing test, like this:
+
+```
+@Manual:Passed
+Scenario: Monitoring a new low risk customer
+  Given Joe is a new customer
+  And Joe is considered a low risk customer
+  When he is onboarded
+  Then his account should be scheduled for review in 3 months time
+```
+
+Or if you want to report that a manual test was unsuccessful:
+
+```
+@Manual:Failed
+Scenario: Monitoring a new low risk customer
+  Given Joe is a new customer
+  And Joe is considered a low risk customer
+  When he is onboarded
+  Then his account should be scheduled for review in 3 months time
+```
+
+The test will then appear as both a manual and a failing test:
+
+.A failing manual test reported in Serenity
+image::failing-test.png[]
+
+If you need to provide more details about the test failure, you can add a note starting with the "Failure:" keyword underneath the scenario title, e.g.
+
+```
+@manual:failed
+Scenario: Monitoring a new low risk customer
+  Failure:Joe is showing as a high-risk customer
+
+  Given Joe is a new customer
+  And Joe is considered a low risk customer
+  When he is onboarded
+  Then his account should be scheduled for review in 3 months time
+```
+
+This error message will then appear in the report:
+
+![](failing-with-message.png)
+.A failing manual test including an error message.
+image::failing-with-message.png[]
+
+Note that you should use this feature with caution, as marking a manual test as passing may be misleading: if you are running your Serenity tests on a CI server, you cannot safely say that they were manually tested with the version that was built on the build server. For this reason, manual test results should be considered as indicative, not definitive.
+
+Although Manual tests can have steps (like the one above), they are not really supposed to have step definitions. If Cucumber finds a step definition for a step, it will execute it, and this may not be what you intend if you mark a test as manual.

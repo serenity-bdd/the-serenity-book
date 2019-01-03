@@ -25,7 +25,7 @@ public void setTheStage() {
 }
 ----
 
-You can also use the `whereEveryoneCan` method to provide additionla abilities, e.g.
+You can also use the `whereEveryoneCan` method to provide additional abilities, e.g.
 
 [source,java]
 ----

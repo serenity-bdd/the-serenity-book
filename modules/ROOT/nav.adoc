@@ -11,7 +11,7 @@
 * xref:remote.adoc[Running Remote Tests]
 
 .Serenity with JUnit
-* xref:junit-basic.adoc[JUnit Basic Integration]
+* xref:junit-basic.adoc[Basic JUnit Integration]
 * xref:junit.adoc[JUnit WebDriver Support]
 * xref:junit-skipping.adoc[Skipping Tests]
 * xref:junit-data-driven.adoc[Data Driven Tests]

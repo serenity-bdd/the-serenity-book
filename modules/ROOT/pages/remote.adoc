@@ -1,0 +1,148 @@
+You can also use Serenity to run your WebDriver tests on a remote machine, such as a Selenium Grid or a remote service such as provided by http://www.saucelabs.com[SauceLabs] or https://www.browserstack.com[BrowserStack]. This allows you to run your web tests against a variety of different browsers and operating systems, and also benefit from faster test execution when running the tests in parallel.
+
+In all cases, you tell Serenity to run tests remotely by using the Selenium Remote driver,
+
+=== Running tests against a Selenium Grid server
+
+https://code.google.com/p/selenium/wiki/Grid2[Selenium Grid] allows you to run tests on a number of remote machines. It is open source, and relatively easy to set up and configure.
+
+To run your Serenity tests on a Selenium Grid, you need to provide the URL of the Selenium Hub using the `webdriver.remote.url` property. You may also want to provide more information about how and where you want to run your tests, using the following properties:
+`webdriver.remote.driver`:: What driver to use remotely ('firefox','chrome','iexplorer' etc.)
+`webdriver.remote.browser.version`:: What version of the remote browser to use
+`webdriver.remote.os`:: What operating system the tests should be run on.
+
+For example, if you were running a Selenium Hub locally on port 4444 (the default),
+
+-----
+mvn verify -Dwebdriver.remote.url=http://localhost:4444/wd/hub -Dwebdriver.remote.driver=chrome -Dwebdriver.remote.os=WINDOWS
+-----
+
+If you are running PhantomJS remotely, you may need to specify what port PhantomJS is to run on using the `phantomjs.webdriver` property.
+
+-----
+mvn verify -Dphantomjs.webdriver=5555 -Dwebdriver.remote.url=http://seleniumgrid:4444/wd/hub
+-----
+
+You can also pass the usual driver-specific capabilities to the remote browser
+
+-----
+mvn verify -Dwebdriver.remote.url=http://localhost:4444/wd/hub -Dwebdriver.remote.driver=chrome -Dwebdriver.remote.os=WINDOWS -Dchrome.switches="--no-sandbox,--ignore-certificate-errors,--homepage=about:blank,--no-first-run"
+-----
+
+=== Running tests on Appium
+Serenity supports running tests on mobile devices/emulators out of the box with http://appium.io[Appium].
+
+You just need to install Appium:
+-----
+(sudo) npm install -g appium --chromedriver_version="2.16"
+-----
+
+Afterwards Appium is available as command and can be started by invoking the following command:
+-----
+appium
+-----
+
+Then adopt `serenity.properties` to run on an Android device:
+-----
+webdriver.driver= appium
+webdriver.base.url = http://www.google.com/
+appium.hub = http://127.0.0.1:4723/wd/hub
+appium.platformName = Android
+appium.platformVersion = 5.1.1
+appium.deviceName = e2f5c460
+appium.browserName = Chrome
+-----
+
+Here's an example for iOS:
+-----
+webdriver.driver= appium
+webdriver.base.url = http://www.google.com/
+appium.hub = http://127.0.0.1:4723/wd/hub
+appium.platformName = iOS
+appium.platformVersion = 8.1
+appium.deviceName = iPhone 5
+appium.browserName = Safari
+-----
+
+`Note`:: All properties which are starting with `appium` in serenity.properties will be forwarded to appium driver.
+e.g. setting `appium.automationName = XCUITest` in serenity.properties will have as end effect setting the property `automationName = XCUITest` in appium driver capabilities.
+
+Besides the properties file you can also use commandline switches:
+-----
+mvn test -Dappium.hub=http://127.0.0.1:4723/wd/hub -Dwebdriver.driver=appium -Dappium.platformName=iOS -Dappium.browserName=Safari -Dappium.deviceName="iPhone 5"
+-----
+
+All properties starting with appium.* will be forwarded to the appium driver as appium desired capabilities.
+For example, setting the property `appium.automationName=myAutomationName` will have as effect setting the capability `automationName`
+in the appium driver to `myAutomationName`.
+
+Following annotations are supported for a PageObject element:
+-----
+@AndroidFindBy(id="")
+private WebElement loginButton;
+-----
+-----
+@iOSFindBy(id="")
+private WebElement loginButton;
+-----
+-----
+@FindBy(accessibilityId="")
+private WebElement loginButton;
+-----
+
+Sometimes it may be necessary in a PageObject to use specific methods of the underlying driver
+-----
+AndroidDriver<AndroidElement> androidDriver() {
+    return (AndroidDriver<AndroidElement>)
+            ((WebDriverFacade) getDriver()).getProxiedDriver();
+}
+...
+androidDriver().hideKeyboard();
+-----
+
+You can also add Appium to an existing grid. See the http://appium.io/slate/en/v1.2.3/?java#server-flags[Appium documentation] for more details about the node-config option.
+
+=== Running tests on SauceLabs
+Serenity has special support for running tests on the Cloud-based testing platform http://www.saucelabs.com[SauceLabs]. The general approach is the same as discussed above, but there are a few extra Saucelabs-specific properties:
+
+`saucelabs.url`:: Usually of the form http://<my_id>:<my_API Key>@ondemand.saucelabs.com:80/wd/hub
+`saucelabs.target.platform`:: See https://saucelabs.com/platforms/
+`saucelabs.driver.version`:: See https://saucelabs.com/platforms/
+`saucelabs.test.name`:: The name of the test as it will appear on the Saucelabs site
+`saucelabs.access.key`:: Your Saucelabs API key, optional, used to generate links to the Saucelabs results
+`saucelabs.user.id`:: Your Saucelabs User ID, optional, used to generate links to the Saucelabs results
+`saucelabs.record.screenshots`::Saucelabs records screenshots as well as videos by default. Since Serenity also records screenshots, this feature is disabled by default. It can be reactivated using this system property
+`saucelabs.implicit.wait`:: Override the default implicit timeout value for the Saucelabs driver
+
+An example of running tests on Saucelabs is shown here:
+-----
+mvn verify -Dsaucelabs.target.platform=XP -Dwebdriver.driver=chrome -Dsaucelabs.driver.version=26 -Dsaucelabs.url=http://<my_id>:<my_API Key>@ondemand.saucelabs.com:80/wd/hub -Dsaucelabs.access.key=<My_API_Key> -Dsaucelabs.user.id=<my_id> -Dwebdriver.base.url=https://www.website.com -Dmaven.test.failure.ignore=true
+-----
+
+In case if you need to define an OS-Browser Combination, you should change *serenity.driver.capabilities* as follows:
+-----
+serenity.driver.capabilities="browserName:iphone; deviceName:iPad Retina; version:9.2"
+-----
+
+=== Running tests on BrowserStack
+
+The setup for running tests on BrowserStack is similar to the one for SauceLabs. The following system properties are available:
+
+`browserstack.url`:: BrowserStack Hub URL if running the tests on BrowserStack Cloud
+`browserstack.os`:: OS type (e.g. WINDOWS, OS X)
+`browserstack.os_version`:: OS version (e.g. Windows: XP, 7, 8 and 8.1; OS X: Snow Leopard, Lion, Mountain Lion, Mavericks, Yosemite, El Capitan)
+`browserstack.browser`:: Browser type (e.g. Firefox, Safari, IE, Chrome, Opera)
+`browserstack.browser_version`:: Browser version (defaults to latest stable; check https://www.browserstack.com/list-of-browsers-and-platforms?product=automate[list of available browsers])
+`browserstack.device`:: BrowserStack https://www.browserstack.com/list-of-browsers-and-platforms?product=automate[mobile device] name on which tests should be run
+`browserstack.deviceOrientation`:: Set the screen orientation of BrowserStack mobile device (portrait or landscape, default: portrait)
+`browserstack.project`:: Specify a name for a logical group of builds on BrowserStack
+`browserstack.build`:: Specify a name for a logical group of tests on BrowserStack
+`browserstack.name`:: Specify an identifier for the test run on BrowserStack
+`browserstack.local`:: For Testing against https://www.browserstack.com/local-testing[internal/local] servers on BrowserStack
+`browserstack.localIdentifier`:: Specify an identifier fot the local browserstack connection check https://www.browserstack.com/local-testing#multiple-connections
+`browserstack.debug`::  Generates screenshots at various steps in tests on BrowserStack
+`browserstack.resolution`:: Sets resolution of VM on BrowserStack
+`browserstack.selenium_version`::
+`browserstack.ie.noFlash`:: Disable flash on Internet Explorer on BrowserStack
+`browserstack.ie.driver`:: Specify the Internet Explorer webdriver version on BrowserStack
+`browserstack.ie.enablePopups`:: Enable the popup blocker in Internet Explorer on BrowserStack

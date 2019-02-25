@@ -175,10 +175,11 @@ drivers {
 }
 ----
 
-This approach also works when you have more than one driver to configure. Suppose you need to run tests on three environments, using Firefox or Windows. One convenient approach is to store your drivers in a directory structure under `src/test/resources` similar to the following:
+This approach also works when you have more than one driver to configure. Suppose you need to run tests on three environments, using Firefox or Windows.
+One convenient approach is to store your drivers in a directory structure under `src/test/resources` similar to the following:
 
-[]
----
+[source]
+----
 src/test/resources
 └── webdriver
     ├── linux
@@ -190,7 +191,7 @@ src/test/resources
     └── windows
         ├── chromedriver.exe
         └── geckodriver.exe
----
+----
 
 This means that your tests will not need the webdriver binaries to be installed on every machine.
 
@@ -301,15 +302,31 @@ chrome {
 
 ==== Configuring Firefox
 
-COMING SOON
+Firefox has [a number of Firefox-specific options](https://firefox-source-docs.mozilla.org/testing/geckodriver/geckodriver/Capabilities.html) which you can configure in Serenity.
 
-==== Configuring Internet Explorer
+The `moz:firefoxOptions` property can be set using the `gecko.firefox.options` property, e.g.
 
-COMING SOON
+[source,properties]
+----
+gecko.firefox.options="{log: {level: trace}}"
+----
 
-==== Configuring Edge
+You can add more complete JSON configuratio options in the `serenity.conf` file, as shown in the example below:
 
-COMING SOON
+[source,json]
+----
+gecko.firefox.options="""
+{
+    args": ["-headless", "-profile", "/path/to/my/profile"],
+    "prefs": {
+        "dom.ipc.processCount": 8
+    },
+    "log": {
+        "level": "trace"
+    }
+}
+"""
+----
 
 ==== Configuring Proxy settings
 
@@ -320,3 +337,41 @@ You can set proxy settings with any driver by using the `serenity.proxy.*` prope
   * `serenity.proxy.password` - The proxy password
   * `serenity.proxy.ssl` - the SSL Proxy configuration
   * `serenity.proxy.sslProxyPort` - the SSL Proxy port configuration
+
+=== Other useful Webdriver configuration options
+
+==== Restart the browser each scenario or feature
+
+Normally, each test or scenario should be independent.
+Serenity therefore starts a new browser session for each scenario by default.
+However there are some cases where, for performance reasons, you may want to run all of the scenarios or tests in a single feature or test class with the same browser.
+In this case, it is your responsibility to ensure that the browser is in the correct state at the start of each scenario.
+
+The `serenity.restart.browser.for.each` property allows you to fine-tune when the browser will be restarted.
+The possible values are:
+
+ * scenario
+ * story or feature
+ * never
+
+==== Pausing between each step
+
+Sometimes, for demonstration purposes, you may which the tests to run more slowly than they normally do.
+You can use the `serenity.step.delay` property for this.
+This is the time in milliseconds (0 by default) that Serenity will pause between each step.
+
+=== General Driver capabilities
+
+You can add arbitrary capabilities to the WebDriver driver by using the `serenity.driver.capabilities` property, as shown below: 
+
+[source,json]
+----
+serenity.driver.capabilities="browserName:iphone; deviceName:iPad Retina; version:9.2"
+----
+
+=== Driver troubleshooting
+
+One of the most common Serenity issues is the "Could not instantiate new WebDriver instance" message.
+This is usually not a Serenity issue as such, but more commonly an issue to do with an incompatible version of the WebDriver binary
+or the browser installed on the machine. Be sure to read the error message carefully, and to make sure you have the latest versions
+ of Serenity, the WebDriver driver, and your browser.

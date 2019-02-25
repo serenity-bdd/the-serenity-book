@@ -8,6 +8,7 @@
 * xref:web-testing-in-serenity.adoc[Testing Web Applications]
 * xref:page-objects.adoc[Working with Page Objects]
 * xref:angularjs.adoc[Testing AngularJS applications]
+* xref:remote.adoc[Running Remote Tests]
 
 .Serenity with JUnit
 * xref:junit-basic.adoc[JUnit Basic Integration]

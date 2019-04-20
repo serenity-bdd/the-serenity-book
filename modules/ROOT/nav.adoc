@@ -9,6 +9,7 @@
 * xref:page-objects.adoc[Working with Page Objects]
 * xref:angularjs.adoc[Testing AngularJS applications]
 * xref:remote.adoc[Running Remote Tests]
+* xref:extending-webdriver.adoc[Extending Webdriver setup and teardown]
 
 .Serenity with JUnit
 * xref:junit-basic.adoc[Basic JUnit Integration]
@@ -35,8 +36,10 @@
 * xref:manual-tests.adoc[Reporting Manual Test Results]
 * xref:jira.adoc[Integrating with JIRA]
 
-.Running Serenity tests
-* xref:serenity-parallel.adoc[Running Serenity tests in parallel]
+.Scaling Serenity
+* xref:serenity-parallel.adoc[Running Serenity tests in parallel on a local machine]
+* xref:serenity-grid.adoc[Running Serenity tests on a Selenium Grid]
+* xref:serenity-parallel-batches.adoc[Running Serenity tests in parallel batches]
 
 .Reference
 * link:glossary.adoc[Glossary]

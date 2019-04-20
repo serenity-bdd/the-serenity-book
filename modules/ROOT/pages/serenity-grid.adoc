@@ -1,0 +1,93 @@
+= Running Serenity tests on a Selenium Grid
+
+One of the most common ways to scale tests is to run them in parallel across several machines, using [Selenium Grid](https://github.com/SeleniumHQ/selenium/wiki/Grid2). There are also many online services that allow you to run your tests on a commercial grid.
+
+== Running Serenity on Zalenium
+
+In this tutorial, we look at how you can run Serenity BDD tests on a Zalenium server using https://www.docker.com[Docker]. https://opensource.zalando.com/zalenium[Zalenium] is an open source tool based on Docker that makes it easy to start up and run a Selenium Grid. The rest of this tutorial assumes that you have Docker installed on your machine.
+
+=== Starting Zalenium
+
+You can start a Zalenium server using the following commands (see the https://opensource.zalando.com/zalenium/#try-it[Zalenium Documentation] for more details or for the latest version of these instructions):
+```
+# Pull docker-selenium
+docker pull elgalu/selenium
+
+# Pull Zalenium
+docker pull dosel/zalenium
+
+# Run it!
+docker run --rm -ti --name zalenium -p 4444:4444 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /tmp/videos:/home/seluser/videos -e WAIT_FOR_AVAILABLE_NODES=false \
+  --privileged dosel/zalenium start --desiredContainers 4
+```
+
+You should end up seeing an output like the following:
+```
+...
+08:42:05.272 [main] INFO  org.openqa.grid.web.Hub - Selenium Grid hub is up and running
+08:42:05.272 [main] INFO  org.openqa.grid.web.Hub - Nodes should register to http://172.17.0.2:4445/grid/register/
+08:42:05.272 [main] INFO  org.openqa.grid.web.Hub - Clients should connect to http://172.17.0.2:4445/wd/hub
+Selenium Hub started!
+Sauce Labs not enabled...
+Browser Stack not enabled...
+TestingBot not enabled...
+Zalenium is now ready!
+```
+
+You can see if the Zalenium server is running correctly by checking out the http://localhost:4444/grid/console[Grid Console].
+
+=== Configuring your Serenity tests
+
+To run your tests on the Selenium grid, you now just need to use the remote driver instead of the usual one. For example, in your `serenity.conf` file, you can configure your tests to run on the Zalenium server using Chrome like this:
+
+```hocon
+webdriver {
+  driver = remote
+  remote {
+      url="http://localhost:4444/wd/hub"
+      driver=chrome
+  }
+}
+```
+vaultpress@johnfergusonsmart.com
+6}Cixg{1Oon;
+
+If you are using the `serenity.properties` file, the configuration would look like this:
+```properties
+webdriver.driver = remote
+webdriver.remote.url = "http://localhost:4444/wd/hub"
+webdriver.remote.driver = chrome
+```
+
+Zalenium even has a http://localhost:4444/dashboard/#[Dashboard] where you can see a recording of the tests you executed.
+
+=== Advanced Zalenium Integration
+
+Serenity also supports more advanced integration with Zalenium, including the ability to pass custom capabilities to the Zalenium server, and displaying the test results correctly. You can enable these features by adding the `serenity-zalenium` dependency to your project. If you are using Maven, you would add the following dependency:
+```xml
+<dependency>
+    <groupId>net.serenity-bdd</groupId>
+    <artifactId>serenity-zalenium</artifactId>
+    <version>${serenity.version}</version>
+    <scope>test</scope>
+</dependency>
+```
+And in Gradle, you would add the equivalent dependency like this:
+```groovy
+testCompile 'net.serenity-bdd:serenity-zalenium:${serenity.version}'
+
+```
+
+When you add this dependency, unsuccessful tests (those with an outcome of failed, broken or compromised) will be marked as failures in Zalenium.
+
+```hacon
+zalenium {
+    screenResolution = "1280x720"
+    idleTimeout = 150
+}
+```
+=== Running tests in parallel on the Selenium grid
+
+Running your tests on a Zalenium server is convenient for many reasons. For example you can run the tests in the background, and you get a convenient video recording of the test results. However to get optimal performance gains, you need to configure your tests to run in parallel.

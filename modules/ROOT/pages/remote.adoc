@@ -2,7 +2,7 @@ You can also use Serenity to run your WebDriver tests on a remote machine, such 
 
 In all cases, you tell Serenity to run tests remotely by using the Selenium Remote driver,
 
-=== Running tests against a Selenium Grid server
+== Running tests against a Selenium Grid server
 
 https://code.google.com/p/selenium/wiki/Grid2[Selenium Grid] allows you to run tests on a number of remote machines. It is open source, and relatively easy to set up and configure.
 
@@ -29,7 +29,7 @@ You can also pass the usual driver-specific capabilities to the remote browser
 mvn verify -Dwebdriver.remote.url=http://localhost:4444/wd/hub -Dwebdriver.remote.driver=chrome -Dwebdriver.remote.os=WINDOWS -Dchrome.switches="--no-sandbox,--ignore-certificate-errors,--homepage=about:blank,--no-first-run"
 -----
 
-=== Running tests on Appium
+== Running tests on Appium
 Serenity supports running tests on mobile devices/emulators out of the box with http://appium.io[Appium].
 
 You just need to install Appium:
@@ -102,7 +102,7 @@ androidDriver().hideKeyboard();
 
 You can also add Appium to an existing grid. See the http://appium.io/slate/en/v1.2.3/?java#server-flags[Appium documentation] for more details about the node-config option.
 
-=== Running tests on SauceLabs
+== Running tests on SauceLabs
 Serenity has special support for running tests on the Cloud-based testing platform http://www.saucelabs.com[SauceLabs]. The general approach is the same as discussed above, but there are a few extra Saucelabs-specific properties:
 
 `saucelabs.url`:: Usually of the form http://<my_id>:<my_API Key>@ondemand.saucelabs.com:80/wd/hub
@@ -124,9 +124,61 @@ In case if you need to define an OS-Browser Combination, you should change *sere
 serenity.driver.capabilities="browserName:iphone; deviceName:iPad Retina; version:9.2"
 -----
 
-=== Running tests on BrowserStack
+== Running Serenity Tests on BrowserStack
 
-The setup for running tests on BrowserStack is similar to the one for SauceLabs. The following system properties are available:
+Serenity provides integrated support for running tests on https://www.browserstack.com[BrowserStack].
+
+First of all, add the `serenity-browserstack` dependency to your project:
+[source,xml]
+----
+<dependency>
+    <groupId>net.serenity-bdd</groupId>
+    <artifactId>serenity-browserstack</artifactId>
+    <version>${serenity.version}</version>
+</dependency>
+----
+
+Next, in your `serenity.conf` configuration file, add a `browserstack` section with your BrowserStack username and API key, like this:
+
+[source,hacon]
+----
+browserstack {
+    user = <your-username>
+    key = <your-api-key>
+    server = hub-cloud.browserstack.com
+    browser = chrome
+}
+----
+
+In the `webdriver` section, you need to configure a `remote` driver like this:
+
+[source,hacon]
+-----
+webdriver {
+    driver = remote
+    remote.url = "http://<your-username>:<your-api-key>@hub-cloud.browserstack.com/wd/hub"
+}
+-----
+
+You can also do the same thing in your `serenity.properties` file, e.g.
+[source,properties]
+----
+browserstack.user=<your-username>
+browserstack.key=<your-api-key>
+browserstack.server = hub-cloud.browserstack.com
+browserstack.browser = chrome
+
+webdriver.driver = remote;
+webdriver.remote.url = "http://<your-username>:<your-api-key>@hub-cloud.browserstack.com/wd/hub"
+----
+
+=== Retries
+
+If your BrowserStack account is limited to a certain number of parallel tests, BrowserStack will add your tests to a queue. If your queue reaches a maximum size, BrowserStack will refuse to run your tests until a spot frees up. Serenity allows for this by delaying the test execution for 30 seconds before retrying. Serenity will retry up to 30 times by default; you can configure the maximum number of retries Serenity will attempt with the `webdriver.creation.retry.max.times` system property.
+
+=== BrowserStack system properties
+
+The following system properties are available:
 
 `browserstack.url`:: BrowserStack Hub URL if running the tests on BrowserStack Cloud
 `browserstack.os`:: OS type (e.g. WINDOWS, OS X)
@@ -139,10 +191,152 @@ The setup for running tests on BrowserStack is similar to the one for SauceLabs.
 `browserstack.build`:: Specify a name for a logical group of tests on BrowserStack
 `browserstack.name`:: Specify an identifier for the test run on BrowserStack
 `browserstack.local`:: For Testing against https://www.browserstack.com/local-testing[internal/local] servers on BrowserStack
-`browserstack.localIdentifier`:: Specify an identifier fot the local browserstack connection check https://www.browserstack.com/local-testing#multiple-connections
+`browserstack.localIdentifier`:: Specify an identifier for the local BrowserStack connection check https://www.browserstack.com/local-testing#multiple-connections
 `browserstack.debug`::  Generates screenshots at various steps in tests on BrowserStack
 `browserstack.resolution`:: Sets resolution of VM on BrowserStack
 `browserstack.selenium_version`::
 `browserstack.ie.noFlash`:: Disable flash on Internet Explorer on BrowserStack
 `browserstack.ie.driver`:: Specify the Internet Explorer webdriver version on BrowserStack
 `browserstack.ie.enablePopups`:: Enable the popup blocker in Internet Explorer on BrowserStack
+
+== Running Serenity on Zalenium
+
+In this section, we look at how you can run Serenity BDD tests on a Zalenium server using https://www.docker.com[Docker]. https://opensource.zalando.com/zalenium[Zalenium] is an open source tool based on Docker that makes it easy to start up and run a Selenium Grid. The rest of this tutorial assumes that you have Docker installed on your machine.
+
+=== Starting Zalenium
+
+You can start a Zalenium server using the following commands (see the https://opensource.zalando.com/zalenium/#try-it[Zalenium Documentation] for more details or for the latest version of these instructions):
+----
+# Pull docker-selenium
+docker pull elgalu/selenium
+
+# Pull Zalenium
+docker pull dosel/zalenium
+
+# Run it!
+docker run --rm -ti --name zalenium -p 4444:4444 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /tmp/videos:/home/seluser/videos -e WAIT_FOR_AVAILABLE_NODES=false \
+  --privileged dosel/zalenium start --desiredContainers 4
+----
+
+You should end up seeing an output like the following:
+----
+08:42:05.272 [main] INFO  org.openqa.grid.web.Hub - Selenium Grid hub is up and running
+08:42:05.272 [main] INFO  org.openqa.grid.web.Hub - Nodes should register to http://172.17.0.2:4445/grid/register/
+08:42:05.272 [main] INFO  org.openqa.grid.web.Hub - Clients should connect to http://172.17.0.2:4445/wd/hub
+Selenium Hub started!
+Sauce Labs not enabled...
+Browser Stack not enabled...
+TestingBot not enabled...
+Zalenium is now ready!
+----
+
+You can see if the Zalenium server is running correctly by checking out the http://localhost:4444/grid/console[Grid Console].
+
+=== Configuring your Serenity tests
+
+To run your tests on the Selenium grid, you now just need to use the remote driver instead of the usual one. For example, in your `serenity.conf` file, you can configure your tests to run on the Zalenium server using Chrome like this:
+
+[source,hocon]
+----
+webdriver {
+  driver = remote
+  remote {
+      url="http://localhost:4444/wd/hub"
+      driver=chrome
+  }
+}
+----
+
+If you are using the `serenity.properties` file, the configuration would look like this:
+[source,properties]
+----
+webdriver.driver = remote
+webdriver.remote.url = "http://localhost:4444/wd/hub"
+webdriver.remote.driver = chrome
+----
+
+Zalenium even has a http://localhost:4444/dashboard/#[Dashboard] where you can see a recording of the tests you executed.
+
+=== Advanced Zalenium Integration
+
+Serenity also supports more advanced integration with Zalenium, including the ability to pass custom capabilities to the Zalenium server, and displaying the test results correctly. You can enable these features by adding the `serenity-zalenium` dependency to your project. If you are using Maven, you would add the following dependency:
+[source,xml]
+----
+<dependency>
+    <groupId>net.serenity-bdd</groupId>
+    <artifactId>serenity-zalenium</artifactId>
+    <version>${serenity.version}</version>
+    <scope>test</scope>
+</dependency>
+----
+
+And in Gradle, you would add the equivalent dependency like this:
+[source,groovy]
+----
+testCompile 'net.serenity-bdd:serenity-zalenium:${serenity.version}'
+
+----
+
+When you add this dependency, unsuccessful tests (those with an outcome of failed, broken or compromised) will be marked as failures in Zalenium.
+
+[source,hacon]
+----
+zalenium {
+    screenResolution = "1280x720"
+    idleTimeout = 150
+}
+----
+
+== Extending Serenity for Distributed Testing
+
+Serenity offers a simple way to extend the default driver capabilities and customise the driver creation and teardown activities. Simply implement the `BeforeAWebdriverScenario` and/or the `AfterAWebDriverScenario` interfaces (both are in the `net.serenitybdd.core.webdriver.enhancers` package). Serenity will execute `BeforeAWebdriverScenario` classes just before a driver instance is created, allowing you to add customised options to the driver capabilities. Any `AfterAWebDriverScenario` are executed at the end of a test, just before the driver is closed.
+
+=== The BeforeAWebdriverScenario interface
+
+The `BeforeAWebdriverScenario` is used to enhance the `DesiredCapabilities` object that will be passed to the WebDriver instance when a new driver is created. The method call passes in the requested driver and the `TestOutcome` object, which contains information about the name and tags used for this test. It also passes in the `EnvironmentVariables`, which gives you access to the current environment configuration. An example of a simple `BeforeAWebdriverScenario` is shown below:
+
+[source,java]
+----
+public class MyCapabilityEnhancer implements BeforeAWebdriverScenario {
+
+    @Override
+    public DesiredCapabilities apply(EnvironmentVariables environmentVariables,
+                                     SupportedWebDriver driver,
+                                     TestOutcome testOutcome,
+                                     DesiredCapabilities capabilities) {
+        capabilities.setCapability("name", testOutcome.getStoryTitle() + " - " + testOutcome.getTitle());
+        return capabilities;
+    }
+}
+----
+
+=== The AfterAWebdriverScenario interface
+
+The `AfterAWebdriverScenario` is called at the end of a test, just before the driver is closed, and once the result of the test is known. The test result (and other details) can be obtained from the `TestOutcome` parameter. This allows any last manipulations or checks to be performed on the driver, before the end of the test. The following example checks the result of the test that has just finished, and adds a cookie with a value depending on the test outcome:
+
+[source,java]
+----
+public class MyTestResultUpdater implements AfterAWebdriverScenario {
+    void apply(EnvironmentVariables environmentVariables,
+               TestOutcome testOutcome,
+               WebDriver driver) {
+       if ((driver == null) || (!RemoteDriver.isARemoteDriver(driver))) {
+           return;
+       }
+
+       Cookie cookie = new Cookie("testPassed",
+                                   testOutcome.isFailure() || testOutcome.isError() || testOutcome.isCompromised() ? "false" : "true");
+       driver.manage().addCookie(cookie);
+    }
+}
+----
+
+=== Configuring the extension packages
+
+The last thing you need to do is to tell Serenity what package it needs to look for your extension classes. Add the package, or a parent package to your Serenity configuration using the `serenity.extension.packages`.
+
+`serenity.extension.packages=com.acme.myserenityextensions`
+
+You can find an example of how these classes are implemented in a real-world use case in the https://github.com/serenity-bdd/serenity-core/tree/master/serenity-browserstack/src/main/java/net/serenitybdd/browserstack[serenity-browserstack] module on Github.

@@ -229,3 +229,13 @@ When you generate the summary report, the results will be aggregated by each tag
 [[alternative-functional-coverage]]
 .Functional coverage can be configured by tags
 image::custom-reports-alternative-functional-coverage.png[]
+
+==== Deep links
+
+You can include a link back to your Serenity report, and links to the individual scenario results,
+by setting the `serenity.report.url` property. You can do this in the `serentiy.properties` file (if it is fixed),
+or pass it in from the command line (if you are pointing the the reports for a specific build, for example):
+
+----
+serenity.report.url=http://my.jenkins.server:8080/job/my-project/serenity-reports/
+----

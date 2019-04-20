@@ -362,7 +362,7 @@ This is the time in milliseconds (0 by default) that Serenity will pause between
 
 === General Driver capabilities
 
-You can add arbitrary capabilities to the WebDriver driver by using the `serenity.driver.capabilities` property, as shown below: 
+You can add arbitrary capabilities to the WebDriver driver by using the `serenity.driver.capabilities` property, as shown below:
 
 [source,json]
 ----

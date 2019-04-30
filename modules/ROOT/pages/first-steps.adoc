@@ -184,7 +184,7 @@ At this level, we are not concerned with where he gets the calculator, what web 
 
 [TIP]
 ====
-Later on, you will learn how to model user journeys an an even more flexible manner using the Screenplay pattern.
+Later on, you will learn how to model user journeys in an even more flexible manner using the Screenplay pattern.
 ====
 
 To achieve this layering, we use _step libraries_.

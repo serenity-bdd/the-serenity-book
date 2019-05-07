@@ -190,7 +190,7 @@ We could retrieve the user as an instance of this class by calling the `jsonPath
 ----
 include::../examples/serenity-screenplay-rest/src/test/java/examples/screenplay/rest/WhenManagingUsers.java[tags=retrieve_user_details]
 ----
-<1> Retrieve the response returned by the previous RESRT call
+<1> Retrieve the response returned by the previous REST call
 <2> Convert the JSON entry in the `data` field to a `User`
 
 === Retrieving lists

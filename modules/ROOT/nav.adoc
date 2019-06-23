@@ -8,7 +8,7 @@
 * xref:web-testing-in-serenity.adoc[Testing Web Applications]
 * xref:page-objects.adoc[Working with Page Objects]
 * xref:angularjs.adoc[Testing AngularJS applications]
-* xref:remote.adoc[Running Remote Tests]
+* xref:remote.adoc[xRunning Remote Tests]
 * xref:extending-webdriver.adoc[Extending Webdriver setup and teardown]
 
 .Serenity with JUnit
@@ -29,6 +29,7 @@
 * xref:serenity-screenplay.adoc[Screenplay Fundamentals]
 * xref:screenplay-selenium-tasks.adoc[Web Testing with Screenplay]
 * xref:serenity-screenplay-rest.adoc[REST API Testing with Screenplay]
+* xref:serenity-screenplay-ensure.adoc[Fluent Assertions in Screenplay]
 
 .Reporting and Living documentation
 * xref:living-documentation.adoc[Living Documentation]

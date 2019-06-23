@@ -10,7 +10,7 @@ image::journey-todo-app.png[]
 
 You can use the Screenplay Pattern with Serenity BDD in JUnit, Cucumber or JBehave. For simplicity, the examples will be using JUnit.
 
-=== Introducing the Screenplay Pattern ===
+== Introducing the Screenplay Pattern
 
 Suppose we are implementing the “Add new todo items” feature of the ToDo MVC application. This feature could have an acceptance criteria along the lines of “Should be able to add a new todo item”. If we were testing these scenarios manually, we could create test plans like the following:
 
@@ -398,3 +398,5 @@ return Text.of(ToDoList.TODO_ITEMS)
            .onTheScreenOf(actor)
            .asList();
 ----
+
+=== Fluent Assertions with Serenity Screenplay

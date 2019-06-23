@@ -1,4 +1,5 @@
-http://cukes.info[Cucumber] is a popular BDD test automation tool. *Cucumber-JVM* is the Java implementation of Cucumber.
+http://cukes.info[Cucumber] is a popular BDD test automation tool.
+ *Cucumber-JVM* is the Java implementation of Cucumber.
 In Cucumber, you express acceptance criteria in a natural, human-readable form.
 For example, we could write the "wool scarf" example mentioned in the JBehave example like this:
 

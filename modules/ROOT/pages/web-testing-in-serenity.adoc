@@ -24,7 +24,9 @@ This test would not scale well for a real application. In the following chapters
 
 == Configuring the driver
 
-It is very rare to need to create a WebDriver instance in Serenity - in most cases, you can do all the configuration you need using the Serenity system properties.
+It is very rare to need to create a WebDriver instance in Serenity -
+in most cases, you can do all the configuration you need
+using the Serenity system properties.
 
 === The webdriver.driver property
 The most fundamental property is the `webdriver.driver`. This tells Serenity which browser to use. You can configure this in several locations.

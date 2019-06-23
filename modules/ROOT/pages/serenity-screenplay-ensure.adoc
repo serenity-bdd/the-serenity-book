@@ -75,7 +75,7 @@ Following this comes the actual assertion method (2).
 You can use auto-complete in your IDE to see the range of assertions available.
 For integers, longs and floating point numbers, the assertions include:
 
-[options="header"]
+[options="header", cols="30%,70%"]
 |====
 | Assertion              | Example
 | isEqualTo              | `Ensure.that(age).isEqualTo(18)`
@@ -112,7 +112,7 @@ aster.attemptsTo(
 
 Other basic comparison assertions about Strings include the following:
 
-[options="header"]
+[options="header", cols="30%,70%"]
 |=======
 | Assertion              | Example
 | isEqualTo              | `Ensure.that(name).isEqualTo("Bill")`
@@ -137,7 +137,7 @@ aster.attemptsTo(
 );
 ----
 
-[options="header"]
+[options="header", cols="30%,70%"]
 |=======
 | Assertion                   | Example
 | containsIgnoringCase        | `Ensure.that(colors).containsIgnoringCase("RED")`
@@ -171,7 +171,7 @@ aster.attemptsTo(
 );
 ----
 
-[options="header"]
+[options="header", cols="30%,70%"]
 |=======
 | Assertion                   | Example
 | hasSize                     | `Ensure.that("red").hasSize(3)`
@@ -246,7 +246,7 @@ aster.attemptsTo(
 
 Other date-related assertions include:
 
-[options="header"]
+[options="header", cols="30%,70%"]
 |=======
 | Assertion       | Example
 | isDayOfWeek     | `Ensure.that(firstOfJanuary).isDayOfWeek(SATURDAY)`
@@ -288,7 +288,7 @@ Here are some examples of other assertion methods using these collections:
 The following assertions are useful if you need to check the size of a collection,
 or whether it is equivalent to another collection.
 
-[options="header"]
+[options="header", cols="30%,70%"]
 |=======
 | Assertion          | Example
 | isEqualTo          | `Ensure.that(colors).isEqualTo(sameColors)`
@@ -317,7 +317,7 @@ aster.attemptsTo(
 
 Some of the other _contains_ assertions are listed in the table below:
 
-[options="header"]
+[options="header", cols="30%,70%"]
 |=======
 | Assertion                 | Example
 | contains                  | `Ensure.that(colors).contains("red","blue")`
@@ -463,7 +463,7 @@ The most simple assertions about web elements are boolean checks about the state
 The `Ensure.that(...).is...` assertions let you make assertions about whether an element
 is displayed or disabled.
 
-[options="header"]
+[options="header", cols="30%,70%"]
 |=======
 | Assertion          | Example
 | isDisplayed        | `Ensure.that(FIRST_NAME).isDisplayed()`
@@ -502,7 +502,7 @@ making it useful in cases where you need to read a full set of values, even thos
 
 The most important `Ensure.that(...)` methods for web elements include the following:
 
-[options="header"]
+[options="header", cols="30%,70%"]
 |=======
 | Assertion           | Example
 | value               | `Ensure.that(FIRST_NAME).value().isEqualTo("Joe")`
@@ -534,7 +534,7 @@ aster.attemptsTo(
 
 The main conversion methods include:
 
-[options="header"]
+[options="header", cols="30%,70%"]
 |=======
 | Assertion     | Example
 | asAnInteger   | `Ensure.that(ITEM_COUNT).value().asAnInteger().isEqualTo(2)`
@@ -584,7 +584,7 @@ aster.attemptsTo(
 
 The main methods defined in the `TheMatchingElement` class include:
 
-[options="header"]
+[options="header", cols="30%,70%"]
 |=======
 | Assertion        | Example
 | isDisplayed      | `Ensure.thatTheSetOf(RESULTS).allMatch(isDisplayed())`

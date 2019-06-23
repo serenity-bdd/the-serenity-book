@@ -75,17 +75,17 @@ Following this comes the actual assertion method (2).
 You can use auto-complete in your IDE to see the range of assertions available.
 For integers, longs and floating point numbers, the assertions include:
 
-[width="80%",frame="topbot",options="header",cols="60%,40%"]
-|=======
-| Assertion              | Example                                       |
-| isEqualTo              | `Ensure.that(age).isEqualTo(18)`              |
-| isNotEqualTo           | `Ensure.that(age).isNotEqualTo(65)`           |
-| isGreaterThan          | `Ensure.that(age).isGreaterThan(18)`          |
-| isGreaterThanOrEqualTo | `Ensure.that(age).isGreaterThanOrEqualTo(20)` |
-| isLessThan             | `Ensure.that(age).isLessThan(100)`            |
-| isBetween              | `Ensure.that(age).isBetween(18,25)`           |
-| isStrictlyBetween      | `Ensure.that(age).isStrictlyBetween(20,25)`   |
-|=======
+[options="header"]
+|====
+| Assertion              | Example
+| isEqualTo              | `Ensure.that(age).isEqualTo(18)`
+| isNotEqualTo           | `Ensure.that(age).isNotEqualTo(65)`
+| isGreaterThan          | `Ensure.that(age).isGreaterThan(18)`
+| isGreaterThanOrEqualTo | `Ensure.that(age).isGreaterThanOrEqualTo(20)`
+| isLessThan             | `Ensure.that(age).isLessThan(100)`
+| isBetween              | `Ensure.that(age).isBetween(18,25)`
+| isStrictlyBetween      | `Ensure.that(age).isStrictlyBetween(20,25)`
+|====
 
 For doubles and floats, you can also use the `isCloseTo()` assertion:
 
@@ -112,16 +112,16 @@ aster.attemptsTo(
 
 Other basic comparison assertions about Strings include the following:
 
-[width="80%",frame="topbot",options="header",cols="60%,40%"]
+[options="header"]
 |=======
-| Assertion              | Example                                         |
-| isEqualTo              | `Ensure.that(name).isEqualTo("Bill")`           |
-| isNotEqualTo           | `Ensure.that(name).isNotEqualTo("Joe")`         |
-| isGreaterThan          | `Ensure.that(name).isGreaterThan("Alfred")`     |
-| isGreaterThanOrEqualTo | `Ensure.that(name).isGreaterThanOrEqualTo("Al")`|
-| isLessThan             | `Ensure.that(name).isLessThan("Carrie")`        |
-| isBetween              | `Ensure.that(name).isBetween("Bill","Carrie")`  |
-| isStrictlyBetween      | `Ensure.that(name).isStrictlyBetween("Al",25)`  |
+| Assertion              | Example
+| isEqualTo              | `Ensure.that(name).isEqualTo("Bill")`
+| isNotEqualTo           | `Ensure.that(name).isNotEqualTo("Joe")`
+| isGreaterThan          | `Ensure.that(name).isGreaterThan("Alfred")`
+| isGreaterThanOrEqualTo | `Ensure.that(name).isGreaterThanOrEqualTo("Al")`
+| isLessThan             | `Ensure.that(name).isLessThan("Carrie")`
+| isBetween              | `Ensure.that(name).isBetween("Bill","Carrie")`
+| isStrictlyBetween      | `Ensure.that(name).isStrictlyBetween("Al",25)`
 |=======
 
 ### String contents
@@ -137,26 +137,26 @@ aster.attemptsTo(
 );
 ----
 
-[width="80%",frame="topbot",options="header",cols="60%,40%"]
+[options="header"]
 |=======
-| Assertion                   | Example                                              |
-| containsIgnoringCase        | `Ensure.that(colors).containsIgnoringCase("RED")`    |
-| containsOnlyDigits          | `Ensure.that("123").containsOnlyDigits()`            |
-| containsOnlyLettersOrDigits | `Ensure.that("abc123").containsOnlyLettersOrDigits()`|
-| containsOnlyLetters         | `Ensure.that("abc").containsOnlyLetters()`           |
-| containsWhitespaces         | `Ensure.that("Red Green").containsWhitespaces()`     |
-| containsOnlyWhitespaces     | `Ensure.that("   ").containsOnlyWhitespaces()`       |
-| startsWith                  | `Ensure.that(colors).startsWith("Red")`              |
-| endsWith                    | `Ensure.that(colors).endsWith("Blue")`               |
-| matches                     | `Ensure.that(colors).matches("Red (.*) Blue")`       |
-| doesNotContain              | `Ensure.that(colors).doesNotContain("cyan")`         |
-| isBlank()                   | `Ensure.that("  ").isBlank()`                        |
-| isNotBlank()                | `Ensure.that(colors).isNotBlank()`                   |
-| isEmpty()                   | `Ensure.that("").isEmpty()`                          |
-| isNotEmpty()                | `Ensure.that(colors).isNotEmpty()`                   |
-| isInLowerCase()             | `Ensure.that("red").isInLowerCase()`                 |
-| isInUpperCase()             | `Ensure.that("RED").isInUpperCase()`                 |
-| isSubstringOf               | `Ensure.that("Green").isSubstringOf(colors)`         |
+| Assertion                   | Example
+| containsIgnoringCase        | `Ensure.that(colors).containsIgnoringCase("RED")`
+| containsOnlyDigits          | `Ensure.that("123").containsOnlyDigits()`
+| containsOnlyLettersOrDigits | `Ensure.that("abc123").containsOnlyLettersOrDigits()`
+| containsOnlyLetters         | `Ensure.that("abc").containsOnlyLetters()`
+| containsWhitespaces         | `Ensure.that("Red Green").containsWhitespaces()`
+| containsOnlyWhitespaces     | `Ensure.that("   ").containsOnlyWhitespaces()`
+| startsWith                  | `Ensure.that(colors).startsWith("Red")`
+| endsWith                    | `Ensure.that(colors).endsWith("Blue")`
+| matches                     | `Ensure.that(colors).matches("Red (.*) Blue")`
+| doesNotContain              | `Ensure.that(colors).doesNotContain("cyan")`
+| isBlank()                   | `Ensure.that("  ").isBlank()`
+| isNotBlank()                | `Ensure.that(colors).isNotBlank()`
+| isEmpty()                   | `Ensure.that("").isEmpty()`
+| isNotEmpty()                | `Ensure.that(colors).isNotEmpty()`
+| isInLowerCase()             | `Ensure.that("red").isInLowerCase()`
+| isInUpperCase()             | `Ensure.that("RED").isInUpperCase()`
+| isSubstringOf               | `Ensure.that("Green").isSubstringOf(colors)`
 |=======
 
 ### String Size
@@ -171,16 +171,16 @@ aster.attemptsTo(
 );
 ----
 
-[width="80%",frame="topbot",options="header",cols="60%,40%"]
+[options="header"]
 |=======
-| Assertion                   | Example                                              |
-| hasSize                     | `Ensure.that("red").hasSize(3)`                      |
-| hasSizeGreaterThan          | `Ensure.that("red").hasSizeGreaterThan(2)`           |
-| hasSizeGreaterThanOrEqualTo | `Ensure.that("red").hasSizeGreaterThanOrEqualTo(3)`  |
-| hasSizeLessThan             | `Ensure.that("red").hasSizeLessThan(4)`              |
-| hasSizeLessThanOrEqualTo    | `Ensure.that("red").hasSizeLessThanOrEqualTo(3)`     |
-| hasSizeBetween              | `Ensure.that("red").hasSizeBetween(1,5)`             |
-| hasLineCount                | `Ensure.that(colors).hasLineCount(1)`                |
+| Assertion                   | Example
+| hasSize                     | `Ensure.that("red").hasSize(3)`
+| hasSizeGreaterThan          | `Ensure.that("red").hasSizeGreaterThan(2)`
+| hasSizeGreaterThanOrEqualTo | `Ensure.that("red").hasSizeGreaterThanOrEqualTo(3)`
+| hasSizeLessThan             | `Ensure.that("red").hasSizeLessThan(4)`
+| hasSizeLessThanOrEqualTo    | `Ensure.that("red").hasSizeLessThanOrEqualTo(3)`
+| hasSizeBetween              | `Ensure.that("red").hasSizeBetween(1,5)`
+| hasLineCount                | `Ensure.that(colors).hasLineCount(1)`
 |=======
 
 ## Assertions using Lambda expressions
@@ -195,10 +195,10 @@ For example:
 String actualColor = "green";
 
 aster.attemptsTo(
-    Ensure.that(actualColor).matches("is an RGB color",                 <1>
-                                         color -> color.equals("red")       <2>
-                                                  || color.equals("blue")
-                                                  || color.equals("green")),
+    Ensure.that(actualColor).matches("is an RGB color",        <1>
+                              color -> color.equals("red")     <2>
+                                       || color.equals("blue")
+                                       || color.equals("green"))
 );
 ----
 
@@ -246,13 +246,13 @@ aster.attemptsTo(
 
 Other date-related assertions include:
 
-[width="80%",frame="topbot",options="header",cols="60%,40%"]
+[options="header"]
 |=======
-| Assertion       | Example                                                |
-| isDayOfWeek     | `Ensure.that(firstOfJanuary).isDayOfWeek(SATURDAY)`    |
-| isDayOfMonth    | `Ensure.that(firstOfJanuary).isDayOfMonth(1)`          |
-| isInTheMonthOf  | `Ensure.that(firstOfJanuary).isInTheMonthOf(JANUARY)`  |
-| isTheYear       | `Ensure.that(firstOfJanuary).isTheYear(2000)`          |
+| Assertion       | Example
+| isDayOfWeek     | `Ensure.that(firstOfJanuary).isDayOfWeek(SATURDAY)`
+| isDayOfMonth    | `Ensure.that(firstOfJanuary).isDayOfMonth(1)`
+| isInTheMonthOf  | `Ensure.that(firstOfJanuary).isInTheMonthOf(JANUARY)`
+| isTheYear       | `Ensure.that(firstOfJanuary).isTheYear(2000)`
 |=======
 
 ## Working with collections
@@ -288,17 +288,17 @@ Here are some examples of other assertion methods using these collections:
 The following assertions are useful if you need to check the size of a collection,
 or whether it is equivalent to another collection.
 
-[width="80%",frame="topbot",options="header",cols="60%,40%"]
+[options="header"]
 |=======
-| Assertion          | Example                                                |
-| isEqualTo          | `Ensure.that(colors).isEqualTo(sameColors)`            |
-| isEmpty            | `Ensure.that(noColors).isEmpty()`                      |
-| isNotEmpty         | `Ensure.that(colors).isNotEmpty()`                     |
-| hasSize            | `Ensure.that(colors).hasSize(3)`                       |
-| hasSizeGreaterThan | `Ensure.that(colors).hasSizeGreaterThan(2)`            |
-| hasSizeLessThan    | `Ensure.that(colors).hasSizeLessThan(4)`               |
-| hasSizeBetween     | `Ensure.that(colors).hasSizeBetween(2,4)`              |
-| hasSameSizeAs      | `Ensure.that(colors).hasSameSize(differentColors)`     |
+| Assertion          | Example
+| isEqualTo          | `Ensure.that(colors).isEqualTo(sameColors)`
+| isEmpty            | `Ensure.that(noColors).isEmpty()`
+| isNotEmpty         | `Ensure.that(colors).isNotEmpty()`
+| hasSize            | `Ensure.that(colors).hasSize(3)`
+| hasSizeGreaterThan | `Ensure.that(colors).hasSizeGreaterThan(2)`
+| hasSizeLessThan    | `Ensure.that(colors).hasSizeLessThan(4)`
+| hasSizeBetween     | `Ensure.that(colors).hasSizeBetween(2,4)`
+| hasSameSizeAs      | `Ensure.that(colors).hasSameSize(differentColors)`
 |=======
 
 ### Assertions about list contents
@@ -317,24 +317,24 @@ aster.attemptsTo(
 
 Some of the other _contains_ assertions are listed in the table below:
 
-[width="80%",frame="topbot",options="header",cols="60%,40%"]
+[options="header"]
 |=======
-| Assertion                 | Example                                                    |
-| contains                  | `Ensure.that(colors).contains("red","blue")`               |
-| containsAnyOf             | `Ensure.that(colors).anyOf("red","pink")`                  |
-| containsOnly              | `Ensure.that(colors).containsOnly("blue","green","red")`   |
-| containsExactly           | `Ensure.that(colors).containsExactly("red","blue","green")`|
-| containsExactlyInAnyOrder | `Ensure.that(colors).containsExactly("red","blue","green")`|
-| doesNotContain            | `Ensure.that(colors).doesNotContain("pink")`               |
-| containsElementsFrom      | `Ensure.that(allColors).containsElementsFrom(colors)`      |
-| containsAnyElementsOf     | `Ensure.that(colors).containsAnyElementsOf(redAndPink)`    |
-| containsExactlyElementsOf | `Ensure.that(colors).containsExactlyElementsOf(sameColors)`|
-| isASubsetOf               | `Ensure.that(colors).isASubsetOf(allColors)`               |
-| doesNotHaveDuplicates     | `Ensure.that(colors).doesNotHaveDuplicates()`              |
-| startsWith                | `Ensure.that(colors).startsWith("red", "green")`           |
-| startsWithElementsFrom    | `Ensure.that(allColors).startsWithElementsFrom(colors)`    |
-| endsWith                  | `Ensure.that(colors).endsWith("green","blue")`             |
-| endWithElementsFrom       | `Ensure.that(allColors).endWithElementsFrom(lastColors)``  |
+| Assertion                 | Example
+| contains                  | `Ensure.that(colors).contains("red","blue")`
+| containsAnyOf             | `Ensure.that(colors).anyOf("red","pink")`
+| containsOnly              | `Ensure.that(colors).containsOnly("blue","green","red")`
+| containsExactly           | `Ensure.that(colors).containsExactly("red","blue","green")`
+| containsExactlyInAnyOrder | `Ensure.that(colors).containsExactly("red","blue","green")`
+| doesNotContain            | `Ensure.that(colors).doesNotContain("pink")`
+| containsElementsFrom      | `Ensure.that(allColors).containsElementsFrom(colors)`
+| containsAnyElementsOf     | `Ensure.that(colors).containsAnyElementsOf(redAndPink)`
+| containsExactlyElementsOf | `Ensure.that(colors).containsExactlyElementsOf(sameColors)`
+| isASubsetOf               | `Ensure.that(colors).isASubsetOf(allColors)`
+| doesNotHaveDuplicates     | `Ensure.that(colors).doesNotHaveDuplicates()`
+| startsWith                | `Ensure.that(colors).startsWith("red", "green")`
+| startsWithElementsFrom    | `Ensure.that(allColors).startsWithElementsFrom(colors)`
+| endsWith                  | `Ensure.that(colors).endsWith("green","blue")`
+| endWithElementsFrom       | `Ensure.that(allColors).endWithElementsFrom(lastColors)`
 |=======
 
 ### Matching list elements with Java 8 Lambdas
@@ -348,7 +348,8 @@ For example, the following code asserts that each element in a collection is 4 c
 List<String> colors = ImmutableList.of("blue", "cyan", "pink");
 
 aster.attemptsTo(
-    Ensure.that(colors).allMatch("4 characters long", it -> it.length() == 4)
+    Ensure.that(colors).allMatch("4 characters long",
+                                 it -> it.length() == 4)
 );
 ----
 
@@ -366,12 +367,14 @@ public void shouldContainAtLeastOnePrimaryColor() {
 
     aster.attemptsTo(
         Ensure.that(colors).anyMatch("is a primary color",
-                                         it ->  isAPrimaryColor(it))
+                                     it ->  isAPrimaryColor(it))
     );
 }
 
 private boolean isAPrimaryColor(String color) {
-    return  (color == "red") || (color == "green") || (color == "blue");
+    return  (color == "red")
+            || (color == "green")
+            || (color == "blue");
 }
 ----
 
@@ -382,7 +385,8 @@ The _noneMatch_ method checks that no elements exist in a collection that match 
 List<String> colors = ImmutableList.of("orange", "cyan", "pink");
 
 aster.attemptsTo(
-    Ensure.that(colors).noneMatch("is a primary color", it ->  isAPrimaryColor(it))
+    Ensure.that(colors).noneMatch("is a primary color",
+                                  it ->  isAPrimaryColor(it))
 );
 ----
 
@@ -394,7 +398,8 @@ For example:
 List<String> colors = ImmutableList.of("blue", "cyan", "red","pink");
 
 aster.attemptsTo(
-    Ensure.that(colors).atLeast(2, "is a primary color", it ->  isAPrimaryColor(it))
+    Ensure.that(colors).atLeast(2, "is a primary color",
+                                it ->  isAPrimaryColor(it))
 );
 ----
 
@@ -458,12 +463,12 @@ The most simple assertions about web elements are boolean checks about the state
 The `Ensure.that(...).is...` assertions let you make assertions about whether an element
 is displayed or disabled.
 
-[width="80%",frame="topbot",options="header",cols="60%,40%"]
+[options="header"]
 |=======
-| Assertion          | Example                                                |
-| isDisplayed        | `Ensure.that(FIRST_NAME).isDisplayed()`                |
-| isDisabled         | `Ensure.that(FIRST_NAME).isDisabled()`                 |
-| isEnabled          | `Ensure.that(FIRST_NAME).isEnabled()`                  |
+| Assertion          | Example
+| isDisplayed        | `Ensure.that(FIRST_NAME).isDisplayed()`
+| isDisabled         | `Ensure.that(FIRST_NAME).isDisabled()`
+| isEnabled          | `Ensure.that(FIRST_NAME).isEnabled()`
 |=======
 
 ### Checking text content and field values
@@ -483,7 +488,9 @@ The `Ensure.that(...).text()` method lets you read the text of the element:
 [source,java]
 ----
 aster.attemptsTo(
-    Ensure.that(SEARCH_RESULTS_SUMMARY).text().endsWith("results for 'Serenity'"),
+    Ensure.that(SEARCH_RESULTS_SUMMARY)
+          .text()
+          .endsWith("results for 'Serenity'"),
 );
 ----
 
@@ -495,17 +502,17 @@ making it useful in cases where you need to read a full set of values, even thos
 
 The most important `Ensure.that(...)` methods for web elements include the following:
 
-[width="80%",frame="topbot",options="header",cols="60%,40%"]
+[options="header"]
 |=======
-| Assertion           | Example                                                              |
-| value               | `Ensure.that(FIRST_NAME).value().isEqualTo("Joe")`                   |
-| text                | `Ensure.that(DESCRIPTION).text().isNotEmpty()`                       |
-| textContent         | `Ensure.that(DESCRIPTION).textContent().isNotEmpty()`                |
-| attribute           | `Ensure.that(FIRST_NAME).attribute("title").isEqualTo("First name")` |
-| selectedValue       | `Ensure.that(COLORS).selectedValue().isEqualTo("green")`             |
-| selectedVisibleText | `Ensure.that(COLORS).selectedVisibleText().isEqualTo("Green")`       |
-| hasCssClass         | `Ensure.that(COLORS).hasCssClass("color-list")`                      |
-| containsElements    | `Ensure.that(RESULT_LIST).containsElements(".result-details")`       |
+| Assertion           | Example
+| value               | `Ensure.that(FIRST_NAME).value().isEqualTo("Joe")`
+| text                | `Ensure.that(DESCRIPTION).text().isNotEmpty()`
+| textContent         | `Ensure.that(DESCRIPTION).textContent().isNotEmpty()`
+| attribute           | `Ensure.that(FIRST_NAME).attribute("title").isEqualTo("First name")`
+| selectedValue       | `Ensure.that(COLORS).selectedValue().isEqualTo("green")`
+| selectedVisibleText | `Ensure.that(COLORS).selectedVisibleText().isEqualTo("Green")`
+| hasCssClass         | `Ensure.that(COLORS).hasCssClass("color-list")`
+| containsElements    | `Ensure.that(RESULT_LIST).containsElements(".result-details")`
 |=======
 
 All of these methods allow you to make all of the String assertions we saw earlier.
@@ -527,16 +534,16 @@ aster.attemptsTo(
 
 The main conversion methods include:
 
-[width="80%",frame="topbot",options="header",cols="60%,40%"]
+[options="header"]
 |=======
-| Assertion     | Example                                                              |
-| asAnInteger   | `Ensure.that(ITEM_COUNT).value().asAnInteger().isEqualTo(2)`         |
-| asADouble     | `Ensure.that(TOTAL_COST).value().asADouble().isEqualTo(99.99d)`      |
-| asAFloat      | `Ensure.that(TOTAL_COST).value().asAFloat().isCloseTo(99.99f,0.01f)` |
-| asABigDecimal | `Ensure.that(TOTAL_COST).value().asABigDecimal().isEqualTo(new BigDecimal("99.99"))` |
-| asADate       | `Ensure.that(CURRENT_DATE).value().asADate().isEqualTo(expectedLocalDate)`     |
-| asATime       | `Ensure.that(CURRENT_TIME).value().asATime().isEqualTo(expectedLocalTime)`     |
-| asABoolean    | `Ensure.that(SOME_FLAG).value().asABoolean().isTrue()`     |
+| Assertion     | Example
+| asAnInteger   | `Ensure.that(ITEM_COUNT).value().asAnInteger().isEqualTo(2)`
+| asADouble     | `Ensure.that(TOTAL_COST).value().asADouble().isEqualTo(99.99d)`
+| asAFloat      | `Ensure.that(TOTAL_COST).value().asAFloat().isCloseTo(99.99f,0.01f)`
+| asABigDecimal | `Ensure.that(TOTAL_COST).value().asABigDecimal().isEqualTo(new BigDecimal("99.99"))`
+| asADate       | `Ensure.that(CURRENT_DATE).value().asADate().isEqualTo(expectedLocalDate)`
+| asATime       | `Ensure.that(CURRENT_TIME).value().asATime().isEqualTo(expectedLocalTime)`
+| asABoolean    | `Ensure.that(SOME_FLAG).value().asABoolean().isTrue()`
 |=======
 
 If a date or time value uses as non-standard format, we can pass a format string to the `asADate()` or `asATime()` methods:
@@ -577,20 +584,20 @@ aster.attemptsTo(
 
 The main methods defined in the `TheMatchingElement` class include:
 
-[width="80%",frame="topbot",options="header",cols="60%,40%"]
+[options="header"]
 |=======
-| Assertion        | Example                                                               |
-| isDisplayed      | `Ensure.thatTheSetOf(RESULTS).allMatch(isDisplayed())`                |
-| isNotDisplayed   | `Ensure.thatTheSetOf(RESULTS).noneMatch(isNotDisplayed())`            |
-| isDisabled       | `Ensure.thatTheSetOf(INPUT_FIELDS).atLeast(1, isDisabled())`          |
-| isNotDisabled    | `Ensure.thatTheSetOf(INPUT_FIELDS).atLeast(1, isNotDisabled())`       |
-| isEnabled        | `Ensure.thatTheSetOf(INPUT_FIELDS).atLeast(1, isEnabled())`           |
-| isNotEnabled     | `Ensure.thatTheSetOf(INPUT_FIELDS).atLeast(1, isNotEnabled())`        |
-| hasCssClass      | `Ensure.thatTheSetOf(RESULTS).noMoreThan(1, hasCssClass("selected"))` |
-| hasValue         | `Ensure.thatTheSetOf(RESULTS).anyMatch(hasValue("red"))`              |
-| containsText     | `Ensure.thatTheSetOf(RESULTS).anyMatch(containsText("Red"))`          |
-| containsOnlyText | `Ensure.thatTheSetOf(RESULTS).anyMatch(containsOnlyText("Red Car"))`  |
-| containsElementsLocatedBy | `Ensure.thatTheSetOf(RESULTS).anyMatch(containsElementsLocatedBy(".model"))`  |
+| Assertion        | Example
+| isDisplayed      | `Ensure.thatTheSetOf(RESULTS).allMatch(isDisplayed())`
+| isNotDisplayed   | `Ensure.thatTheSetOf(RESULTS).noneMatch(isNotDisplayed())`
+| isDisabled       | `Ensure.thatTheSetOf(INPUT_FIELDS).atLeast(1, isDisabled())`
+| isNotDisabled    | `Ensure.thatTheSetOf(INPUT_FIELDS).atLeast(1, isNotDisabled())`
+| isEnabled        | `Ensure.thatTheSetOf(INPUT_FIELDS).atLeast(1, isEnabled())`
+| isNotEnabled     | `Ensure.thatTheSetOf(INPUT_FIELDS).atLeast(1, isNotEnabled())`
+| hasCssClass      | `Ensure.thatTheSetOf(RESULTS).noMoreThan(1, hasCssClass("selected"))`
+| hasValue         | `Ensure.thatTheSetOf(RESULTS).anyMatch(hasValue("red"))`
+| containsText     | `Ensure.thatTheSetOf(RESULTS).anyMatch(containsText("Red"))`
+| containsOnlyText | `Ensure.thatTheSetOf(RESULTS).anyMatch(containsOnlyText("Red Car"))`
+| containsElementsLocatedBy | `Ensure.thatTheSetOf(RESULTS).anyMatch(containsElementsLocatedBy(".model"))`
 |=======
 
 We can also make assertions about collections of matching values or the text contents of matching elements.
@@ -615,10 +622,12 @@ For example:
 
 [source,java]
 ----
-Target SLOW_FIELD = Target.the("Slow field").locatedBy("#slow")
+Target SLOW_FIELD = Target.the("Slow field")
+                          .locatedBy("#slow")
+
 aster.attemptsTo(
-        Open.browserOn(demoPage),
-        Ensure.that(SLOW_FIELD.waitingForNoMoreThan(Duration.ofSeconds(10)))
+        Ensure.that(SLOW_FIELD
+                    .waitingForNoMoreThan(Duration.ofSeconds(10)))
               .value()
               .isEqualTo("Marseille")
 );
@@ -628,9 +637,9 @@ We can also build a delay into a `Target` field, if the same delay should be app
 
 [source,java]
 ----
-    Target SLOW_FIELD = Target.the("Slow field")
-                              .locatedBy("#slow")
-                              .waitingForNoMoreThan(Duration.ofSeconds(5))
+Target SLOW_FIELD = Target.the("Slow field")
+                      .locatedBy("#slow")
+                      .waitingForNoMoreThan(Duration.ofSeconds(5))
 ----
 
 ### Making assertions about the current page
@@ -669,7 +678,9 @@ We could then use the `Ensure.thatTheAnswerTo()`  method to check the result of 
 [source,java]
 ----
 aster.attemptsTo(
-        Ensure.thatTheAnswerTo("the count", countOf("some-todo-item")).isEqualTo(1)
+        Ensure.thatTheAnswerTo("the count",
+                               countOf("some-todo-item"))
+              .isEqualTo(1)
 );
 ----
 
@@ -703,6 +714,8 @@ We can do this using the `silently()` method:
 [source,java]
 ----
 aster.attemptsTo(
-    Ensure.that(ElementLocated.by("#firstName")).silently().isDisplayed()
+    Ensure.that(ElementLocated.by("#firstName"))
+          .silently()
+          .isDisplayed()
 );
 ----

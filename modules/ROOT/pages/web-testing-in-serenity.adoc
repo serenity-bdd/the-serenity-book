@@ -111,7 +111,7 @@ Scenario: Mark a task as completed in Cucumber
 === Configuring Drivers
 When you run a WebDriver test against almost any driver, you need an OS-specific binary file to act as an intermediary between your test and the browser you want to manipulate. The main drivers, and where you can download them from, are listed below:
 
-[cols="2*", options="header"]
+[cols="4*", options="header"]
 |===
 |Browser
 |Driver

@@ -8,7 +8,7 @@
 * xref:web-testing-in-serenity.adoc[Testing Web Applications]
 * xref:page-objects.adoc[Working with Page Objects]
 * xref:angularjs.adoc[Testing AngularJS applications]
-* xref:remote.adoc[xRunning Remote Tests]
+* xref:remote.adoc[Running Remote Tests]
 * xref:extending-webdriver.adoc[Extending Webdriver setup and teardown]
 
 .Serenity with JUnit

@@ -89,7 +89,7 @@ image::manual-test-pending-retest.png[]
 
 ## Attaching evidence
 
-Sometimes we need to attach screenshots or other files to our manual test reports as additional evidence. You can do this in two ways: you can either include a link to an external site, or place an image in the `src/test/resources/assets` folder and include a relative link to this file (without the `assets` folder name), e.g.
+Sometimes we need to attach screenshots or other files to our manual test reports as additional evidence. The `@manual-test-evidence` tag allows you to do just this. You can either include a link to an external site, as shown here:
 
 [source,gherkin]
 ----
@@ -101,7 +101,7 @@ Scenario: Invoice details should be downloadable as a PDF file
    ...
 ----
 
-or
+Alternatively, you can place an image in the `src/test/resources/assets` folder and include a relative link to this file (starting with "assets/"):
 
 [source,gherkin]
 ----

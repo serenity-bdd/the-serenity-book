@@ -60,7 +60,7 @@ For example, suppose that a team is working towards a release at the end of the 
 [source,gherkin]
 ----
 @manual
-@manual:passed
+@manual-result:passed
 @manual-last-tested:sprint-15
 Scenario: Invoice details should be downloadable as a PDF file
    ...
@@ -107,13 +107,13 @@ Alternatively, you can place an image in the `src/test/resources/assets` folder 
 ----
 @manual
 @manual-result:passed
-@last-tested:sprint-15
-@test-evidence:assets/some-screenshot.png
+@manual-last-tested:sprint-15
+@manual-test-evidence:assets/some-screenshot.png
 Scenario: Invoice details should be downloadable as a PDF file
    ...
 ----
 
-Test Evidence is only displayed if the `@last-tested` annotation is defined.
+Test Evidence is only displayed if the `@lmanual-ast-tested` annotation is defined.
 
 ## Updating manual test results in an existing test suite
 

@@ -39,7 +39,7 @@ This also makes it easier to run all of the manual tests in isolation.
 [source,gherkin]
 ----
 @manual
-@manual:passed
+@manual-result:passed
 Scenario: Invoice details should be downloadable as a PDF file
    ...
 ----

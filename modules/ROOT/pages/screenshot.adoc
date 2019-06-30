@@ -1,8 +1,10 @@
+= Working with Screenshots
+
 One of the key goals of the Serenity reports is to turn test reports into _living documentation_. One of the ways it does this for web tests is to record screenshots at key steps throughout the execution of a test.
 
 However, recording a large number of screenshots can slow down test execution. For this reason, Serenity lets you configure how often you record screenshots during test execution. For example, you may want to record screenshots only for test failures during a local test run, but record all of the screenshots during a nightly build. Serenity provides many options to help you determine exactly how many screenshots will be recorded.
 
-=== Basic screenshot configuration
+== Basic screenshot configuration
 
 The simplest screenshot configuration option is the +serenity.take.screenshots+ property. This property can take the following values:
 
@@ -16,7 +18,7 @@ The simplest screenshot configuration option is the +serenity.take.screenshots+ 
 
 +DISABLED+:: Doesn't save screenshots for any steps.
 
-=== Using annotations to control screenshots
+== Using annotations to control screenshots
 An even more granular level of control is possible using annotations.
 You can annotate any test or step method (or any method used by a step or test) with the +@Screenshots+ annotation to override the number of screenshots taken within this step (or sub-step). Some sample uses are shown here:
 
@@ -39,7 +41,7 @@ public void should_take_screenshots_for_each_action_in_this_test() {…}
 public void should_not_take_screenshots_for_any_action_in_this_test(() {…}
 ------------------
 
-=== Class-specific screenshot configuration with ScreenPlay
+== Class-specific screenshot configuration with ScreenPlay
 
 If you are using Screenplay, you can configure which tasks and actions should have screenshots. In Screenplay, a `Task` represents something a user needs to do to achieve some goal, expressed in business, not technical, terms. For example, "Add an item to the todo list". An `Interaction` represents how the user interacts with the application to perform a task, for example "enter 'buy some milk' into the input field", or "click on the 'add' button".
 
@@ -113,13 +115,13 @@ Now you can configure screenshots for any Task or Interaction that implements th
 serenity.take.screenshot.for.noscreenshots = DISABLED
 ----
 
-=== Taking screenshots at any arbitrary point during a step
+== Taking screenshots at any arbitrary point during a step
 It is possible to have even finer control on capturing screenshots in the tests. Using the +takeScreenshot+ method, you can  instruct Serenity to take a screenshot at any arbitrary point in the step irrespective of the screenshot level set using configuration or annotations.
 
 Simply call +Serenity.takeScreenshot()+ in the step methods whenever you want a screenshot to be captured.
 
 
-=== Increasing the size of screenshots
+== Increasing the size of screenshots
 Sometimes the default window size is too small to display all of the application screen in the screenshots. You can increase the size of the window Serenity opens by providing the +Serenity.browser.width+ and +Serenity.browser.height+ system properties. Typically, the width parameter is the only one you will need to specify, as the height will be determined by the contents of the browser page.
 
 You can also set the `serenity.browser.maximize` property to `true` to get WebDriver to maximize the browser at the start of the tests.
@@ -128,7 +130,7 @@ When the browser width is larger than 1000px, the slideshow view in the reports 
 
 Note there are some caveats with this feature. In particular, it will not work at all with Chrome, as Chrome, by design, does not support window resizing. In addition, since WebDriver uses a real browser, so the maximum size will be limited by the physical size of the browser. This limitation applies to the browser width, as the full vertical length of the screen will still be recorded in the screenshot even if it scrolls beyond a single page.
 
-==== Screenshots and OutOfMemoryError issues
+=== Screenshots and OutOfMemoryError issues
 Selenium needs memory to take screenshots, particularly if the screens are large. If Selenium runs out of memory when taking screenshots, it will log an error in the test output. In this case, configure the maven-surefire-plugin to use more memory, as illustrated here:
 
 [source,xml]
@@ -143,10 +145,10 @@ Selenium needs memory to take screenshots, particularly if the screens are large
 </plugin>
 ------------------
 
-=== Saving raw screenshots
+== Saving raw screenshots
 Serenity saves only rescaled screenshots by default. This is done to help reduce the disk space taken by reports. If you require to save the original unscaled screenshots, this default can be easily overridden by setting the property, +serenity.keep.unscaled.screenshots+ to +true+.
 
-=== Blurring sensitive screenshots
+== Blurring sensitive screenshots
 For security/privacy reasons, it may be required to blur sensitive screenshots in Serenity reports. This can be done by annotating the test methods or steps with the annotation +@BlurScreenshots+. When defined on a test, all screenshots for that test will be blurred. When defined on a step, only the screenshot for that step will be blurred. @BlurredScreenshot takes a string parameter with values +LIGHT, MEDIUM+ or +HEAVY+ to indicate the amount of blurring. For example,
 
 [source,java]

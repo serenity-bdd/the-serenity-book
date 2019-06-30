@@ -1,4 +1,4 @@
-Assertions are an important part of any test automation framework, and Serenity gives us many options. To start with, you can use standard JUnit, http://hamcrest.org/[Hamcrest] or https://joel-costigliola.github.io/assertj/[AssertJ] assertions at any point in a Screenplay test.
+= Screenplay Assertions
 
 We have seen how make assertions using the `should()` method with targets or questions combined with Hamcrest matchers, like this:
 

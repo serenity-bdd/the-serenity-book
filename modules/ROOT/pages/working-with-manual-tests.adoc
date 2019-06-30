@@ -26,22 +26,11 @@ This scenario will now appear as a manual test case in the Serenity reports:
 image::manual-scenario.png[]
 
 ## Recording manual test results
-By default, `@manual` scenarios are marked as _pending_ in the Serenity reports.
-However, you can indicate a different result by adding the `@manual-result` tag as shown here:
-   * A passing test: `@manual-result:passed`
-   * A failing test: `@manual-result:failed`
-   * A compromised test: `@manual-result:compromised`
+By default, `@manual` scenarios are marked as _pending_ in the Serenity reports. However, you can indicate a different result as shown here:
+   * A passing test: `@manual:passed`
+   * A failing test: `@manual:failed`
+   * A compromised test: `@manual:compromised`
 
-Note that if you want to record the result of a manual test, you should include both the `@manual` and the `@manual-result` tags.
-This also makes it easier to run all of the manual tests in isolation.
-
-[source,gherkin]
-----
-@manual
-@manual:passed
-Scenario: Invoice details should be downloadable as a PDF file
-   ...
-----
 These manual test results are indicated in a different shade in the Serenity reports, and also appear in the summary table on the home page:
 
 [[manual-results]]
@@ -58,7 +47,6 @@ For example, suppose that a team is working towards a release at the end of the 
 
 [source,gherkin]
 ----
-@manual
 @manual:passed
 @manual-last-tested:sprint-15
 Scenario: Invoice details should be downloadable as a PDF file
@@ -92,8 +80,7 @@ You can either include a link to an external site, or place an image in the `src
 
 [source,gherkin]
 ----
-@manual
-@manual-result:passed
+@manual:passed
 @manual-last-tested:sprint-15
 @manual-test-evidence:https://some.external/link.png
 Scenario: Invoice details should be downloadable as a PDF file
@@ -104,8 +91,7 @@ or
 
 [source,gherkin]
 ----
-@manual
-@manual-result:passed
+@manual:passed
 @last-tested:sprint-15
 @test-evidence:assets/some-screenshot.png
 Scenario: Invoice details should be downloadable as a PDF file
@@ -115,10 +101,3 @@ Scenario: Invoice details should be downloadable as a PDF file
 Test Evidence is only displayed if the `@last-tested` annotation is defined.
 
 ## Updating manual test results in an existing test suite
-
-Manual test results are not always updated at the same time as code changes.
-You can update an existing set of test results by selectively running the manual scenarios.
-
-----
- mvn verify -Dcucumber.options="--tags @manual"
-----

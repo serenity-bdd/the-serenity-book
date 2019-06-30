@@ -28,9 +28,10 @@ image::manual-scenario.png[]
 ## Recording manual test results
 By default, `@manual` scenarios are marked as _pending_ in the Serenity reports.
 However, you can indicate a different result by adding the `@manual-result` tag as shown here:
-   * A passing test: `@manual-result:passed`
-   * A failing test: `@manual-result:failed`
-   * A compromised test: `@manual-result:compromised`
+
+* A passing test: `@manual-result:passed`
+* A failing test: `@manual-result:failed`
+* A compromised test: `@manual-result:compromised`
 
 Note that if you want to record the result of a manual test, you should include both the `@manual` and the `@manual-result` tags.
 This also makes it easier to run all of the manual tests in isolation.

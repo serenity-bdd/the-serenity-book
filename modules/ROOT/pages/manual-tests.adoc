@@ -113,7 +113,32 @@ Scenario: Invoice details should be downloadable as a PDF file
    ...
 ----
 
-Test Evidence is only displayed if the `@lmanual-ast-tested` annotation is defined.
+You can provide more than one piece of evidence by providing a comma-separated list:
+
+[source,gherkin]
+----
+@manual
+@manual-result:passed
+@manual-last-tested:sprint-15
+@manual-test-evidence:assets/first-screenshot.png,assets/second-screenshot.png
+Scenario: Invoice details should be downloadable as a PDF file
+   ...
+----
+
+You can also use a markdown-like syntax to customise the text that will describe each piece of evidence:
+[source,gherkin]
+----
+@manual
+@manual-result:passed
+@manual-last-tested:sprint-15
+@manual-test-evidence:[First_Screenshot](assets/first-screenshot.png)
+Scenario: Invoice details should be downloadable as a PDF file
+   ...
+----
+
+Since Cucumber does not allow spaces in tags, you can use underscores for spaced.
+
+Test Evidence is only displayed if the `@manual-last-tested` annotation is defined.
 
 ## Updating manual test results in an existing test suite
 

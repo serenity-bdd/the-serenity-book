@@ -7,7 +7,6 @@
 .Testing Web Applications
 * xref:web-testing-in-serenity.adoc[Testing Web Applications]
 * xref:page-objects.adoc[Working with Page Objects]
-* xref:screenshots.adoc[Managing Screenshots]
 * xref:angularjs.adoc[Testing AngularJS applications]
 * xref:remote.adoc[Running Remote Tests]
 * xref:extending-webdriver.adoc[Extending Webdriver setup and teardown]
@@ -34,9 +33,11 @@
 
 .Reporting and Living documentation
 * xref:living-documentation.adoc[Living Documentation]
+* xref:filtering-reports.adoc[Filtering Reports]
 * xref:extended-reports.adoc[Additional Reports]
 * xref:manual-tests.adoc[Reporting Manual Test Results]
 * xref:jira.adoc[Integrating with JIRA]
+
 
 .Scaling Serenity
 * xref:serenity-parallel.adoc[Running Serenity tests in parallel on a local machine]

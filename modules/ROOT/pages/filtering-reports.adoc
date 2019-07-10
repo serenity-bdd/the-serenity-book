@@ -1,0 +1,68 @@
+
+= Filtering Reports
+Serenity BDD makes it easy to get both a broad overview of your test results and functional coverage. But when working with large test suites, it is often useful to be able to focus on specific functional areas of the application when reporting results. For example, you may want to view only the results for the tests related to the current release, or to a specific functional area.
+
+In Serenity BDD, you can use tags to generate this kind of focused report.
+
+This works very naturally with Cucumber test scenarios. For example, in the following feature file, we have used the `@sprint-2` tag to indicate that the scenario is scheduled for Sprint 2.
+
+[source,gherkin]
+----
+
+@sprint-2
+Scenario: Buyer orders a coffee
+  Given Cathy has a Caffeinate-Me account
+  When she orders a large cappuccino
+  Then Cathy should receive the order
+----
+
+Tagging also works with JUnit test, as illustrated here:
+
+[source,java]
+----
+@RunWith(SerenityRunner.class)
+public class WhenAddingNumbers {
+
+    @Steps
+    MathWizSteps michael;
+
+    @Test
+    @WithTag("sprint-2")
+    public void addingSums() {
+        // Given
+        michael.startsWith(1);
+
+        // When
+        michael.adds(2);
+
+        // Then
+        michael.shouldHave(3);
+    }
+}
+----
+
+== Running
+
+----
+mvn clean verify -Dtags="sprint-2"
+----
+
+When using Cucumber, we need to use the `cucumber.options` property to indicate which scenarios should be executed. For example, the following command runs all of the Cucumber scenarios with the `@sprint-2` tag":
+
+----
+mvn clean verify -Dcucumber.options="--tags=@sprint-2"
+----
+
+== Excluding Unrelated Requirements
+
+By default, when you use the `tags` option, Serenity will filter your requirements as best it can to report only the requirements that are relevant to the specified tag.
+
+Requirements filtering only happens if you specify the `tags` option. So this will produce a full set of requirements in the *Requirements* page.
+```
+$ mvn clean verify -Dcucumber.options="--tags @sprint-2"
+```
+
+But this will report only the requirements that are related to the executed tests.
+```
+$ mvn clean verify -Dcucumber.options="--tags @sprint-2" -Dtags=sprint-2
+```

@@ -492,8 +492,21 @@ resetImplicitTimeout()
 
 See http://docs.seleniumhq.org/docs/04_webdriver_advanced.jsp#implicit-waits[Selenium Documentation] for more details on how the WebDriver implicit waits work.
 
+=== Using custom locator factories
+
+Internally, Selenium uses the concept of Locator Factories
+Normally, Serenity uses `SmartElementLocatorFactory`, an extension of the WebDriver `AjaxElementLocatorFactory`, when instantiating page objects. Among other things, this helps ensure that web elements are available and usable before they are used, allows field-by-field timeouts, and avoids long unnecessary waits on web elements after a step has failed. 
+
+The `SmartElementLocatorFactory` uses the default implicit wait, or the `timeoutInSeconds` attribute of the `@FindBy` annotation if this value has been specified (see below), or the default implicit wait value specified by the `webdriver.timeouts.implicitlywait` property.
+
+In rare cases, you may need to customise this behaviour. To do this, you can use the `serenity.locator.factory` property to use one of the following alternative locator factories:
+  * `AjaxElementLocatorFactory`: A WebDriver locator factory more suitable for Ajax applications. According to the WebDriver docs, this locator factory will return _an element locator that will wait for the specified number of seconds for an element to appear, rather than failing instantly if it's not present. This works by polling the UI on a regular basis. The element returned will be present on the DOM, but may not actually be visible._
+  * `DefaultElementLocatorFactory`: the default WebDriver locator factory
+
+If you use the `AjaxElementLocatorFactory`, you can use the `webdriver.timeouts.implicitlywait` parameter is to specify the number of seconds to wait. If no value is specified, the default wait will be 5 seconds.
+
 === Explicit Timeouts
-You can also wait until an element is in a particular state. For example, we could wait until a field becomes visible:
+You can also programatically wait until an element is in a particular state. This is more flexible and useful when you need to wait for extra time in a specific situation. For example, we could wait until a field becomes visible:
 
 [source,java]
 ----

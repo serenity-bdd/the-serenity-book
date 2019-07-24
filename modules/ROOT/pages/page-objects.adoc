@@ -502,7 +502,7 @@ The `SmartElementLocatorFactory` uses the default implicit wait, or the `timeout
 In rare cases, you may need to customise this behaviour. To do this, you can use the `serenity.locator.factory` property to use one of the following alternative locator factories:
 
   * `AjaxElementLocatorFactory`: A WebDriver locator factory more suitable for Ajax applications. According to the WebDriver docs, this locator factory will return _an element locator that will wait for the specified number of seconds for an element to appear, rather than failing instantly if it's not present. This works by polling the UI on a regular basis. The element returned will be present on the DOM, but may not actually be visible._
-  
+
   * `DefaultElementLocatorFactory`: the default WebDriver locator factory
 
 If you use the `AjaxElementLocatorFactory`, you can use the `webdriver.timeouts.implicitlywait` parameter is to specify the number of seconds to wait. If no value is specified, the default wait will be 5 seconds.
@@ -804,7 +804,7 @@ You sometimes also need to check constraints that apply to all of the elements u
     shouldMatch(persons, each("lastName").isDifferent())
 -----------
 
-You can also check that the number of matching elements corresponds to what you are expecting. For example, to check that there is only one person who's first name is Bill, you could do this:
+You can also check that the number of matching elements corresponds to what you are expecting. For example, to check that there is only one person named Bill, you could do this:
 
 [source,java]
 -----------
@@ -993,3 +993,33 @@ Optimistic will only wait until the field is defined. This is the native Seleniu
 Pessimistic will wait until at least the first element is displayed. This is currently the default.
 
 Paranoid will wait until all of the elements are displayed. This can be slow for long lists.
+
+== Working with fixture methods
+
+When a UI step fails in a Serenity test, the WebDriver instance is disabled for the rest of the test. This avoids unnecessary waits as the test steps through the subsequent steps (which it needs to do to document the test steps). The exception to this rule is in the case of fixture methods, such as methods annotated with the `@After` annotation in JUnit or Cucumber.
+
+In these methods, the WebDriver instance can be used normally. In addition to the known JUnit and Cucumber annotations, any annotation starting with the word `After` will be considered a fixture method.
+
+For example, suppose you need to delete the customer accounts via the UI at the end of each test. You already have an `AdminSteps` step library with a `deleteAllCustomerAccounts()` method that performs this task. You could ensure that all of the customer accounts are deleted like this:
+
+[source,java]
+------------------
+@Steps
+AdminSteps asAdministrator;
+
+...
+
+@After
+public void deleteUserAccounts() {
+    asAdministrator.deleteAllCustomerAccounts();
+}
+------------------
+
+This makes it easy to perform teardown or cleanup operations that use the user interface, potentially reusing steps or tasks that are used elsewhere in the tests.
+
+You can also override this behaviour at any point by calling the `reenableDrivers()` method, as shown here:
+
+[source,java]
+------------------
+Serenity.webdriver().reenableDrivers();
+------------------

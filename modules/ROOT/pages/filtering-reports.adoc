@@ -66,3 +66,12 @@ But this will report only the requirements that are related to the executed test
 ```
 $ mvn clean verify -Dcucumber.options="--tags @sprint-2" -Dtags=sprint-2
 ```
+
+If you have already run the full set of tests, you can also produce a filtered aggregate report, in which case you don't need to provide the `cucumber.options` property:
+```
+$ mvn serenity:aggregate -Dtags=sprint-2
+```
+
+== Using custom requirements structures
+
+By default, requirements filtering will a

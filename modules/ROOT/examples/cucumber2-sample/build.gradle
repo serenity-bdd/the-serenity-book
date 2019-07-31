@@ -9,7 +9,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath("net.serenity-bdd:serenity-gradle-plugin:1.9.36")
+        classpath("net.serenity-bdd:serenity-gradle-plugin:2.0.64")
     }
 }
 
@@ -22,15 +22,14 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    testCompile 'org.slf4j:slf4j-api:1.7.5'
-
-    testCompile 'junit:junit:4.11'
-    testCompile 'org.assertj:assertj-core:1.7.0'
-    testCompile 'net.serenity-bdd:serenity-junit:1.9.36'
     // tag::dependencies[]
-    testCompile 'net.serenity-bdd:core:1.9.36'
-    testCompile 'net.serenity-bdd:serenity-cucumber:1.9.15'
+    testCompile 'net.serenity-bdd:core:2.0.64'
+    testCompile 'net.serenity-bdd:serenity-junit:2.0.64'
+    testCompile 'net.serenity-bdd:serenity-cucumber:2.0.19'
     // end::dependencies[]
+    testCompile 'org.slf4j:slf4j-api:1.7.5'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.assertj:assertj-core:1.7.0'
 }
 
 tasks.withType(Test) {

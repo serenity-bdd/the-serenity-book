@@ -1,145 +1,201 @@
-http://cukes.info[Cucumber] is a popular BDD test automation tool.
- *Cucumber-JVM* is the Java implementation of Cucumber.
-In Cucumber, you express acceptance criteria in a natural, human-readable form.
-For example, we could write the "wool scarf" example mentioned in the JBehave example like this:
+http://cucumber.io[Cucumber] is a popular tool for automating BDD-style acceptance criteria.
+Teams that practice BDD have conversations about business rules and examples to better understand the problem they are solving.
+Some of these examples can be transformed into automated acceptance criteria.
+Teams that use Cucumber express these acceptance criteria in a natural, human-readable form using the `given..when..then` structure:
 
 [source,gherkin]
 ----
- Given I want to buy a wool scarf
- When I search for items containing 'wool'
- Then I should only see items related to 'wool'
+Scenario: Cash withdrawal
+  Given Clive has $1000 in his current account
+  When he withdraws $100 in cash
+  Then his remaining balance should be $900
 ----
 
-This format is known as 'Gherkin', and is widely used in Cucumber and other Cucumber-based BDD tools such as SpecFlow (for .NET) and Behave (for Python). Gherkin is a flexible, highly readable format that can be written collaboratively with product owners to ensure that everyone . The loosely-structured 'Given-When-Then' format helps people focus on what they are trying to achieve, and how they will know when they get it.
+This format is known as 'Gherkin', and is widely used in Cucumber and other Cucumber-based BDD tools such as SpecFlow (for .NET) and Behave (for Python).
+Gherkin is a flexible, highly readable format that can be written collaboratively with product owners to ensure that everyone is on the same page.
+The loosely-structured 'Given-When-Then' format helps people focus on what they are trying to achieve, and how they will know when they get it.
 
-Sometimes tables can be used to summarize several different examples of the same scenario.
-In Gherkin, you can use example tables to do this.
-For instance, the following scenario illustrates how you can search for different types of products made of different materials:
+Gherkin also supports tabular data formats, which is a useful and concise way of representing many domain concepts:
 
 [source,gherkin]
 ----
-  Scenario Outline: Filter by different item types
-    Given I have searched for items containing '<material>'
-    When I filter results by type '<type>'
-    Then I should only see items containing '<material>' of type '<type>'
+Scenario: Transferring funds between internal accounts
+  Given Clive has the following accounts:
+    | Account | Balance |
+    | Current | 1000    |
+    | Savings | 2000    |
+  When he transfers $100 from his Current account to his Savings account
+  Then his new account balances should be:
+    | Account | Balance |
+    | Current | 900     |
+    | Savings | 2100    |
+----
+
+Sometimes tables can be used to summarise several different examples of the same scenario.
+For example, the following scenario illustrates the fee structure for different account types:
+
+[source,gherkin]
+----
+Scenario Outline: Account Fees for different types of account
+  Given Clive has an <Account Type> account with a balance of <Sample Balance>
+  When the monthly fees are calculated
+  Then a <Monthly Fee> monthly fee of <Sample Fee> should be deducted
   Examples:
-    | material | type           |
-    | silk     | Handmade       |
-    | bronze   | Vintage        |
-    | wool     | Craft Supplies |
+  | Account Type | Monthly Fee | Sample Balance | Sample Fee |
+  | Current      | $1.50       | 1000           | 1.50       |
+  | Savings      | $0.00       | 1000           | 0.00       |
+  | Investment   | 0.25%       | 1000           | 2.50       |
 ----
 
-== Getting Started with Cucumber-JVM and Serenity
+When you integrate Serenity with Cucumber,
 
-To get started, you will need to add the Serenity Cucumber plugin to your project. In Maven, just add the following dependencies to your pom.xml file:
+== Versions of Cucumber
+
+There are currently two commonly-used versions of Cucumber: Cucumber 2 and Cucumber 4.
+While they both support the same _Gherkin_ notation, the way you implement the steps is a little different in each version.
+When you use Serenity with Cucumber, you use a different dependency depending on the version of Cucumber you want to use.
+
+New versions come out regularly: you can find out what the latest stable versions are [on the Serenity BDD Github home page](https://github.com/serenity-bdd/serenity-core/#what-is-the-latest-stable-version-i-should-use).
+
+=== Working with Cucumber 2
+
+To get started, you will need to add the Serenity Cucumber plugin to your project.
+In Maven, just add the following dependencies to your pom.xml file:
 
 [source,xml]
 ----
-include::../examples/cucumber-quick-start/pom.xml[tags=dependencies]
+include::../examples/cucumber2-sample/pom.xml[tags=dependencies]
 ----
 
 The equivalent in Gradle is:
 
 [source,groovy]
 ----
-include::../examples/cucumber-quick-start/build.gradle[tags=dependencies]
+include::../examples/cucumber2-sample/build.gradle[tags=dependencies]
 ----
 
-New versions come out regularly, so be sure to check the Maven Central repository (http://search.maven.org) to know the latest version numbers for each dependency.
+=== Working with Cucumber 4
 
-=== Cucumber Maven Archetype
+The Cucumber 4 dependency setup is a bit more complicated, as you need to override the Cucumber 2 dependency in Serenity core.
+In Maven, you need add the following dependency configuration to your pom.xml file:
 
-A Cucumber archetype is available to help you jumpstart a new project. As usual, you can run `mvn archetype:generate -Dfilter=serenity` from the command line and then select the `net.serenity-bdd:serenity-cucumber-archetype` archetype from the proposed list of archetypes.
+[source,xml]
+----
+include::../examples/cucumber4-sample/pom.xml[tags=dependencies]
+----
+
+The equivalent in Gradle is:
+
+[source,groovy]
+----
+include::../examples/cucumber4-sample/build.gradle[tags=dependencies]
+----
+
+=== Using the Cucumber Maven Archetype
+
+A Cucumber archetype for Cucumber 2 is available to help you jumpstart a new project.
+As usual, you can run `mvn archetype:generate -Dfilter=serenity` from the command line
+and then select the `net.serenity-bdd:serenity-cucumber-archetype` archetype from the proposed list of archetypes.
 Or you can use your favorite IDE to generate a new Maven project using an archetype.
 
-=== Writing executable specifications with Cucumber and Serenity
+== Writing Executable Specifications with Cucumber and Serenity
 
 In Cucumber, scenarios are stored in 'Feature Files', which contain an overall description of a feature as well as a number of scenarios.
-The Feature File for the example above is called `search_by_keyword.feature`, and looks something like this:
+The Feature File for the first example we saw earlier is called `cash_withdrawals.feature`, and looks something like this:
 
 [source,gherkin]
 ----
-include::../examples/cucumber-quick-start/src/test/resources/features/search/search_by_keyword.feature[tags=header;woolscenario]
+include::../examples/cucumber2-sample/src/test/resources/features/bank/cash_withdrawals.feature
 ----
 
-These feature files can be placed in different locations, but you can reduce the amount of configuration you need to do with Serenity if you put them in the `src/test/resources/features` directory.
+=== Organising your feature files
 
-You typically organize the feature files in sub-directories that reflect the higher-level requirements.
-In the following directory structure, for example, we have feature definitions for several capabilities: 'search' and 'shopping_cart':
+The simplest way to organise your Serenity/Cucumber feature files is to place them in the `src/test/resources/features` directory.
+
+You typically organise the feature files in sub-directories that reflect the higher-level requirements.
+You can think of each subdirectory as a chapter or section heading in your living documentation, with the features grouped inside these sections.
+For example, in the following directory structure, we have feature definitions for several capabilities related to an online store, including 'search_for_products', 'make_a_purchase' and 'request_a_refund':
 
 ----
 |----src
 | |----test
 | | |----resources
 | | | |----features
-| | | | |----search
-| | | | | |----search_by_keyword.feature
-| | | | |----shopping_cart
+| | | | |----search_for_products
+| | | | | |----search.feature
+| | | | |----make_a_purchase
 | | | | | |----adding_items_to_the_shopping_cart.feature
-----
-
-Another option is to place them in `src/test/resources', but underneath the same package name as your scenario runner class (see below).
-This requires slightly less configuration of the scenario runner class.
-However in this case, you need to specify the `thucydides.requirements.dir` property in your `serenity.properties` (or `thucydides.properties`) file to point to the root requirements directory:
-
-----
-thucydides.requirements.dir=src/test/resources/net/serenity_bdd/samples/etsy/features
+| | | | | |----sales_tax.feature
+| | | | | |----checkout.feature
+| | | | |----request_a_refund
+| | | | | |----refund_standard_purchases.feature
+| | | | | |----refund_third_party_purchases.feature
 ----
 
 === The Scenario Runner
 
 Cucumber runs the feature files via JUnit, and needs a dedicated test runner class to actually run the feature files.
 When you run the tests with Serenity, you use the `CucumberWithSerenity` test runner.
-If the feature files are not in the same package as the test runner class, you also need to use the `@CucumberOptions` class to provide the root directory where the feature files can be found.
+You also need to use the `@CucumberOptions` class to provide the root directory where the feature files can be found.
+
 A simple test runner looks like this:
 
 [source,java]
 ----
-include::../examples/cucumber-quick-start/src/test/java/net/serenity_bdd/samples/etsy/features/SearchByKeyword.java[]
+include::../examples/cucumber-quick-start/src/test/java/net/serenity_bdd/samples/runners/CashWithdrawals.java[]
 ----
-
-If your feature files are stored in or under the same package as your scenario runner class (in `src/test/resources`) as discussed in the previous section, then you don't need to use `@CucumberOptions` to provide the root directory.
+(1) Serenity Cucumber feature files need the `CucumberWithSerenity` test runner.
+(2) The `features` attribute indicates where to look for the feature files
+(3) The `glue` attribute tells Cucumber where to find the Step Definition classes
 
 === Step definitions
 
 In Cucumber, each line of the Gherkin scenario maps to a method in a Java class, known as a 'Step Definition'.
 These use annotations like `@Given`, `@When` and `@Then` match lines in the scenario to Java methods.
-You define simple regular expressions to indicate parameters that will be passed into the methods:
+In Cucumber 2, you define simple regular expressions to indicate parameters that will be passed into the methods:
 
 [source,java]
 ----
-include::../examples/cucumber-quick-start/src/test/java/net/serenity_bdd/samples/etsy/features/steps/SearchByKeywordStepDefinitions.java[tags=header;woolscenario;tail]
+public class CashWithdrawalsStepDefinitions {
+
+    @Given("^(.*) has \\$(\\d+) in his (.*) account$")
+    public void in_his_current_account(String customer, int balance, String accountType) {
+    }
+
+    @When("^he withdraws \\$(\\d+) in cash$")
+    public void he_withdraws_$_in_cash(int withdrawal) {
+    }
+
+    @Then("^his remaining balance should be \\$(\\d+)$")
+    public void his_remaining_balance_should_be(int expectedBalance) {
+    }
+}
 ----
 
-These step definitions use Serenity to organize the step definition code into more reusable components.
-The `@Steps` annotation tells Serenity that this variable is a Step Library.
-In Serenity, we use Step Libraries to add a layer of abstraction between the "what" and the "how" of our acceptance tests.
-The Cucumber step definitions describe "what" the acceptance test is doing, in fairly implementation-neutral, business-friendly terms.
-So we say "searches for items containing ''wool'", not "enters ''wool'' into the search field and clicks on the search button".
-This layered approach makes the tests both easier to understand and to maintain, and helps build up a great library of reusable business-level steps that we can use in other tests. Without this kind of layered approach, step definitions tend to become very technical very quickly, which limits reuse and makes them harder to understand and maintain.
+In Cucumber 4, you can use regular expressions, but also the more readable https://cucumber.io/docs/cucumber/cucumber-expressions[Cucumber Expressions] notation shown below:
 
-Step definition files need to go in or underneath the package containing the scenario runners:
-
+[source,java]
 ----
-|----src
-| |----test
-| | |----java
-| | | |----net
-| | | | |----serenity_bdd
-| | | | | |----samples
-| | | | | | |----etsy
-| | | | | | | |----features                                    //<1>
-| | | | | | | | |----AcceptanceTests.java                      //<2>
-| | | | | | | | |----steps                                     //<3>
-| | | | | | | | | |----SearchByKeywordStepDefinitions.java
-| | | | | | | | | |----serenity                                //<4>
-| | | | | | | | | | |----BuyerSteps.java
+public class CashWithdrawalsStepDefinitions {
+
+    @Given("{word} has ${int} in his {word} account")
+    public void in_his_current_account(String customer, int balance, String accountType) {
+    }
+
+    @When("he withdraws ${int} in cash")
+    public void he_withdraws_in_cash(int withdrawal) {
+    }
+
+    @Then("his remaining balance should be ${int}")
+    public void his_remaining_balance_should_be(int expectedBalance) {
+    }
+}
 ----
-<1> The scenario runner package
-<2> A scenario runner
-<3> Step definitions for the scenario runners
-<4> Serenity Step Libraries are placed in a different sub-package
 
-=== Serenity Step Libraries and Page Objects
+=== Integrating with Serenity Step Libraries and Action Classes
 
-Both scenario step libraries (annotated with the `@Steps` annotation) and Page Objects that are declared inside the Cucumber step definition classes will be automatically instantiated.
+=== Integrating with Serenity Page Objects
+
+=== Maintaining the browser open for the entire feature
+
+=== Maintaining state between scenarios

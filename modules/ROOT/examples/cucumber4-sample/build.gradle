@@ -1,0 +1,46 @@
+repositories {
+    mavenLocal()
+    jcenter()
+}
+
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath("net.serenity-bdd:serenity-gradle-plugin:2.0.64")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'net.serenity-bdd.aggregator'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+// tag::dependencies[]
+configurations.all {
+    resolutionStrategy {
+        force "io.cucumber:cucumber-core:4.2.0"
+    }
+}
+
+dependencies {
+    testCompile "net.serenity-bdd:serenity-core:2.0.64",
+            "net.serenity-bdd:serenity-cucumber4:1.0.19",
+            "io.cucumber:cucumber-core:4.2.0",
+            "io.cucumber:cucumber-junit:4.2.0"
+
+    // Other dependencies
+    testCompile "org.slf4j:slf4j-api:1.7.5",
+            "junit:junit:4.12",
+            "org.assertj:assertj-core:1.7.0"
+}
+// end::dependencies[]
+
+tasks.withType(Test) {
+    systemProperty 'tags', System.getProperty('tags', '')
+}

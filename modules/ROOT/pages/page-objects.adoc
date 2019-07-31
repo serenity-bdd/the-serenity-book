@@ -1023,11 +1023,3 @@ You can also override this behaviour at any point by calling the `reenableDriver
 ------------------
 Serenity.webdriver().reenableDrivers();
 ------------------
-
-chromeOptions.addArguments(((Map)enhancedCapabilities.caps.get("goog:chromeOptions")).get("args"))
-
-chromeOptions.addExtensions(((Map)enhancedCapabilities.caps.get("goog:chromeOptions")).get("extensions"))
-
-chromeOptions.addExtensions(((Map)enhancedCapabilities.caps.get("goog:chromeOptions")).get("extensions"))
-
-chromeOptions.setExperimentalOption()

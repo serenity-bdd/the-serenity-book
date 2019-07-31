@@ -12,9 +12,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <serenity.version>1.9.36</serenity.version>
-        <serenity.maven.version>1.9.36</serenity.maven.version>
-        <serenity.cucumber.version>1.9.15</serenity.cucumber.version>
+        <serenity.version>2.0.64</serenity.version>
+        <serenity.maven.version>2.0.64</serenity.maven.version>
+        <serenity.cucumber.version>1.9.45</serenity.cucumber.version>
         <webdriver.driver>chrome</webdriver.driver>
         <tags></tags>
     </properties>
@@ -24,6 +24,11 @@
         <dependency>
             <groupId>net.serenity-bdd</groupId>
             <artifactId>serenity-core</artifactId>
+            <version>${serenity.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.serenity-bdd</groupId>
+            <artifactId>serenity-junit</artifactId>
             <version>${serenity.version}</version>
         </dependency>
         <dependency>
@@ -40,7 +45,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -77,7 +82,7 @@
                 <version>2.18</version>
                 <configuration>
                     <includes>
-                        <include>net/serenity_bdd/samples/etsy/features/*.java</include>
+                        <include>net/serenity_bdd/samples/runners/*.java</include>
                     </includes>
                     <systemProperties>
                         <webdriver.driver>${webdriver.driver}</webdriver.driver>

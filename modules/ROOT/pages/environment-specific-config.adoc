@@ -1,0 +1,135 @@
+When we write acceptance tests, we often need to run them against different environments. Managing the URLs for each environment by hand can be cumbersome, especially when there are not just web pages, but also REST end points, databases etc to think about. Fortunately, Serenity BDD provides a lot of flexibility in configuring environment-specific options.
+
+== Configuring page URLs for different environments
+
+Whether you are using Screenplay or classic Serenity Page Objects, the simplest way to open a browser on a given page is to use the @DefaultUrl annotation, shown below:
+
+[source,java]
+----
+@DefaultUrl(""http://myapp.myorg.com"/somepage")
+public void MyAppHomePage extends PageObject {}
+----
+
+You can modify this url at runtime by providing a different base URL in the `webdriver.base.url` system property.
+
+For example, if you set `webdriver.base.url` to "http://staging.myapp.myorg.com", the page object in the previous example will open on the URL of "http://staging.myapp.myorg.com/somepage".
+
+== Configuring the base url for different environments
+
+You can also configure the `webdriver.base.url` property for different environments in the `serenity.conf` configuration file, in the `src/test/resources` directory. To do this, you add an `environments` section that contains the configuration property values to be used for each environment. For example, suppose you need to configure your tests for three environments: dev, staging and prod, each with a different base url. You con set this up by adding the following section to your `serenity.conf` file:
+
+[source,json]
+----
+environments {
+    default {
+        webdriver.base.url = "http://localhost:8080/myapp"
+    }
+    dev {
+        webdriver.base.url = "http://dev.myapp.myorg.com"
+    }
+    staging {
+        webdriver.base.url = "http://staging.myapp.myorg.com"
+    }
+    prod {
+        webdriver.base.url = "http://myapp.myorg.com"
+    }
+}
+----
+
+Once the `environments` section is present in your `serenity.conf` file, you can use the `environment` system property to use the properties for a given environment. For example, the following would cause the staging urls to be used:
+
+[source]
+----
+mvn verify -Denvironment=staging
+----
+
+The `default` environment will be used if no other value is provided, which is why it is useful to always have a `default` environment section.
+
+== Configuring different page URLs for different environments
+
+You may need some pages to use different base URLs even within the same environment. For example, you may need to open a page on a different site or domain. You can do this by adding arbitrarily-named properties to each environment section, like the `accounts.service.url` property defined here:
+
+[source,json]
+----
+environments {
+    default {
+        webdriver.base.url = "http://localhost:8080/myapp"
+        accounts.service.url = "http://localhost:8081"
+    }
+    dev {
+        webdriver.base.url = "http://dev.myapp.myorg.com"
+        accounts.service.url = "http://dev.accounts.myorg.com"
+    }
+    staging {
+        webdriver.base.url = "http://staging.myapp.myorg.com"
+        accounts.service.url = "http://staging.accounts.myorg.com"
+    }
+    prod {
+        webdriver.base.url = "http://myapp.myorg.com"
+        accounts.service.url = "http://accounts.myorg.com"
+    }
+}
+----
+
+You can then reference a URL in a page object using the "page:" notation:
+
+[source,java]
+----
+@DefaultUrl("page:home.page")
+public void MyAppHomePage extends PageObject {}
+Or, if you are using Screenplay, you can refer to the pages directly by name:
+actor.attemptsTo(
+    Open.thePageNamed("home.page")
+)
+----
+
+You can also add an all section, for URLs that will apply to any environment. These can use properties from the `default` environment section (or elsewhere in the config file), using the # symbol (the $ symbol, normally used, may conflict with the normal TypeSafe Config variable substitution). An example is shown here:
+
+[source,json]
+----
+environments {
+    ...
+    all {
+        home.page = "#{webdriver.base.url}/myapp"
+        config.page = "#{webdriver.base.url}/myapp"
+        accounts.page = "#{accounts.service.url}/myapp"
+    }
+}
+----
+
+== Configuring different parameters for different environments
+
+You can even leverage this feature for your own application code, and access environment-specific properties programmatically.
+Suppose your `serenity.conf` file contains the following configuration:
+
+[source,json]
+----
+environments {
+    default {
+        my.webservice.endpoint = "http://localhost:8081"
+    }
+    dev {
+        my.webservice.endpoint = "http://dev.myapp.myorg.com:8081"
+    }
+    staging {
+        my.webservice.endpoint = "http://mywebservice.myapp.myorg.com"
+    }
+}
+----
+
+First of all, you need to inject the Serenity environment variables into your code. You can do this in any Page Object, Action class, step library or Screenplay task simply by declaring a variable of type `EnvironmentVariables`. You can access the corresponding webservice endpoint using the `EnvironmentSpecificConfiguration` class as shown here:
+
+[source,java]
+----
+public class MyWebServiceActions {
+
+  private EnvironmentVariables environmentVariables;
+
+  @Step
+  public void invoke_my_webservice() {
+    String webserviceEndpoint =  EnvironmentSpecificConfiguration.from(environmentVariables)
+                                                                 .getProperty("my.webservice.endpoint");
+    ...
+  }
+}
+----

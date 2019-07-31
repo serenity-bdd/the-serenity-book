@@ -10,6 +10,7 @@
 * xref:angularjs.adoc[Testing AngularJS applications]
 * xref:remote.adoc[Running Remote Tests]
 * xref:extending-webdriver.adoc[Extending Webdriver setup and teardown]
+* xref:environment-specific-config.adoc[Environment-specific configurations]
 
 .Serenity with JUnit
 * xref:junit-basic.adoc[Basic JUnit Integration]
@@ -19,7 +20,7 @@
 * xref:junit-requirements.adoc[Modelling JUnit Requirements]
 
 .Serenity with Cucumber
-* xref:cucumber.adoc[Working with Cucumber JVM]
+* xref:cucumber.adoc[Getting Started with Cucumber and Serenity]
 * xref:cucumber-before-and-after.adoc[Setting up and tearing down test data]
 
 .Serenity with JBehave

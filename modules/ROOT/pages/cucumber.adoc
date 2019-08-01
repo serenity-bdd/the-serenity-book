@@ -148,7 +148,7 @@ include::../examples/cucumber-quick-start/src/test/java/net/serenity_bdd/samples
 (2) The `features` attribute indicates where to look for the feature files
 (3) The `glue` attribute tells Cucumber where to find the Step Definition classes
 
-=== Step definitions
+=== Cucumber Step definitions
 
 In Cucumber, each line of the Gherkin scenario maps to a method in a Java class, known as a 'Step Definition'.
 These use annotations like `@Given`, `@When` and `@Then` match lines in the scenario to Java methods.
@@ -191,11 +191,206 @@ public class CashWithdrawalsStepDefinitions {
     }
 }
 ----
+=== Using Serenity step libraries in Cucumber Step definitions
 
-=== Integrating with Serenity Step Libraries and Action Classes
+It is perfectly possible to call classic test automation code directly in your step definition methods. In this case, Serenity will only report on the _Given..When..Then_ steps, and leave you full control of the underlying code.
+
+Many teams however find it useful to organise their tests into reusable components and domain layer classes. And Serenity provides many ways to help with this.
+
+Serenity Step Libraries integrate smoothly into Cucumber Step Definition files;
+all you need to do is to annotate a step library variable with the `@Steps` annotation. For example, suppose our banking application has a set of web services to handle account balances and withdrawals. We could wrap these web service calls in Serenity Action classes, and inject these action classes into the step definition classes using the Serenity `@Steps` annotation, e.g.
+
+[source,java]
+----
+public class CashWithdrawalsStepDefinitions {
+    @Steps
+    CreateAccountAction createAnAccount;
+
+    @Given("{word} has ${int} in his {word} account")
+    public void in_his_current_account(String customer,
+                                       int balance,
+                                       String accountType) {
+        createAnAccount.forCustomer(customer)
+                       .ofType(accountType)
+                       .withABalanceOf(balance);
+    }
+    ...
+}
+----
+
+The Action class uses a builder pattern for better readability.
+We use the `@Step` annotation on the last method to ensure that we get a complete description of the step in our reports:
+
+[source,java]
+----
+public class CreateAccountAction {
+    String customerName;
+    String accountType;
+
+    public CreateAccountAction forCustomer(String customerName) {
+        this.customerName = customerName;
+        return this;
+    }
+
+    public CreateAccountAction ofType(String accountType) {
+        this.accountType = accountType;
+        return this;
+    }
+
+    @Step("Create a #accountType account for customer #customerName with a balance of ${0}")
+    public int withABalanceOf(int balance) {
+        // Call the appropriate web service and return the account unique ID
+    }
+}
+----
+
+The other step definition methods would use similar step libraries.
+Some teams group their step libraries by theme or end point (for example, they might place all the web service calls related to managing a bank account in a single `BankAccountActions` step library). Others prefer to enforce a stricter separation of concerns, and have a single class per action (this approach is know as the _Action Classes_ pattern), as illustrated here:
+
+[source,java]
+----
+public class CashWithdrawalsStepDefinitions {
+
+    @Steps
+    CreateAccountAction createAnAccount;
+
+    @Steps
+    WithdrawAction withdraw;
+
+    @Steps
+    AccountBalanceAction accountBalance;
+
+    int accountIdentifier;
+
+    @Given("{word} has ${int} in his {word} account")
+    public void in_his_current_account(String customer, int balance, String accountType) {
+        accountIdentifier = createAnAccount.forCustomer(customer).ofType(accountType).withABalanceOf(balance);
+    }
+
+    @When("he withdraws ${int} in cash")
+    public void he_withdraws_in_cash(int withdrawal) {
+        withdraw.fromAccount(accountIdentifier).theSumOf(withdrawal);
+    }
+
+    @Then("his remaining balance should be ${int}")
+    public void his_remaining_balance_should_be(int expectedBalance) {
+        assertThat(accountBalance.forAccount(accountIdentifier)).isEqualTo(expectedBalance);
+    }
+}
+----
 
 === Integrating with Serenity Page Objects
 
-=== Maintaining the browser open for the entire feature
+Integration Cucumber with Serenity UI tests is also easy. Unlike with JUnit, you don't need to declare an `@Managed` WebDriver instance in your tests; Serenity will automatically instantiate a driver on demand.
 
-=== Maintaining state between scenarios
+For example, the following scenario is a very simple example of using a search engine:
+
+[source,gherkin]
+----
+Feature: Search by keyword
+
+  Scenario: Search for terms by a single keyword
+    Given Serge is on the Search page
+    When he searches by "Tomato"
+    Then he should only see search results containing the word "Tomato"
+----
+
+We could use Serenity Page Objects or UI Action Classes to model the UI interactions.
+For example, the following Serenity `PageObject` models the DuckDuckGo home page:
+
+[source,java]
+----
+@DefaultUrl("https://duckduckgo.com")
+public class SearchPage extends PageObject {
+
+    public void searchBy(String keyword) {
+        $("#search_form_input_homepage").sendKeys(keyword, Keys.ENTER);
+    }
+}
+----
+
+And this one allows us to query the search results:
+
+[source,java]
+----
+public class ResultsPage extends PageObject {
+
+    public List<String> getSearchResultTitles() {
+        return findAll(".results .result__title")
+                .stream()
+                .map(WebElementFacade::getTextContent)
+                .collect(Collectors.toList());
+    }
+}
+----
+
+We could use both of these page objects directly in our Cucumber step definition code, as shown here:
+
+[source,java]
+----
+public class SearchStepDefinitions {
+
+    SearchPage searchPage;
+    ResultsPage resultsPage;
+
+    @Given("Serge is on the Search page")
+    public void serge_is_on_the_Search_page() {
+        searchPage.open();
+    }
+
+    @When("he searches by {string}")
+    public void he_searches_by(String keyword) {
+        searchPage.searchBy(keyword);
+    }
+
+    @Then("he should only see search results containing the word {string}")
+    public void he_should_only_see_search_results_containing_the_word(String expectedKeyword) {
+        resultsPage.getSearchResultTitles().forEach(
+                title -> assertThat(title).containsIgnoringCase(expectedKeyword)
+        );
+    }
+}
+----
+
+Alternatively, we could use Action Classes or Step Libraries to encapsulate the UI logic.
+In both cases, Serenity will instantiate the WebDriver instance for us the first time a page object is invoked.
+
+
+=== Configuring Cucumber and Serenity
+
+Serenity provides a number of configuration options when using Cucumber.
+
+==== Maintaining the browser open for the entire feature
+
+Reopening a browser session for each scenario can slow down your tests.
+If you want Serenity to keep the browser open for the duration of a feature, you can set the following property in your `serenity.properties` or `serenity.conf` file:
+
+[source,properties]
+----
+serenity.restart.for.each = feature
+----
+
+==== Maintaining state between scenarios
+
+You may also wish to maintain state between scenarios.
+By default, Serenity will use new step libraries and action classes for each scenario.
+However, if you want to share data between the scenarios of a feature, you can use the following option:
+
+[source,properties]
+----
+serenity.maintain.session = true
+----
+
+With this value set, you can now use either the `@Shared` annotation, or the `@Steps(shared=true)`. For example, suppose that the `CreateAccountAction` needs to retrieve a security token before making any calls, but that it only needs to do this once.
+We could tell Serenity to maintain the same `CreateAccountAction` step library for all the scenarios in a feature file like this:
+
+[source,java]
+----
+@Shared
+CreateAccountAction createAnAccount;
+----
+
+
+=== Integrating with Serenity Screenplay
+
+COMING SOON

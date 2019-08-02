@@ -1,5 +1,6 @@
 Feature: Search by keyword
 
+  @ignore
   Scenario: Search for terms by a single keyword
     Given Serge is on the Search page
     When he searches by "Tomato"

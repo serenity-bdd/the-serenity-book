@@ -12,9 +12,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <serenity.version>2.0.64</serenity.version>
-        <serenity.maven.version>2.0.64</serenity.maven.version>
-        <serenity.cucumber4.version>1.0.19</serenity.cucumber4.version>
+        <serenity.version>2.0.66-SNAPSHOT</serenity.version>
+        <serenity.maven.version>2.0.66</serenity.maven.version>
+        <serenity.cucumber4.version>1.0.21-SNAPSHOT</serenity.cucumber4.version>
         <webdriver.driver>chrome</webdriver.driver>
         <tags></tags>
     </properties>

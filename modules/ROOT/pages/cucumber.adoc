@@ -1,6 +1,7 @@
 http://cucumber.io[Cucumber] is a popular tool for automating BDD-style acceptance criteria.
 Teams that practice BDD have conversations about business rules and examples to better understand the problem they are solving.
 Some of these examples can be transformed into automated acceptance criteria.
+
 Teams that use Cucumber express these acceptance criteria in a natural, human-readable form using the `given..when..then` structure:
 
 [source,gherkin]
@@ -47,9 +48,14 @@ Scenario Outline: Account Fees for different types of account
   | Investment   | 0.25%       | 1000           | 2.50       |
 ----
 
-When you integrate Serenity with Cucumber,
+Serenity BDD integrates very smoothly with Cucumber.
+When you implement your Cucumber scenarios with Serenity BDD, you benefit from the powerful Serenity reporting features, which are fine-tuned to work well with Cucumber. But Serenity also makes it easier to write cleaner, more maintainable test automation code.
 
-== Versions of Cucumber
+[[fig-cucumber-feature]]
+.A Cucumber scenario in a Serenity report
+image::cucumber-cash-withdrawals-feature.png[scaledwidth="80%", width=475]
+
+== Using Cucumber with Serenity BDD
 
 There are currently two commonly-used versions of Cucumber: Cucumber 2 and Cucumber 4.
 While they both support the same _Gherkin_ notation, the way you implement the steps is a little different in each version.
@@ -96,7 +102,7 @@ include::../examples/cucumber4-sample/build.gradle[tags=dependencies]
 A Cucumber archetype for Cucumber 2 is available to help you jumpstart a new project.
 As usual, you can run `mvn archetype:generate -Dfilter=serenity` from the command line
 and then select the `net.serenity-bdd:serenity-cucumber-archetype` archetype from the proposed list of archetypes.
-Or you can use your favorite IDE to generate a new Maven project using an archetype.
+Or you can use your favourite IDE to generate a new Maven project using an archetype.
 
 == Writing Executable Specifications with Cucumber and Serenity
 

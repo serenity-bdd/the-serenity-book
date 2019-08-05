@@ -158,10 +158,16 @@ A simple test runner looks like this:
 
 [source,java]
 ----
-include::../examples/cucumber-quick-start/src/test/java/net/serenity_bdd/samples/runners/CashWithdrawals.java[]
+@RunWith(CucumberWithSerenity.class)                    <1>
+@CucumberOptions(
+        features="src/test/resources/features",         <2>
+        glue = "net.serenity_bdd.samples")              <3>
+public class CashWithdrawals {
+}
+
 ----
 (1) Serenity Cucumber feature files need the `CucumberWithSerenity` test runner.
-(2) The `features` attribute indicates where to look for the feature files
+(2) The `features` attribute indicates where to look for the feature files, and can be a path to a directory or to a specific feature file
 (3) The `glue` attribute tells Cucumber where to find the Step Definition classes
 
 === Cucumber Step definitions

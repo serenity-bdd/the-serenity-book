@@ -1,18 +1,18 @@
 Feature: Internal Transfers
 
   Scenario: Cash withdrawal
-    Given Clive has $1000 in his current account
+    Given Clive has $1000 in his Current account
     When he withdraws $100 in cash
     Then his remaining balance should be $900
 
   Scenario: Transferring funds between internal accounts
     Given Clive has the following accounts:
-      | Account | Balance |
+      | account | balance |
       | Current | 1000    |
       | Savings | 2000    |
     When he transfers $100 from his Current account to his Savings account
     Then his new account balances should be:
-      | Account | Balance |
+      | account | balance |
       | Current | 900     |
       | Savings | 2100    |
 

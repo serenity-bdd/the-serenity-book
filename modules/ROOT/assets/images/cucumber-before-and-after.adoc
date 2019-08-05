@@ -1,0 +1,152 @@
+When we write automated acceptance tests we often need to perform some initial tasks to prepare test data or set up the test environment. Likewise, when a test finishes, we often need to tidy up the database or put the environment into a clean state. With Serenity BDD and Cucumber, there are several ways to perform these setup and teardown tasks.
+
+== Setting up data in the Background step
+
+For example, suppose we are writing a Todo application, and we have a scenario like the following:
+
+[source,gherkin]
+----
+Scenario Outline: Viewing the items by status
+  Given that Jane has a todo list containing <tasks>
+  And she has completed the task called 'Walk the dog'
+  When she filters her list to show only <filter> tasks
+  Then her todo list should contain <expected>
+  Examples:
+    | tasks                       | filter    | expected      |
+    | Buy some milk, Walk the dog | Active    | Buy some milk |
+    | Buy some milk, Walk the dog | Completed | Walk the dog  |
+----
+
+To perform this test, we might need Jane to have an account, and have already logged on to the application. We could use the `Background` step for this, as illustrated here:
+
+[source,gherkin]
+----
+Background:
+  Given Jane has a Super Todo List App account
+  And Jane is on the application home page
+----
+
+Background steps are implemented just like any other Cucumber step. Using the Action Classes pattern, the step definitions might look something like this:
+
+[source,java]
+----
+@Steps
+AccountActions accountManager;
+
+@Steps
+LogonActions logon;
+
+@Steps
+NavigateActions navigate;
+
+@Given("^(.*) has a Super Todo List App account$")
+public void openAnAccount(String name) {
+    accountManager.opensAnAccountFor(name);
+}
+
+@Given("^(.*) is on the application home page$")
+public void navigateToHomePageAs(String user) {
+    logon.as(user);
+    navigate.toTheHomePage();
+}
+----
+
+Background steps are run before each scenario, including each example, so sometimes the test code might need to check whether a particular setup action has already been completed. For example, the `opensAnAccountFor()` method might be able to check whether an account for Jane already exists, and if it does simply clear any relevant data  for this account. Naturally this kind of logic will depend on the nature of your application.
+
+The steps in a background section also appear in the test reports, which can be useful if the steps are relevant to understanding the scenario from a business perspective, but less so if they are simply about setting up test date. If your setup steps are more technical, or less directly relevant to the scenarios being tested, the `@Before` hook might be a better choice.
+
+== Using the @Before hook
+
+The `@Before` hook marks a method that is run before each scenario.
+Suppose we just need to open the application on the home page, and don't need to set up a specific user account.
+In this case, the initial step, "Given Jane is on the application home page", is not very interesting from a business perspective. We could place it inside a `@Before` method as shown below:
+
+[source,java]
+----
+@Steps
+NavigateActions navigate;
+
+@Before
+public void openTheApplication() {
+  navigate.toTheHomePage();
+}
+
+@Given("^that (?:.*) has a todo list containing (.*)$")
+public void has_a_list_containing(List<String> tasks) throws Exception {
+    tasks.forEach(
+            task -> todoUser.adds_a_task(task)
+    );
+}
+----
+
+## Ordering @Before hook methods
+
+Sometimes you need to run `@Before` methods in a specific order. For example, if you are using Screenplay, you need to set the stage with an online cast before you can do any web interactions. Cucumber allows you to define the execution order of hook methods with the `order` attribute. So your code might look more like this:
+
+[source,java]
+----
+@Before(order=1)
+public void set_the_stage() {
+    OnStage.setTheStage(new OnlineCast());
+}
+
+@Before(order=2)
+public void openApplication() {
+    OnStage.aNewActor().attemptsTo(
+        OpenTheTodoMVCApplication.onTheHomePage()
+    );
+}
+
+@Given("^that (.*) has a todo list containing (.*)$")
+public void has_a_todo_list(String actorName, String itemList) {
+    List<String> items = split(itemList);
+    theActorCalled(actorName).wasAbleTo(
+        AddTodoItems.called(items)
+    );
+}
+----
+
+== Selectively running @Before hook methods
+
+You can also use tags to define which of the `@Before` hook methods you need to run for a given scenario.
+For example, you might only need to create a cast of Selenium-enabled actors for web tests. One approach to this would be to add a special tag (say, `@web`) to the scenarios that use web interactions, e.g.
+
+[source,gherkin]
+----
+@web
+Scenario Outline: Viewing the items by status
+  Given that Jane has a todo list containing <tasks>
+  And she has completed the task called 'Walk the dog'
+  When she filters her list to show only <filter> tasks
+  Then her todo list should contain <expected>
+  Examples:
+    | tasks                       | filter    | expected      |
+    | Buy some milk, Walk the dog | Active    | Buy some milk |
+    | Buy some milk, Walk the dog | Completed | Walk the dog  |
+----
+
+Then, you can ensure that the UI-test hook methods web tests are only executed for UI-based scenarios:
+
+[source,java]
+----
+@Before(value="@web", order=1)
+public void set_the_stage() {
+    OnStage.setTheStage(new OnlineCast());
+}
+----
+
+## Tidying up with the @After hook
+
+The Cucumber `@After` hook is executed after each scenarios.
+
+For example, the following code deletes all of the todo items created during a scenario. This allows us to keep the same browser open for the entire feature, which can improve test performance.
+
+[source,java]
+----
+@After
+public void tidyUp() {
+    theActorInTheSpotlight().attemptsTo(DeleteAll.items());
+}
+----
+
+Note that for performance and reliability reasons, cleanup operations are generally best done via backend methods (e.g. via REST or JDBC calls) rather than through the UI.

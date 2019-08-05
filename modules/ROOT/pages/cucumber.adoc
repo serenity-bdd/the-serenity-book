@@ -7,7 +7,7 @@ Teams that use Cucumber express these acceptance criteria in a natural, human-re
 [source,gherkin]
 ----
 Scenario: Cash withdrawal
-  Given Clive has $1000 in his current account
+  Given Clive has $1000 in his Current account
   When he withdraws $100 in cash
   Then his remaining balance should be $900
 ----
@@ -65,7 +65,7 @@ New versions come out regularly: you can find out what the latest stable version
 
 === Working with Cucumber 2
 
-To get started, you will need to add the Serenity Cucumber plugin to your project.
+To get started with Cucumber 2 and Serenity, you will need to add the Serenity Cucumber plugin to your project.
 In Maven, just add the following dependencies to your pom.xml file:
 
 [source,xml]
@@ -99,14 +99,14 @@ include::../examples/cucumber4-sample/build.gradle[tags=dependencies]
 
 === Using the Cucumber Maven Archetype
 
-A Cucumber archetype for Cucumber 2 is available to help you jumpstart a new project.
+If you are starting from scratch, a Cucumber archetype for Cucumber 2 is available to help you jumpstart a new project.
 As usual, you can run `mvn archetype:generate -Dfilter=serenity` from the command line
 and then select the `net.serenity-bdd:serenity-cucumber-archetype` archetype from the proposed list of archetypes.
 Or you can use your favourite IDE to generate a new Maven project using an archetype.
 
 == Writing Executable Specifications with Cucumber and Serenity
 
-In Cucumber, scenarios are stored in 'Feature Files', which contain an overall description of a feature as well as a number of scenarios.
+In Cucumber, scenarios are stored in _Feature Files_, which contain an overall description of a feature as well as a number of scenarios.
 The Feature File for the first example we saw earlier is called `cash_withdrawals.feature`, and looks something like this:
 
 [source,gherkin]
@@ -118,25 +118,35 @@ include::../examples/cucumber2-sample/src/test/resources/features/bank/cash_with
 
 The simplest way to organise your Serenity/Cucumber feature files is to place them in the `src/test/resources/features` directory.
 
-You typically organise the feature files in sub-directories that reflect the higher-level requirements.
+But placing all your feature files in one directory can become messy as your project grows.
+To make the feature files easier to manage, in Serenity projects we typically organise the feature files in sub-directories that reflect the higher-level requirements.
 You can think of each subdirectory as a chapter or section heading in your living documentation, with the features grouped inside these sections.
 For example, in the following directory structure, we have feature definitions for several capabilities related to an online store, including 'search_for_products', 'make_a_purchase' and 'request_a_refund':
 
 ----
-|----src
-| |----test
-| | |----resources
-| | | |----features
-| | | | |----search_for_products
-| | | | | |----search.feature
-| | | | |----make_a_purchase
-| | | | | |----adding_items_to_the_shopping_cart.feature
-| | | | | |----sales_tax.feature
-| | | | | |----checkout.feature
-| | | | |----request_a_refund
-| | | | | |----refund_standard_purchases.feature
-| | | | | |----refund_third_party_purchases.feature
+|____src
+| |____test
+| | |____resources
+| | | |____features
+| | | | |____banking_app
+| | | | | |____deposits_and_withdrawals
+| | | | | | |____internal_transfers.feature
+| | | | | | |____inter_bank_transfers.feature
+| | | | | | |____cash_withdrawals.feature
+| | | | | |____opening_an_account
+| | | | | | |____opening_current_savings.feature
+| | | | | | |____opening_business_accounts.feature
+| | | | | | |____opening_current_accounts.feature
+| | | | | |____closing_an_account
+| | | | | | |____closing_a_business_account.feature
+| | | | | | |____closing_an_individual_account.feature
 ----
+
+This requirements structure is reflected in the _Requirements_ tab of the Serenity reports:
+
+[[fig-cucumber-requirements-hierarchy]]
+.A Cucumber requirements hierarchy report
+image::cucumber-requirements-hierarchy.png[scaledwidth="80%", width=475]
 
 === The Scenario Runner
 
@@ -158,45 +168,345 @@ include::../examples/cucumber-quick-start/src/test/java/net/serenity_bdd/samples
 
 In Cucumber, each line of the Gherkin scenario maps to a method in a Java class, known as a 'Step Definition'.
 These use annotations like `@Given`, `@When` and `@Then` match lines in the scenario to Java methods.
-In Cucumber 2, you define simple regular expressions to indicate parameters that will be passed into the methods:
+In this section, we will briefly look at how to write your own Cucumber step definitions in both Cucumber 2 and Cucumber 4.
+
+=== Writing Step Definitions in Cucumber 2
+
+In Cucumber 2, you define simple regular expressions to indicate parameters that will be passed into the methods. The regular expressions indicate where you want to pass in a parameter. For example, in the following method, we use three regular expressions to match the name of the customer, the current account balance, and the account type:
 
 [source,java]
 ----
-public class CashWithdrawalsStepDefinitions {
+@Given("^(.*) has \\$(\\d+) in his (.*) account$")
+public void in_his_current_account(String customer, int balance, String accountType) {
+}
+----
 
-    @Given("^(.*) has \\$(\\d+) in his (.*) account$")
-    public void in_his_current_account(String customer, int balance, String accountType) {
+==== Simple type conversions
+
+As you can see in the previous code, Cucumber will convert the expressions you pass automatically into basic types such as `String`, `int` and `float`. You can also convert to enums, which can make your tests a bit more reliable. For example, we could create an `enum` to represent the different account types:
+
+[source,java]
+----
+public enum AccountType {
+    Current, Savings, Investment
+}
+----
+
+We could then use this enum as a parameter for the step definition method: Cucumber will do the conversion automatically:
+
+[source,java]
+----
+@Given("^(.*) has \\$(\\d+) in his (.*) account$")
+public void in_his_current_account(String customer, int balance, AccountType accountType) {
+}
+----
+
+==== Working with lists and tables
+
+Lists and tables are often used to make scenarios more concise and readable.
+In the following step, we pass in a list of bank accounts:
+
+[source,gherkin]
+----
+Given Clive has the following accounts:
+  | Account | Balance |
+  | Current | 1000    |
+  | Savings | 2000    |
+----
+
+There are a few ways we can pass this table into our step definition.
+One is to use the Cucumber `DataTable` class, which provides a number of helper methods to extract values from the table, or to convert the rows into a more usable form.
+
+For example, suppose you had the following simple Java class to represent the account entries in the tables:
+
+[source,java]
+----
+class AccountDetails {
+    private final AccountType account;
+    private final int balance;
+
+    public AccountDetails(AccountType account, int balance) {
+        this.account = account;
+        this.balance = balance;
     }
 
-    @When("^he withdraws \\$(\\d+) in cash$")
-    public void he_withdraws_$_in_cash(int withdrawal) {
+    public AccountType getAccount() {
+        return account;
     }
 
-    @Then("^his remaining balance should be \\$(\\d+)$")
-    public void his_remaining_balance_should_be(int expectedBalance) {
+    public int getBalance() {
+        return balance;
     }
 }
 ----
 
-In Cucumber 4, you can use regular expressions, but also the more readable https://cucumber.io/docs/cucumber/cucumber-expressions[Cucumber Expressions] notation shown below:
+You could pass the table into your step definition method as a `DataTable`, and then use the `asList()` method to convert the entries to a list of `AccountDetails`:
 
 [source,java]
 ----
-public class CashWithdrawalsStepDefinitions {
+@Given("^Clive has the following accounts:$")
+public void cliveHasTheFollowingAccounts(DataTable accounts) {
+    List<AccountDetails> accountDetails = accounts.asList(AccountDetails.class);
+    ...
+}
+----
 
-    @Given("{word} has ${int} in his {word} account")
-    public void in_his_current_account(String customer, int balance, String accountType) {
+Cucumber also allows you to bypass the `DataTable` class and pass in a list of domain objects. So the step definition method shown above could be simplified as follows:
+
+[source,java]
+----
+@Given("^Clive has the following accounts:$")
+public void cliveHasTheFollowingAccounts(List<AccountDetails> accountDetails) {
+    ...
+}
+----
+
+Another approach is to pass in a list of maps; each map represents one of the rows in the table, with the column headers as the keys:
+
+[source,java]
+----
+@Given("^Clive has the following accounts:$")
+public void cliveHasTheFollowingAccounts(List<Map<String,String>> accountDetails) {
+}
+----
+
+This approach can be useful when you use a table to override default values. For example, an Account object might have many more fields than simply the account and balance fields, but in our example above we could safely use sensible default values for all the other fields, only overriding the values we are really interested in.
+
+=== Writing Step Definitions in Cucumber 4
+
+In Cucumber 4, you can use regular expressions, but also the more readable https://cucumber.io/docs/cucumber/cucumber-expressions[Cucumber Expressions] notation.
+
+_Cucumber Expressions_ use tokens surrounded by curly brackets such as "{string}","{word}","{int}" and "{float}" to represent common types. _{string}_ represents a sequence of characters enclosed in quotes (such as `"red car"`), whereas _{word}_ matches a word containing no whitespaces and not enclosed in quotes (`red`, but not `"red"` or `red green`).  The _anonymous_ parameter type ("{}") can be used to match any sequence of characters, like the "(.*)" wildcard regular expression.
+
+The following step definition shows how we could use Cucumber Expressions for the "Given Clive has $1000 in his Current account" step  we saw earlier:
+
+[source,java]
+----
+@Given("{word} has ${int} in his {word} account")
+public void in_his_current_account(String customer, int balance, String accountType) {
+}
+----
+
+==== Simple type conversions
+
+Cucumber 4 does not automatically convert parameters to enums and domain classes the way Cucumber  2 does - a little more configuration is required. If you want to pass in an `AccountType` enum value directly, you need to define a custom parameter type.
+
+Each custom parameter type has a name you can define, which makes the step definitions much more readable. For instance, we could define a custom parameter type called `AccountType`, and include it in the step definition annotation like this:
+
+[source,java]
+----
+@Given("{word} has ${int} in his {AccountType} account")
+public void in_his_current_account(String customer,
+                                   int balance,
+                                   AccountType accountType) {
+}
+----
+
+However for this to work, we need to declare the `AccountType` custom parameter in the Cucumber _type registry_. We do this by adding an implementation of the `TypeRegistryConfigurer` class to our step definitions and defining a custom parameter type for our enum, as shown here:
+
+[source,java]
+----
+public class TypeRegistryConfiguration implements TypeRegistryConfigurer {
+    @Override
+    public Locale locale() {
+        return ENGLISH;
     }
 
-    @When("he withdraws ${int} in cash")
-    public void he_withdraws_in_cash(int withdrawal) {
-    }
-
-    @Then("his remaining balance should be ${int}")
-    public void his_remaining_balance_should_be(int expectedBalance) {
+    @Override
+    public void configureTypeRegistry(TypeRegistry typeRegistry) {
+        typeRegistry.defineParameterType(ParameterType.fromEnum(AccountType.class));
     }
 }
 ----
+
+==== Converting parameters to custom classes
+
+We can also use the Cucumber type registry to convert parameters to domain objects.
+This helps reduce boiler-plate code in our step definitions and makes the Cucumber Expressions more readable.
+
+One common use of this feature is in Screenplay tests, where we can define a custom _{actor}_ parameter type. Normally, to convert the name of an actor to a Screenplay actor, we would use the `Actor.named()` method, like this:
+
+[source,java]
+----
+@Given("{word} has ${int} in his {AccountType} account")
+public void in_his_current_account(String customerName,
+                                   int balance,
+                                   AccountType accountType) {
+    Actor customer = Actor.named(customerName);
+    customer.attemptsTo(
+        OpenABankAccount.ofType(accountType).withABalanceOf(balance)
+    );
+    ...
+}
+----
+
+In Cucumber 4, we can define a custom parameter type so that we can pass a Screenplay actor directly into a step definition method, like this:
+
+[source,java]
+----
+@Given("{actor} has ${int} in his {AccountType} account")
+public void in_his_current_account(Actor customer,
+                                   int balance,
+                                   AccountType accountType) {
+     customer.attemptsTo(
+         OpenABankAccount.ofType(accountType).withABalanceOf(balance)
+     );
+}
+----
+
+To do this, we need to include the actor creation logic in the Cucumber Type Registry, by using the `defineParameterType()` method in the `TypeRegistryConfiguration` class:
+
+[source,java]
+----
+public class TypeRegistryConfiguration implements TypeRegistryConfigurer {
+    @Override
+    public Locale locale() { return ENGLISH; }
+
+    @Override
+    public void configureTypeRegistry(TypeRegistry typeRegistry) {
+      typeRegistry.defineParameterType(new ParameterType<>(
+              "actor",                                        <1>
+              ".*",                                           <2>
+              Actor.class,                                    <3>
+              (String actorName) -> Actor.named(actorName)))  <4>
+        );
+    }
+}
+----
+
+<1> The name of the custom parameter
+<2> The regular expression used to capture the parameter value
+<3> The parameter type
+<4> A lambda expression to convert the String parameter to the target type
+
+==== Working with data tables
+
+In Cucumber 2, it is relatively easy to pass a data table to a step definition method as a list of domain objects. We saw this earlier with the following step:
+
+[source,gherkin]
+----
+Given Clive has the following accounts:
+  | Account | Balance |
+  | Current | 1000    |
+  | Savings | 2000    |
+----
+
+In Cucumber 4, as in Cucumber 2, we can pass in a `DataTable` or a list of maps:
+
+[source,java]
+----
+@Given("^Clive has the following accounts:$")
+public void hasTheFollowingAccounts(List<Map<String,String>> accounts) {
+    ....
+}
+----
+
+However if we want to pass in a list of domain objects, or convert a `DataTable` to a domain object or a list of domain objects, we need to do a little more work.
+
+===== Converting Data Table rows to objects
+
+Probably the simplest approach is to configure Cucumber to convert data table entries into Java objects using an _ObjectMapper_. Cucumber comes bundled with the Jackson `ObjectMapper`, which converts Cucumber table entries to JSON, and then into Java. This is relatively easy to set up, but it does need a few minor tweaks to your Gherkin and Java code.
+
+First of all, Jackson needs a default constructor in the classes it creates. So we need to refactor the `AccountDetails` class to look like this:
+
+[source,java]
+----
+public class AccountDetails {
+    private AccountType account;
+    private int balance;
+
+    public AccountDetails(AccountType account, int balance) {
+        this.account = account;
+        this.balance = balance;
+    }
+
+    public AccountDetails() {} <1>
+
+    public AccountType getAccount() {
+        return account;
+    }
+
+    public int getBalance() {
+        return balance;
+    }
+}
+----
+
+<1> Jackson needs a default constructor to work correctly
+
+Secondly, the column names need to match the Java field names exactly.
+One option is to write the column headings in lower case, like this:
+
+[source,gherkin]
+----
+Given Clive has the following accounts:
+  | account | balance |
+  | Current | 1000    |
+  | Savings | 2000    |
+----
+
+The other option is to use the `@JsonProperty` annotation to change the default field names used by Jackson:
+
+[source,java]
+----
+public class AccountDetails {
+    private AccountType account;
+    private int balance;
+
+    public AccountDetails(AccountType account, int balance) {
+        this.account = account;
+        this.balance = balance;
+    }
+
+    public AccountDetails() {}
+
+    @JsonProperty("Account")
+    public AccountType getAccount() {
+        return account;
+    }
+
+    @JsonProperty("Balance")
+    public int getBalance() {
+        return balance;
+    }
+}
+----
+
+The last thing we need to do is to register the ObjectMapper with the Cucumber type registry.
+This involves writing a _Transformer_ class that implements the `TableEntryByTypeTransformer` interface. One that uses the bundled Jackson `ObjectMapper` class looks like this:
+
+[source,java]
+----
+class Transformer implements TableEntryByTypeTransformer {
+
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    @Override
+    public <T> T transform(Map<String, String> map,
+                          Class<T> aClass,
+                          TableCellByTypeTransformer typeTransformer) {
+        return objectMapper.convertValue(map, aClass);
+    }
+}
+----
+
+Next, we need to register the transformer by adding the following code to the `configureTypeRegistry()` method we saw earlier:
+
+[source,java]
+----
+Transformer transformer = new Transformer();
+typeRegistry.setDefaultDataTableEntryTransformer(transformer);
+----
+
+We can now pass the list of account details into the step definition method as a list of `AccountDetail` objects:
+
+[source,java]
+----
+@Given("Clive has the following accounts:")
+public void cliveHasTheFollowingAccounts(List<AccountDetails> accounts) {
+}
+----
+
 === Using Serenity step libraries in Cucumber Step definitions
 
 It is perfectly possible to call classic test automation code directly in your step definition methods. In this case, Serenity will only report on the _Given..When..Then_ steps, and leave you full control of the underlying code.
@@ -396,7 +706,108 @@ We could tell Serenity to maintain the same `CreateAccountAction` step library f
 CreateAccountAction createAnAccount;
 ----
 
+=== Integrating Cucumber with Serenity Screenplay
 
-=== Integrating with Serenity Screenplay
+link:serenity-screenplay.html[The Screenplay Pattern] is a popular technique among experienced test automation practitioners that makes it easier to write cleaner, more maintainable test automation code at scale.
 
-COMING SOON
+==== Defining the Screenplay cast
+
+When we use Screenplay with Cucumber, it is possible to define an actor programmatically as we do in JUnit tests. However it is more common to pass the name of the actor dynamically to the step definition methods. We do this using the `OnStage` class.
+
+In Cucumber, Serenity needs a _cast_ of actors to draw on in the various step definitions. Each actor is uniquely identified by their name. We set this up by calling the `setTheStage()` method in a `@Before`-annotated method:
+
+[source,java]
+----
+@Before
+public void prepareTests() {
+    OnState.setTheStage(new OnlineCast());
+}
+----
+
+The `OnlineCast` is a cast of actors with the ability to browse the web. For more sophisticated actor setups, we can use the `Cast.whereEveryoneCan()` method:
+
+[source,java]
+----
+@Before
+public void prepareTests() {
+    OnState.setTheStage(OnlineCast.whereEveryoneCan(CallAnApi.at(ADMIN_REST_URL)));
+}
+----
+
+==== Invoking an actor
+
+Once we have set up the cast, any step can refer to an actor by name.
+We can do this using the `OnStage.theActorCalled()` method, as shown below:
+
+[source,java]
+----
+@Given("{word} has ${int} in his {AccountType} account")
+public void in_his_current_account(String customerName,
+                                   int balance,
+                                   AccountType accountType) {
+    OnStage.theActorCalled(customerName).attemptsTo(
+        OpenABankAccount.ofType(accountType).withABalanceOf(balance)
+    );
+    ...
+}
+----
+
+We often use a static import to simplify this code:
+
+[source,java]
+----
+static import net.serenitybdd.screenplay.actors.OnStage.theActorCalled;
+
+@Given("{word} has ${int} in his {AccountType} account")
+public void in_his_current_account(String customerName,
+                                   int balance,
+                                   AccountType accountType) {
+    theActorCalled(customerName).attemptsTo(
+        OpenABankAccount.ofType(accountType).withABalanceOf(balance)
+    );
+    ...
+}
+----
+
+If we do not have the name of the actor available within a step definition, we can also use the `theActorInTheSpotlight()` method, e.g.
+
+[source,java]
+----
+@When("s?he filters her list to show only (.*) tasks")
+public void filters_tasks_by(TodoStatusFilter status) {
+    OnStage.theActorInTheSpotlight().attemptsTo(FilterItems.toShow(status));
+}
+----
+
+A more short-hand way of writing this code is to use the `OnStage.withCurrentActor()` method:
+
+[source,java]
+----
+@When("s?he filters her list to show only (.*) tasks")
+public void filters_tasks_by(TodoStatusFilter status) {
+  withCurrentActor(
+          FilterItems.toShow(status)
+  );
+}
+----
+
+==== Using Actors in Hook methods
+
+If you need to perform UI actions in test setup (for example, to log on to an application), you may not know the name of the actor who will be first mentioned in the Gherkin steps. You can still use an actor in this case, but you need to use the `OnStage.aNewActor()` method.
+
+[source,java]
+----
+@Before(order=1)
+public void set_the_stage() {
+    OnStage.setTheStage(new OnlineCast());
+}
+
+@Before(order=2)
+public void openApplication() {
+    OnStage.aNewActor().attemptsTo(
+        OpenTheTodoMVCApplication.onTheHomePage()
+    );
+}
+----
+
+The `aNewActor()` method will create a new, unnamed actor, who will be associated with the first actor referred to by name in the subsequent steps.

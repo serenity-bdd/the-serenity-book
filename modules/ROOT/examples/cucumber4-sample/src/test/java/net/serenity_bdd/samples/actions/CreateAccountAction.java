@@ -1,17 +1,18 @@
 package net.serenity_bdd.samples.actions;
 
+import net.serenity_bdd.samples.domain.AccountType;
 import net.thucydides.core.annotations.Step;
 
 public class CreateAccountAction {
     String customerName;
-    String accountType;
+    AccountType accountType;
 
     public CreateAccountAction forCustomer(String customerName) {
         this.customerName = customerName;
         return this;
     }
 
-    public CreateAccountAction ofType(String accountType) {
+    public CreateAccountAction ofType(AccountType accountType) {
         this.accountType = accountType;
         return this;
     }

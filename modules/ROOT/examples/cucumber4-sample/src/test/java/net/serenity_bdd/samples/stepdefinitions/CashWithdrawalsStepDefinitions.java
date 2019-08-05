@@ -6,6 +6,9 @@ import cucumber.api.java.en.When;
 import net.serenity_bdd.samples.actions.AccountBalanceAction;
 import net.serenity_bdd.samples.actions.CreateAccountAction;
 import net.serenity_bdd.samples.actions.WithdrawAction;
+import net.serenity_bdd.samples.domain.AccountType;
+import net.serenitybdd.screenplay.Actor;
+import net.serenitybdd.screenplay.actors.OnStage;
 import net.thucydides.core.annotations.Shared;
 import net.thucydides.core.annotations.Steps;
 
@@ -24,9 +27,9 @@ public class CashWithdrawalsStepDefinitions {
 
     int accountIdentifier;
 
-    @Given("{word} has ${int} in his {word} account")
-    public void in_his_current_account(String customer, int balance, String accountType) {
-        accountIdentifier = createAnAccount.forCustomer(customer).ofType(accountType).withABalanceOf(balance);
+    @Given("{word} has ${int} in his {AccountType} account")
+    public void in_his_current_account(String customer, int balance, AccountType accountType) {
+       accountIdentifier = createAnAccount.forCustomer(customer).ofType(accountType).withABalanceOf(balance);
     }
 
     @When("he withdraws ${int} in cash")

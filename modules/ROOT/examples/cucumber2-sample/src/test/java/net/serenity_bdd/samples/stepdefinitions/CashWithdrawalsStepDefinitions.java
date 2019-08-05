@@ -3,11 +3,12 @@ package net.serenity_bdd.samples.stepdefinitions;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import net.serenity_bdd.samples.domain.AccountType;
 
 public class CashWithdrawalsStepDefinitions {
 
     @Given("^(.*) has \\$(\\d+) in his (.*) account$")
-    public void in_his_current_account(String customer, int balance, String accountType) {
+    public void in_his_current_account(String customer, int balance, AccountType accountType) {
     }
 
     @When("^he withdraws \\$(\\d+) in cash$")

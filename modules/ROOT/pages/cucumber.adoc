@@ -111,7 +111,7 @@ The Feature File for the first example we saw earlier is called `cash_withdrawal
 
 [source,gherkin]
 ----
-include::../examples/cucumber2-sample/src/test/resources/features/bank/cash_withdrawals.feature
+include::../examples/cucumber2-sample/src/test/resources/features/bank/cash_withdrawals.feature[]
 ----
 
 === Organising your feature files
@@ -146,7 +146,7 @@ This requirements structure is reflected in the _Requirements_ tab of the Sereni
 
 [[fig-cucumber-requirements-hierarchy]]
 .A Cucumber requirements hierarchy report
-image::cucumber-requirements-hierarchy.png[scaledwidth="80%", width=475]
+image::cucumber-requirements-hierarchy.png[scaledwidth="80%", width=600]
 
 === The Scenario Runner
 
@@ -166,9 +166,10 @@ public class CashWithdrawals {
 }
 
 ----
-(1) Serenity Cucumber feature files need the `CucumberWithSerenity` test runner.
-(2) The `features` attribute indicates where to look for the feature files, and can be a path to a directory or to a specific feature file
-(3) The `glue` attribute tells Cucumber where to find the Step Definition classes
+
+1. Serenity Cucumber feature files need the `CucumberWithSerenity` test runner.
+2. The `features` attribute indicates where to look for the feature files, and can be a path to a directory or to a specific feature file
+3. The `glue` attribute tells Cucumber where to find the Step Definition classes
 
 === Cucumber Step definitions
 
@@ -380,10 +381,10 @@ public class TypeRegistryConfiguration implements TypeRegistryConfigurer {
 }
 ----
 
-<1> The name of the custom parameter
-<2> The regular expression used to capture the parameter value
-<3> The parameter type
-<4> A lambda expression to convert the String parameter to the target type
+1. The name of the custom parameter
+2. The regular expression used to capture the parameter value
+3. The parameter type
+4. A lambda expression to convert the String parameter to the target type
 
 ==== Working with data tables
 
@@ -438,7 +439,7 @@ public class AccountDetails {
 }
 ----
 
-<1> Jackson needs a default constructor to work correctly
+1. Jackson needs a default constructor to work correctly
 
 Secondly, the column names need to match the Java field names exactly.
 One option is to write the column headings in lower case, like this:

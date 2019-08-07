@@ -66,7 +66,7 @@ or
     }
 ----
 
-More that that you can create Steps classes in Serenity BDD way and use them as reusable components, and use all features of Serenity aggregated report.
+More than that you can create Steps classes in Serenity BDD way and use them as reusable components, and use all features of Serenity aggregated report.
 Also Serenity BDD introduce possibility to share same RestResponse between steps to allow write Steps methods in more native way:
 
 [source,java]

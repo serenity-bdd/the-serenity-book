@@ -51,8 +51,6 @@ webdriver {
   }
 }
 ```
-vaultpress@johnfergusonsmart.com
-6}Cixg{1Oon;
 
 If you are using the `serenity.properties` file, the configuration would look like this:
 ```properties

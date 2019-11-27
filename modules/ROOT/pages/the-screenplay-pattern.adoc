@@ -203,7 +203,7 @@ To get the job done, a high level business task will usually need to call either
 include::{srcdir}/journey-pattern-sample/src/main/java/net/serenitybdd/demos/todos/tasks/AddATodoItem.java[tags=performAs]
 ----
 
-The actual implementation uses pre-defined `Action` classes (such as `Enter` and `Hit `shown here) that come with Serenity.  `Action` classes are very similar to `Task` classes, except that they focus on interacting directly with the application. Serenity provides a small number of basic Action classes for core UI interactions such as entering field values, clicking on elements, or selecting values from drop-down lists. You can find these in the `net.serenitybdd.screenplay.actions` package. In practice, these provide a convenient and readable DSL that let you describe common low-level UI interactions needed to perform a task.
+The actual implementation uses pre-defined `Action` classes (such as `Enter` and `Hit` shown here) that come with Serenity. `Action` classes are very similar to `Task` classes, except that they focus on interacting directly with the application. Serenity provides a small number of basic Action classes for core UI interactions such as entering field values, clicking on elements, or selecting values from drop-down lists. You can find these in the `net.serenitybdd.screenplay.actions` package. In practice, these provide a convenient and readable DSL that let you describe common low-level UI interactions needed to perform a task.
 
 For example, the UI Action to enter the text defined in the `thingToDo` field into the input field with an ID value of “new-todo” would look like this:
 
@@ -325,7 +325,7 @@ then(james).should(seeThat(TheRemainingItemCount.value(), is(1)));
 
 The Question object here is defined by the `TheRemainingItemCount` class.  This class has one very precise responsibility: to read the number in the remaining item count text displayed at the bottom of the todo list.
 
-The static `value()`` method is a simple factory method that returns a new instance of the `TheRemainingItemCount` class.  This is simply to make the code read more fluently.
+The static `value()` method is a simple factory method that returns a new instance of the `TheRemainingItemCount` class.  This is simply to make the code read more fluently.
 
 `Question` objects are similar to `Task` and `Action` objects. However, instead of the `performAs()` used for Tasks and Actions, a Question class needs to implement the `answeredBy(actor)` method, and return a result of a specified type. The `TheRemainingItemCount` class is configured to return an Integer. Since it will be querying the web interface, we can extend the WebQuestion class to give us access to the powerful Serenity WebDriver API.
 

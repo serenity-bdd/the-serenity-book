@@ -399,4 +399,60 @@ return Text.of(ToDoList.TODO_ITEMS)
            .asList();
 ----
 
-=== Fluent Assertions with Serenity Screenplay
+=== Conditional tasks
+
+
+The `Check` task gives you a convenient way to only execute a task if a value or the answer to a question is true. For example, in the following code we choose to add items to an initial list or not depending on whether there are any items in the list.
+
+```java
+public void has_a_list_containing(Actor actor, List<String> expectedItems) {
+
+    actor.attemptsTo(
+            Open.browserOn().the(TodoReactHomePage.class),
+            Check.whether(!expectedItems.isEmpty())
+                    .andIfSo(AddTodoItems.from(expectedItems))
+
+    );
+}
+```
+
+We could avoid the negation by using the `otherwise()` method:
+
+```java
+public void has_a_list_containing(Actor actor, List<String> expectedItems) {
+
+    actor.attemptsTo(
+            Open.browserOn().the(TodoReactHomePage.class),
+            Check.whether(expectedItems.isEmpty())
+                    .otherwise(AddTodoItems.from(expectedItems))
+
+    );
+}
+```
+
+We can also use a `Question` and a Hamcrest matcher rather than a boolean value to decide which task or tasks to run:
+
+```java
+actor.attemptsTo(
+        Check.whether(theNumberOfItemsLeft(), Matchers.equalTo(0))
+             .otherwise(completeAllItems())
+);
+```
+
+In this case, the `theNumberOfItemsLeft()` would be a method that returns a `Question<Integer>`
+
+```java
+private static Question<Integer> theNumberOfItemsLeft() {
+    return actor -> Text.of(ITEMS_LEFT).viewedBy(actor).asInteger();
+}
+```
+
+And the `completeAllItems()` method would return a performable that does the actual work.
+
+```java
+private Performable completeAllItems() {
+    return Task.where("{0} completes each item",
+            actor -> COMPLETE_ITEM_CHECKBOXS.resolveAllFor(actor)
+                                            .forEach(WebElementFacade::click));
+}
+```

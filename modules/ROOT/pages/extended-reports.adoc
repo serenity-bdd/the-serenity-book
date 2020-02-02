@@ -32,13 +32,13 @@ The full configuration looks something like this:
     <dependencies>
         <dependency> <1>
             <groupId>net.serenity-bdd</groupId>
-            <artifactId>serenity-emailer</artifactId>
+            <artifactId>serenity-single-page-report</artifactId>
             <version>${serenity.version}</version>
         </dependency>
     </dependencies>
     <configuration>
         <tags>${tags}</tags>
-        <reports>email</reports> <2>
+        <reports>single-page-html</reports> <2>
     </configuration>
     <executions>
         <execution>
@@ -58,7 +58,7 @@ The full configuration looks something like this:
 If you are using Maven, you can also generate these reports directly using the `reports` goal and by passing the `serenity.reports` system property:
 
 ----
-mvn serenity:reports -Dserenity.reports=email
+mvn serenity:reports -Dserenity.reports=single-page-html
 ----
 
 === Setting up Gradle
@@ -73,8 +73,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath "net.serenity-bdd:serenity-gradle-plugin:1.9.36"
-        classpath "net.serenity-bdd:serenity-emailer:1.9.36"
+        classpath "net.serenity-bdd:serenity-gradle-plugin:2.1.3"
+        classpath "net.serenity-bdd:serenity-single-page-report:2.1.3"
     }
 }
 ----
@@ -84,7 +84,7 @@ Next, you need to configure the report you want to generate in your `build.gradl
 [source,gradle]
 ----
 serenity {
-    reports = ["email"]
+    reports = ["single-page-html"]
 }
 ----
 
@@ -239,3 +239,31 @@ or pass it in from the command line (if you are pointing the the reports for a s
 ----
 serenity.report.url=http://my.jenkins.server:8080/job/my-project/serenity-reports/
 ----
+
+=== Custom build info
+
+You can also add your own fields the the Build Info screen, using the `sysinfo.*` properties.
+The `sysinfo.*` properties let you define fields and values that will appear in the Build Info page. For simple field-value combinations, the field appears alongside the other values on the Build Info screen:
+
+```
+sysinfo.lead = Daisy
+```
+
+You can use Groovy expressions to access system properties (that you can pass in from the command line). The `env` property gives you access to the current environment variables. For example, to display the current Jenkins build number, you could include the following line:
+
+```
+sysinfo.build = "${env.BUILD_NUMBER}"
+```
+
+You can also group custom properties into sections with sub-titles. An example of such a configuration in the `serenity.conf` file is shown below:
+
+```
+sysinfo {
+  lead = Daisy
+  build = "${env.BUILD_NUMBER}"
+  Test Run {
+    Run By = "${env.USER}"
+    Java Version = "${java.version}"
+  }
+}
+```

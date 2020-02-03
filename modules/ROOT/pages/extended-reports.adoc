@@ -73,8 +73,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath "net.serenity-bdd:serenity-gradle-plugin:2.1.3"
-        classpath "net.serenity-bdd:serenity-single-page-report:2.1.3"
+        classpath "net.serenity-bdd:serenity-gradle-plugin:2.1.4"
+        classpath "net.serenity-bdd:serenity-single-page-report:2.1.4"
     }
 }
 ----
@@ -240,7 +240,7 @@ or pass it in from the command line (if you are pointing the the reports for a s
 serenity.report.url=http://my.jenkins.server:8080/job/my-project/serenity-reports/
 ----
 
-=== Custom build info
+=== Custom Build Info
 
 You can also add your own fields the the Build Info screen, using the `sysinfo.*` properties.
 The `sysinfo.*` properties let you define fields and values that will appear in the Build Info page. For simple field-value combinations, the field appears alongside the other values on the Build Info screen:
@@ -267,3 +267,9 @@ sysinfo {
   }
 }
 ```
+
+The corresponding Build Info screen is shown below:
+
+[[fig-build-info-screen]]
+.Customised Build Info details
+image::build-info.png[]

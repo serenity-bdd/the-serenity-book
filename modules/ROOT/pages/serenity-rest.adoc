@@ -1,10 +1,10 @@
-Serenity BDD can help you to create tests for REST services, with all advantages that Serenity BDD introduce to Web Tests and even more.
+Serenity BDD can help you create tests for REST services, with all the advantages that Serenity BDD introduces to Web Tests and more.
 
-It is provided tight integration with well known https://github.com/jayway/rest-assured[Rest Assured], with some improvements and advanced reporting. All what you need is use in import instead of RestAssured - SerenityRest, and that's all!!
+It provides tight integration with https://github.com/jayway/rest-assured[Rest Assured], along with some improvements and advanced reporting. All you need to do is import SerenityRest, and that's all!
 
 === Reports created when Rest is tested
 
-If you use in your tests SerenityRest then all your requests/response will be included in generated report, so you can easy explore body, cookies, headers, response body, url as well as validate them in RestAssured way.
+If you use SerenityRest in your tests then all your requests/responses will be included in the generated report, so you can easily explore the cookies, headers, response body, url as well as validate them in the RestAssured way.
 Here is example of generated report for some of demo tests:
 
 [[request_with_headers_and_body]]
@@ -15,7 +15,7 @@ image::request_headers_body.png[]
 .Response with Headers and Body and Cookies Example
 image::response_headers_body_cookies.png[]
 
-As you see all requests included in report under correspond steps:
+As you see, all the requests are included in the report under the corresponding steps:
 
 [[rest_query_in_report]]
 .Rest Query included in report under steps
@@ -66,8 +66,8 @@ or
     }
 ----
 
-More than that you can create Steps classes in Serenity BDD way and use them as reusable components, and use all features of Serenity aggregated report.
-Also Serenity BDD introduce possibility to share same RestResponse between steps to allow write Steps methods in more native way:
+You can create Steps classes in the normal Serenity BDD way and use them as reusable components. You'll have access to use all the features of Serenity including the aggregated report.
+Also Serenity BDD introduces the possibility to share the same RestResponse between steps to allow writing Step methods in a  more native way:
 
 [source,java]
 ----

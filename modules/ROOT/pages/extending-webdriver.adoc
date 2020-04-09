@@ -49,3 +49,42 @@ The last thing you need to do is to tell Serenity what package it needs to look 
 `serenity.extension.packages=com.acme.myserenityextensions`
 
 You can find an example of how these classes are implemented in a real-world use case in the https://github.com/serenity-bdd/serenity-core/tree/master/serenity-browserstack/src/main/java/net/serenitybdd/browserstack[serenity-browserstack] module on Github.
+
+
+== Custom WebDriver implementations
+
+You can add your own custom WebDriver provider by implementing the DriverSource interface. First, you need to set up the following system properties (e.g. in your `serenity.properties` file):
+
+-----
+webdriver.driver = provided
+webdriver.provided.type = mydriver
+webdriver.provided.mydriver = com.acme.MyPhantomJSDriver
+thucydides.driver.capabilities = mydriver
+-----
+
+Your custom driver must implement the DriverSource interface, as shown here:
+
+[source,java]
+-----
+public class MyPhantomJSDriver implements DriverSource {
+
+    @Override
+    public WebDriver newDriver() {
+        try {
+            DesiredCapabilities capabilities = DesiredCapabilities.phantomjs();
+            // Add
+            return new PhantomJSDriver(ResolvingPhantomJSDriverService.createDefaultService(), capabilities);
+        }
+        catch (IOException e) {
+            throw new Error(e);
+        }
+    }
+
+	@Override
+    public boolean takesScreenshots() {
+        return true;
+    }
+}
+-----
+
+This driver will now take screenshots normally.

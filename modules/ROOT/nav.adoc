@@ -9,7 +9,7 @@
 * xref:page-objects.adoc[Working with Page Objects]
 * xref:angularjs.adoc[Testing AngularJS applications]
 * xref:remote.adoc[Running Remote Tests]
-* xref:extending-webdriver.adoc[Extending Webdriver setup and teardown]
+* xref:extending-webdriver.adoc[Extending Webdriver]
 * xref:environment-specific-config.adoc[Environment-specific configurations]
 
 .Serenity with JUnit

@@ -24,7 +24,7 @@ The story in <<frequent-flyer-story-card>> describes how many points members nee
 
 [source,gherkin]
 ----
-include::{srcdir}/jira-integration-scenarios/sample-jbehabe-scenatio.story[]
+include::../examples/jira-integration-scenarios/sample-jbehabe-scenatio.story[]
 ----
 
 Serenity lets you associate JBehave stories or JUnit tests with a JIRA card using the @issue meta tag (illustrated above), or the equivalent @Issue annotation in JUnit. At the most basic level, this will generate links back to the corresponding JIRA cards in your test reports, as illustrated here:
@@ -37,7 +37,7 @@ For this to work, Serenity needs to know where your JIRA server. The simplest wa
 
 [source,gherkin]
 ----
-include::{srcdir}/jira-integration-scenarios/serenity.properties[]
+include::../examples/jira-integration-scenarios/serenity.properties[]
 ----
 
 You can also set these properties up in your Maven pom.xml file or pass them in as system properties.
@@ -49,7 +49,7 @@ We call this idea of measuring the number (and quality) of the acceptance tests 
 
 [source,xml]
 ----
-include::{srcdir}/jira-integration-scenarios/sample-dependency.xml[]
+include::../examples/jira-integration-scenarios/sample-dependency.xml[]
 ----
 
 (The actual version number might be different for you – always take a look at http://search.maven.org/#search%7Cga%7C1%7Cthucydides[Maven Central] to know what the latest version is).
@@ -58,7 +58,7 @@ You will also need to add this dependency to the Serenity reporting plugin confi
 
 [source,xml]
 ----
-include::{srcdir}/jira-integration-scenarios/serenity-reporting-plugin-configuration.xml[]
+include::../examples/jira-integration-scenarios/serenity-reporting-plugin-configuration.xml[]
 ----
 
 Now, when you run the tests, Serenity will query JIRA to determine the epics and stories that you have defined, and list them in the Requirements page. This page gives you an overview of how many requirements (epics and stories) have passing tests (green), how many have failing (red) or broken (orange) tests, and how many have no tests at all (blue):
@@ -135,7 +135,7 @@ The default configuration will work with the default JIRA workflow: open or in p
 
 [source,groovy]
 ----
-include::{srcdir}/jira-integration-scenarios/sample-workflow-configuration.groovy[]
+include::../examples/jira-integration-scenarios/sample-workflow-configuration.groovy[]
 ----
 
 You can write your own configuration file and place it on the classpath of your test project (e.g. in serenity's directory). Then you can override the default configuration by using `serenity.jira.workflow` property, e.g.

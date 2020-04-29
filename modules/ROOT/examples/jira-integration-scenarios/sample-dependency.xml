@@ -1,0 +1,8 @@
+<dependencies>
+    ...
+    <dependency>
+        <groupId>net.serenity.plugins.jira</groupId>
+        <artifactId>serenity-jira-requirements-provider</artifactId>
+        <version>xxx</version>
+    </dependency>
+</dependencies>

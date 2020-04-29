@@ -1,7 +1,7 @@
 This repo contains the asciidoctor files that make up the book which can be found at https://serenity-bdd.github.io/theserenitybook/latest/index.html 
 
 # Contributing
-You can add an improve on this documentation. To build the site locally:
+You can add and improve on this documentation. To build the site locally:
 
     # create a folder to hold both required repositories
     mkdir $project-root

@@ -23,7 +23,7 @@ Using the Screenplay Pattern, we could write this code very naturally like this:
 
 [source,java]
 ----
-include::{srcdir}/journey-pattern-sample/src/test/java/net/serenitybdd/demos/todos/features/record_todos/AddNewTodos.java[tags=should_be_able_to_add_a_todo_item]
+include::../examples/journey-pattern-sample/src/test/java/net/serenitybdd/demos/todos/features/record_todos/AddNewTodos.java[tags=should_be_able_to_add_a_todo_item]
 ----
 
 One of the motivations behind the Screenplay Pattern is the highly readable test code that it produces. Even if you are not familiar with how this code is implemented under the hood, it should be quite obvious what the test is trying to demonstrate, and how it is going about it.
@@ -42,9 +42,9 @@ The Serenity Screenplay Pattern currently integrates with both JUnit and Cucumbe
 
 [source,java]
 ----
-include::{srcdir}/journey-pattern-sample/src/test/java/net/serenitybdd/demos/todos/features/record_todos/AddNewTodos.java[tags=add_new_todos_start]
-include::{srcdir}/journey-pattern-sample/src/test/java/net/serenitybdd/demos/todos/features/record_todos/AddNewTodos.java[tags=should_be_able_to_add_a_todo_item]
-include::{srcdir}/journey-pattern-sample/src/test/java/net/serenitybdd/demos/todos/features/record_todos/AddNewTodos.java[tags=add_new_todos_end]
+include::../examples/journey-pattern-sample/src/test/java/net/serenitybdd/demos/todos/features/record_todos/AddNewTodos.java[tags=add_new_todos_start]
+include::../examples/journey-pattern-sample/src/test/java/net/serenitybdd/demos/todos/features/record_todos/AddNewTodos.java[tags=should_be_able_to_add_a_todo_item]
+include::../examples/journey-pattern-sample/src/test/java/net/serenitybdd/demos/todos/features/record_todos/AddNewTodos.java[tags=add_new_todos_end]
 ----
 
 It’s not hard to guess what this test does just by reading the code. There are however a few things here that are new. In the following sections, we will take a closer look at the details.
@@ -202,7 +202,7 @@ To get the job done, a high level business task will usually need to call either
 
 [source,java]
 ----
-include::{srcdir}/journey-pattern-sample/src/main/java/net/serenitybdd/demos/todos/tasks/AddATodoItem.java[tags=performAs]
+include::../examples/journey-pattern-sample/src/main/java/net/serenitybdd/demos/todos/tasks/AddATodoItem.java[tags=performAs]
 ----
 
 The actual implementation uses pre-defined `Action` classes (such as `Enter` and `Hit `shown here) that come with Serenity.  `Action` classes are very similar to `Task` classes, except that they focus on interacting directly with the application. Serenity provides a small number of basic Action classes for core UI interactions such as entering field values, clicking on elements, or selecting values from drop-down lists. You can find these in the `net.serenitybdd.screenplay.actions` package. In practice, these provide a convenient and readable DSL that let you describe common low-level UI interactions needed to perform a task.
@@ -274,7 +274,7 @@ This task is defined using the AddATodoItem class, as shown here:
 
 [source,java]
 ----
-include::{srcdir}/journey-pattern-sample/src/main/java/net/serenitybdd/demos/todos/tasks/AddTodoItems.java[tags=class]
+include::../examples/journey-pattern-sample/src/main/java/net/serenitybdd/demos/todos/tasks/AddTodoItems.java[tags=class]
 ----
 
 It is quite frequent to reuse existing tasks to build up more sophisticated business tasks in this way.
@@ -315,7 +315,7 @@ The test to describe and verify this behavior could look like this:
 
 [source,java]
 ----
-include::{srcdir}/journey-pattern-sample/src/test/java/net/serenitybdd/demos/todos/features/completing_todos/CompleteATodo.java[tags=items_left_counter_should_be_decremented_when_an_item_is_completed]
+include::../examples/journey-pattern-sample/src/test/java/net/serenitybdd/demos/todos/features/completing_todos/CompleteATodo.java[tags=items_left_counter_should_be_decremented_when_an_item_is_completed]
 ----
 
 The test needs to check that the number of remaining items is 1. The corresponding assertion is in the last line of the test:

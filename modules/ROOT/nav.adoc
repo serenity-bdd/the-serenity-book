@@ -49,4 +49,4 @@
 * xref:serenity-parallel-batches.adoc[Running Serenity tests in parallel batches]
 
 .Reference
-* link:glossary.adoc[Glossary]
+* xref:glossary.adoc[Glossary]

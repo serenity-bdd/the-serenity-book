@@ -35,6 +35,9 @@
 * xref:serenity-screenplay-rest.adoc[REST API Testing with Screenplay]
 * xref:serenity-screenplay-ensure.adoc[Fluent Assertions in Screenplay]
 
+.Integrating in Spring
+* xref:spring.adoc[Integration testing Spring]
+
 .Reporting and Living documentation
 * xref:living-documentation.adoc[Living Documentation]
 * xref:filtering-reports.adoc[Filtering Reports]

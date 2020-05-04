@@ -187,20 +187,20 @@ The hierarchy of requirement types. This is the list of requirement types to be 
 When deriving requirement types from a path, exclude any values from this comma-separated list.
 
 === serenity.test.requirements.basedir 
-The base directory in which requirements are kept. It is assumed that this directory contains sub folders src/test/resources. If this property is set, the requirements are read from src/test/resources under this folder
-instead of the classpath or working directory. If you need to set an independent requirements directory that
-does not follow the src/test/resources convention, use `serenity.requirements.dir1 instead
+The base directory in which requirements are kept.
+It is assumed that this directory contains sub folders src/test/resources.
+If this property is set, the requirements are read from src/test/resources under this folder instead of the classpath or working directory.
+If you need to set an independent requirements directory that does not follow the src/test/resources convention, use `serenity.requirements.dir1` instead
 
 This property is used to support situations where your working directory
-is different from the requirements base dir (for example when building a multi-module project from parent pom with
-requirements stored inside a sub-module.
+is different from the requirements base dir (for example when building a multi-module project from parent pom with requirements stored inside a sub-module.
 
 === serenity.release.types 
 What tag names identify the release types (e.g. Release, Iteration, Sprint). A comma-separated list. By default, "Release, Iteration"
 
 === serenity.locator.factory 
-Normally, Serenity uses SmartElementLocatorFactory, an extension of the AjaxElementLocatorFactory
-when instantiating page objects. This is to ensure that web elements are available and usable before they are used.
+Normally, Serenity uses SmartElementLocatorFactory, an extension of the AjaxElementLocatorFactory when instantiating page objects.
+This is to ensure that web elements are available and usable before they are used.
 For alternative behaviour, you can set this value to DisplayedElementLocatorFactory, AjaxElementLocatorFactory or DefaultElementLocatorFactory.
 
 === chrome.switches 

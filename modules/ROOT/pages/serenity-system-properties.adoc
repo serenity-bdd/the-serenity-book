@@ -7,7 +7,7 @@ You typically run Serenity as part of the build process (either locally or on a 
 The full list is shown here:
 
 === properties 
-Absolute path of the property file where Serenity system property defaults are defined. Defaults to +~/serenity.properties+
+Absolute path of the property file where Serenity system property defaults are defined. Defaults to `~/serenity.properties`
 
 === webdriver.driver 
 What browser do you want your tests to run in, for example firefox, chrome, phantomjs or iexplorer. You can also use the *driver* property as a shortcut.
@@ -49,7 +49,7 @@ Where should reports be generated. If project contains only one module (root mod
 What name should appear on the reports
 
 === serenity.only.save.failing.screenshots 
-Should Serenity only store screenshots for failing steps? This can save disk space and speed up the tests a little. It is very useful for data-driven testing. This property is now deprecated. Use +serenity.take.screenshots+ instead.
+Should Serenity only store screenshots for failing steps? This can save disk space and speed up the tests a little. It is very useful for data-driven testing. This property is now deprecated. Use `serenity.take.screenshots` instead.
 
 === serenity.ext.packages* 
 Extension packages. This is a list of packages that will be scanned for custom TagProvider implementations. To add a custom tag provider, just implement the TagProvider interface and specify the root package for this provider in this parameter.
@@ -60,10 +60,11 @@ Should Serenity take screenshots for every clicked button and every selected lin
 
 === serenity.take.screenshots 
 Set this property to have more finer control on how screenshots are taken. This property can take the following values:
-* *FOR_EACH_ACTION* : Similar to +serenity.verbose.screenshots+
+
+* *FOR_EACH_ACTION* : Similar to `serenity.verbose.screenshots`
 * *BEFORE_AND_AFTER_EACH_STEP*
 * *AFTER_EACH_STEP*
-* *FOR_FAILURES* : Similar to +serenity.only.save.failing.screenshots+
+* *FOR_FAILURES* : Similar to `serenity.only.save.failing.screenshots`
 * *DISABLED*
 
 === serenity.report.encoding 
@@ -103,10 +104,12 @@ Resize the browser to the specified dimensions, in order to take larger screensh
 Value in pixels. If set, screenshots are resized to this size. Useful to save space.
 
 === serenity.keep.unscaled.screenshots 
-Set to +true+ if you wish to save the original unscaled screenshots. This is set to +false+ by default.
+Set to `true` if you wish to save the original unscaled screenshots.
+This is set to `false` by default.
 
 === serenity.store.html.source 
-Set this property to +true+ to save the HTML source code of the screenshot web pages. This is set to +false+ by default.
+Set this property to `true` to save the HTML source code of the screenshot web pages.
+This is set to `false` by default.
 
 === serenity.issue.tracker.url 
 The URL used to generate links to the issue tracking system.
@@ -137,7 +140,7 @@ Set this property to override the default locator factory with another locator f
 
 
 === serenity.native.events 
-Activate and deactivate native events for Firefox by setting this property to +true+ or +false+.
+Activate and deactivate native events for Firefox by setting this property to `true` or `false`.
 
 === security.enable_java 
 Set this to true to enable Java support in Firefox. By default, this is set to false as it slows down the web driver.
@@ -161,6 +164,7 @@ HTTP Proxy password configuration for Firefox and PhantomJS
 
 === serenity.logging 
 Property for providing level of serenity actions, results, etc.
+
 * *QUIET* : No Thucydides logging at all
 * *NORMAL* : Log the start and end of tests
 * *VERBOSE* : Log the start and end of tests and test steps, default value
@@ -225,7 +229,7 @@ A semicolon separated list of Firefox configuration settings. For ex.,
 -Dfirefox.preferences="browser.download.folderList=2;browser.download.manager.showWhenStarting=false;browser.download.dir=c:\downloads"
 ------------------
 
-Integer and boolean values will be converted to the corresponding types in the Firefox preferences; all other values will be treated as Strings. You can set a boolean value to true by simply specifying the property name, e.g. +-Dfirefox.preferences=app.update.silent+.
+Integer and boolean values will be converted to the corresponding types in the Firefox preferences; all other values will be treated as Strings. You can set a boolean value to true by simply specifying the property name, e.g. `-Dfirefox.preferences=app.update.silent`.
 
 A complete reference to Firefox's configuration settings is given http://kb.mozillazine.org/Firefox_:_FAQs_:_About:config_Entries[here].
 
@@ -315,7 +319,7 @@ public void aTestUsingMyCustomProfile() {...}
 /////
 === Colors in console output
 
-There is feature for colorful console output during executing serenity tests. To enable it you should provide variable +serenity.console.colors = true+, by default it is turned off. This feature can cause errors if it is enabled for builds under Jenkins.
+There is feature for colorful console output during executing serenity tests. To enable it you should provide variable `serenity.console.colors = true`, by default it is turned off. This feature can cause errors if it is enabled for builds under Jenkins.
 Possible values are:
 
  - true

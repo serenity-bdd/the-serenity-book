@@ -53,3 +53,4 @@
 
 .Reference
 * xref:glossary.adoc[Glossary]
+* xref:serenity-system-properties.adoc[Serenity System Properties and Configuration]

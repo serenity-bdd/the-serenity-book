@@ -289,13 +289,21 @@ What (human) language are the Cucumber feature files written in? Defaults to "en
 Keep the Thucydides session data between tests. Normally, the session data is cleared between tests.
 
 === serenity.console.colors 
-Enabling or disabling in console output. All details you can find under <<Colors in console output>>
+There is feature for colorful console output during executing serenity tests. To enable it you should provide variable `serenity.console.colors = true`, by default it is turned off. This feature can cause errors if it is enabled for builds under Jenkins.
 
-// FIXME move FF profile to driver info pages
-/////
+[[console-colors-off]]
+.Console color output is disabled
+image::console-colors-off.png[]
+
+If this property equal to true you will find colorful output:
+
+[[console-colors-on]]
+.Console color output is enabled
+image::console-colors-on.png[]
 
 
-=== Providing your own Firefox profile
+// FIXME move FF profile to extended driver info pages?
+== Providing your own Firefox profile
 
 If you need to configure your own customized Firefox profile, you can do this by using the Thucydidies.useFirefoxProfile() method before you start your tests. For example:
 
@@ -313,30 +321,3 @@ public void setupProfile() {
 @Test
 public void aTestUsingMyCustomProfile() {...}
 ------
-/////
-
-// FIXME do you need a special chapter for colors? move to property description
-/////
-=== Colors in console output
-
-There is feature for colorful console output during executing serenity tests. To enable it you should provide variable `serenity.console.colors = true`, by default it is turned off. This feature can cause errors if it is enabled for builds under Jenkins.
-Possible values are:
-
- - true
- - false (default value)
-
-If this property equal to false (or not provided at all) - output will be as configured in your system, for example:
-
-[[console-colors-off]]
-.Console color output is disabled
-image::console-colors-off.png[]
-
-If this property equal to true you will find colorful output:
-
-[[console-colors-on]]
-.Console color output is enabled
-image::console-colors-on.png[]
-
-
-/////
-

@@ -187,7 +187,7 @@ The hierarchy of requirement types. This is the list of requirement types to be 
 When deriving requirement types from a path, exclude any values from this comma-separated list.
 
 === serenity.test.requirements.basedir 
- The base directory in which requirements are kept. It is assumed that this directory contains sub folders src/test/resources. If this property is set, the requirements are read from src/test/resources under this folder
+The base directory in which requirements are kept. It is assumed that this directory contains sub folders src/test/resources. If this property is set, the requirements are read from src/test/resources under this folder
 instead of the classpath or working directory. If you need to set an independent requirements directory that
 does not follow the src/test/resources convention, use `serenity.requirements.dir1 instead
 

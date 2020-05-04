@@ -198,11 +198,12 @@ What tag names identify the release types (e.g. Release, Iteration, Sprint). A c
 === serenity.locator.factory 
 Normally, Serenity uses SmartElementLocatorFactory, an extension of the AjaxElementLocatorFactory when instantiating page objects.
 This is to ensure that web elements are available and usable before they are used.
-For alternative behaviour, you can set this value to DisplayedElementLocatorFactory, AjaxElementLocatorFactory or DefaultElementLocatorFactory.
+For alternative behaviour, you can set this value to `DisplayedElementLocatorFactory`, `AjaxElementLocatorFactory` or `DefaultElementLocatorFactory`.
 
 === chrome.switches 
 Arguments to be passed to the Chrome driver, separated by commas. Example: `chrome.switches = --incognito;--disable-download-notification`
 
+// FIXME link to Serenity.useFirefoxProfile()
 === webdriver.firefox.profile 
 The path to the directory of the profile to use when starting firefox. This defaults to webdriver creating an anonymous profile. This is useful if you want to run the web tests using your own Firefox profile. If you are not sure about how to find the path to your profile, look here: http://support.mozilla.com/en-US/kb/Profiles. For example, to run the default profile on a Mac OS X system, you would do something like this:
 
@@ -256,6 +257,7 @@ If defined, the JIRA project id will be prepended to issue numbers.
 
 === jira.username 
 If defined, the JIRA username required to connect to JIRA.
+
 === jira.password 
 If defined, the JIRA password required to connect to JIRA.
 

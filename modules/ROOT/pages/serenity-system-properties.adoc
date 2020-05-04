@@ -302,7 +302,7 @@ image::console-colors-on.png[]
 // FIXME move FF profile to extended driver info pages?
 == Providing your own Firefox profile
 
-If you need to configure your own customized Firefox profile, you can do this by using the Thucydidies.useFirefoxProfile() method before you start your tests. For example:
+If you need to configure your own customized Firefox profile, you can do this by using the Serenity.useFirefoxProfile() method before you start your tests. For example:
 
 [source,java]
 ------

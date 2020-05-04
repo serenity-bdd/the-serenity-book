@@ -48,9 +48,6 @@ Where should reports be generated. If project contains only one module (root mod
 === serenity.project.name 
 What name should appear on the reports
 
-=== serenity.only.save.failing.screenshots 
-Should Serenity only store screenshots for failing steps? This can save disk space and speed up the tests a little. It is very useful for data-driven testing. This property is now deprecated. Use `serenity.take.screenshots` instead.
-
 === serenity.ext.packages* 
 Extension packages. This is a list of packages that will be scanned for custom TagProvider implementations. To add a custom tag provider, just implement the TagProvider interface and specify the root package for this provider in this parameter.
 

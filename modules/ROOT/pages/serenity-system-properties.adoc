@@ -94,7 +94,8 @@ Don't accept sites using untrusted certificates. By default, Serenity BDD accept
 === serenity.timeout 
 How long should the driver wait for elements not immediately visible, in milliseconds.
 
-=== serenity.browser.width* and *serenity.browser.height 
+=== serenity.browser.width
+=== serenity.browser.height
 Resize the browser to the specified dimensions, in order to take larger screenshots. This should work with Internet Explorer and Firefox, but not with Chrome.
 
 === serenity.resized.image.width 
@@ -131,10 +132,6 @@ Set this to false for running all web tests in same story file with one browser,
 
 === serenity.restart.browser.for.each 
 Indicate when a browser should be restarted during a test run. Can be one of: example, scenario, story, feature, never
-
-=== serenity.locator.factory 
-Set this property to override the default locator factory with another locator factory (for ex., AjaxElementLocatorFactory or DefaultElementLocatorFactory). By default, Serenity uses a custom locator factory called DisplayedElementLocatorFactory.
-
 
 === serenity.native.events 
 Activate and deactivate native events for Firefox by setting this property to `true` or `false`.

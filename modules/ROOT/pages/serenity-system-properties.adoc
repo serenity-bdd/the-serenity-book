@@ -56,13 +56,13 @@ Should Serenity take screenshots for every clicked button and every selected lin
 @Deprecated This property is still supported, but serenity.take.screenshots provides more fine-grained control.
 
 === serenity.take.screenshots 
-Set this property to have more finer control on how screenshots are taken. This property can take the following values:
+Set this property to have more finer control on how screenshots are taken, default is `serenity.take.screenshots=BEFORE_AND_AFTER_EACH_STEP` This property can take the following values:
 
-* *FOR_EACH_ACTION* : Similar to `serenity.verbose.screenshots`
-* *BEFORE_AND_AFTER_EACH_STEP*
-* *AFTER_EACH_STEP*
-* *FOR_FAILURES* : Similar to `serenity.only.save.failing.screenshots`
-* *DISABLED*
+* `FOR_EACH_ACTION`: Saves a screenshot at every web element action (like click(), typeAndEnter(), type(), typeAndTab() etc.).
+* `BEFORE_AND_AFTER_EACH_STEP`: Saves a screenshot before and after every step.
+* `AFTER_EACH_STEP`: Saves a screenshot after every step
+* `FOR_FAILURES`: Saves screenshots only for failing steps.
+* `DISABLED`: Doesn't save screenshots for any steps.
 
 === serenity.report.encoding 
 Encoding used to generate the CSV exports

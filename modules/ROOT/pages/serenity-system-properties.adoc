@@ -82,7 +82,7 @@ Report on releases (defaults to true).
 === serenity.restart.browser.frequency 
 During data-driven tests, some browsers (Firefox in particular) may slow down over time due to memory leaks. To get around this, you can get Serenity to start a new browser session at regular intervals when it executes data-driven tests.
 
-=== thucycides.step.delay 
+=== serenity.step.delay
 Pause (in ms) between each test step.
 
 === untrusted.certificates 

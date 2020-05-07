@@ -1,10 +1,12 @@
+= Integration with Issue & Project Tracking systems
+
 Serenity BDD allows create links between stories/tests and issues. Sometimes it is useful for complex development workflow, and for organizing self-documented tests.
 
 Configuration of links is made by annotations and property `serenity.issue.tracker.url` that can be provided in serenity.params or using system variables. The URL provided by `serenity.issue.tracker.url` is used as "body of link", and issue name provided in annotations - last part of this link.
 
 Generally in annotations you should use name of issues according to mask #(NAME)(-)(NUMBER), link will be created to (NAME)(-)(NUMBER), below you can find example.
 
-==== Linking with issues for JUnit
+== Linking with issues for JUnit
 When tests created with JUnit you can use annotations `@Issue`, `@Issues`, `@Title`.
 
 * `@Issue` used for linking single issue. It should be initialised with name of referenced issue, started with `#`
@@ -17,7 +19,7 @@ serenity.properties contains:
 
 [source,gherkin]
 ----
-include::{srcdir}/junit-tests-linked-to-issues/serenity.properties[]
+include::../examples/junit-tests-linked-to-issues/serenity.properties[]
 ----
 
 
@@ -25,7 +27,7 @@ test class looks like:
 
 [source,java]
 ----
-include::{srcdir}/junit-tests-linked-to-issues/src/test/java/net/serenity/samples/retries/SampleTest.java[]
+include::../examples//junit-tests-linked-to-issues/src/test/java/net/serenity/samples/retries/SampleTest.java[]
 ----
 
 In this case report will look like:
@@ -41,7 +43,7 @@ Also, all references clickable and will be :
 #NO-97:  https://example.server.com/cases/view/NO-97
 ----
 
-==== Linking with issues for JBehave
+== Linking with issues for JBehave
 Also you can use the `@issue` annotation or `#` in scenario name to link scenarios with issues when using JBehave, as illustrated here:
 
 [source,gherkin]
@@ -63,7 +65,7 @@ Then I should get a successful result
 In this case links will be created according same rules as for <<Linking with issues for JUnit>>
 
 
-==== Linking with issues for Cucumber
+== Linking with issues for Cucumber
 The `@issue` or `@issues` annotations can be used in Cucumber `.feature` files to link scenarios with issues , as shown below:
 
 [source,gherkin]

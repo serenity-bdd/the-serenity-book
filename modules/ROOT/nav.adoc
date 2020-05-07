@@ -44,6 +44,7 @@
 * xref:extended-reports.adoc[Additional Reports]
 * xref:manual-tests.adoc[Reporting Manual Test Results]
 * xref:jira.adoc[Integrating with JIRA]
+* xref:screenshot.adoc[Managing Screenshots]
 
 
 .Scaling Serenity

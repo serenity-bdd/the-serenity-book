@@ -40,7 +40,7 @@
 
 .Reporting and Living documentation
 * xref:living-documentation.adoc[Living Documentation]
-* xref:filtering-reports.adoc[Filtering Reports]
+* xref:filtering-reports.adoc[Filtering Execution and Reports with Tags]
 * xref:extended-reports.adoc[Additional Reports]
 * xref:manual-tests.adoc[Reporting Manual Test Results]
 * xref:jira.adoc[Integrating with JIRA]

@@ -6,7 +6,7 @@ However, recording a large number of screenshots can slow down test execution. F
 
 == Basic screenshot configuration
 
-The simplest screenshot configuration option is the <<serenity-system-properties.adoc#serenity.take.screenshots,serenity.take.screenshots>> property.
+The simplest screenshot configuration option is the <<serenity-system-properties.adoc#_serenity_take_screenshots,serenity.take.screenshots>> property.
 
 == Using annotations to control screenshots
 An even more granular level of control is possible using annotations.

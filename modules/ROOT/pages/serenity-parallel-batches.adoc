@@ -330,6 +330,9 @@ stage("report aggregation") {
             echo "Unstashing serenity reports for ${batchName}"
             unstash batchName
         }
+        
+        //build report
+        mvn "serenity:aggregate"
 
         // publish the Serenity report
 

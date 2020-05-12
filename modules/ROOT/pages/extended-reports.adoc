@@ -28,7 +28,7 @@ The full configuration looks something like this:
 <plugin>
     <groupId>net.serenity-bdd.maven.plugins</groupId>
     <artifactId>serenity-maven-plugin</artifactId>
-    <version>${serenity.maven.version}</version>
+    <version>${serenity.version}</version>
     <dependencies>
         <dependency> <1>
             <groupId>net.serenity-bdd</groupId>

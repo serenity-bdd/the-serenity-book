@@ -82,8 +82,7 @@ The `pom.xml` for this project has `4` `<parallel.tests>` defined within the `<p
 ```
 <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <serenity.version>1.9.37</serenity.version>
-    <serenity.maven.version>1.9.6</serenity.maven.version>
+    <serenity.version>1.9.6</serenity.version>
     <serenity.cucumber.version>1.9.16-SNAPSHOT</serenity.cucumber.version>
     <encoding>UTF-8</encoding>
     <parallel.tests>4</parallel.tests>

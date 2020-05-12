@@ -13,7 +13,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <serenity.version>2.0.67</serenity.version>
-        <serenity.maven.version>2.0.67</serenity.maven.version>
         <serenity.cucumber4.version>1.0.21</serenity.cucumber4.version>
         <tags></tags>
     </properties>
@@ -129,7 +128,7 @@
             <plugin>
                 <groupId>net.serenity-bdd.maven.plugins</groupId>
                 <artifactId>serenity-maven-plugin</artifactId>
-                <version>${serenity.maven.version}</version>
+                <version>${serenity.version}</version>
                 <executions>
                     <execution>
                         <id>serenity-reports</id>

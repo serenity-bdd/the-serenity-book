@@ -1,3 +1,5 @@
+= Serenity with Cucumber
+
 http://cucumber.io[Cucumber] is a popular tool for automating BDD-style acceptance criteria.
 Teams that practice BDD have conversations about business rules and examples to better understand the problem they are solving.
 Some of these examples can be transformed into automated acceptance criteria.

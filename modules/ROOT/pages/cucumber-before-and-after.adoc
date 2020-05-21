@@ -1,3 +1,5 @@
+= Setting up and tearing down test data
+
 When we write automated acceptance tests we often need to perform some initial tasks to prepare test data or set up the test environment. Likewise, when a test finishes, we often need to tidy up the database or put the environment into a clean state. With Serenity BDD and Cucumber, there are several ways to perform these setup and teardown tasks.
 
 == Setting up data in the Background step

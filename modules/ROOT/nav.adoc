@@ -2,7 +2,6 @@
 * xref:index.adoc[Introduction to Serenity BDD]
 * xref:getting-started.adoc[Getting Started]
 * xref:first-steps.adoc[First Steps]
-// TODO should be moved to basic junit integration section IMHO
 * xref:step-libraries.adoc[Working with Step Libraries]
 
 .Testing Web Applications

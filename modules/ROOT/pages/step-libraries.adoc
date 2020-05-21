@@ -64,7 +64,7 @@ include::../examples/frequent-flyer/src/test/java/flyer/steps/TravellerEarningSt
 
 One of the keys to writing good tests is getting the layers right. Test suites are more maintainable when they are organised in clear, well defined layers. This helps our brain concentrate on one thing at a time.
 
-= Step libraries and personas
+== Step libraries and personas
 
 Step libraries are often used to represent actors or persona who interact with the application. For example, the `TravellerEarningStatusPoints` step library we saw earlier represents how a Frequent Flyer member earns status points.
 

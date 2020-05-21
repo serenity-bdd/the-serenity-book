@@ -12,8 +12,8 @@ table of contents of the reference manual
   - [x] Building Serenity projects in Gradle
   - [x] Building Serenity projects in Maven
   - [x] Building Serenity projects in Ant <!-- obsolete --> 
-- [ ] Writing Serenity Step Libraries <!-- TODO all moved to "working with step libraries"? -->
-  - [X] Storing data between steps <!-- Serenity.setSessionVariable is missing in the new docs, @Shared is used instead -->
+- [x] Writing Serenity Step Libraries 
+  - [x] Storing data between steps <!-- Serenity.setSessionVariable is missing in the new docs, @Shared is used instead -->
 - [x] Serenity with different BDD Frameworks
   - [x] Serenity with JBehave
   - [x] Serenity with Cucumber

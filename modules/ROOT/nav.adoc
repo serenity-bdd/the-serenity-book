@@ -11,6 +11,7 @@
 * xref:remote.adoc[Running Remote Tests]
 * xref:extending-webdriver.adoc[Extending Webdriver setup and teardown]
 * xref:environment-specific-config.adoc[Environment-specific configurations]
+* xref:advanced-webdriver.adoc[Advanced WebDriver integration]
 
 .Serenity with JUnit
 * xref:junit-basic.adoc[Basic JUnit Integration]

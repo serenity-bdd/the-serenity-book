@@ -51,8 +51,8 @@ table of contents of the reference manual
   - [x] Tasks can be used as building blocks by other tasks
   - [x] Actors can ask questions about the state of the application
   - [x] Actors use their abilities to interact with the system
-- [ ] Advanced WebDriver integration <!-- TODO -->
-  - [ ] Custom WebDriver implementations
+- [x] Advanced WebDriver integration <!-- TODO -->
+  - [x] Custom WebDriver implementations
 - [x] Running Remote tests
   - [x] Running tests against a Selenium Grid server
   - [x] Running tests on Appium

@@ -1,3 +1,5 @@
+= Serenity with Cucumber
+
 http://cucumber.io[Cucumber] is a popular tool for automating BDD-style acceptance criteria.
 Teams that practice BDD have conversations about business rules and examples to better understand the problem they are solving.
 Some of these examples can be transformed into automated acceptance criteria.
@@ -61,7 +63,7 @@ There are currently two commonly-used versions of Cucumber: Cucumber 2 and Cucum
 While they both support the same _Gherkin_ notation, the way you implement the steps is a little different in each version.
 When you use Serenity with Cucumber, you use a different dependency depending on the version of Cucumber you want to use.
 
-New versions come out regularly: you can find out what the latest stable versions are [on the Serenity BDD Github home page](https://github.com/serenity-bdd/serenity-core/#what-is-the-latest-stable-version-i-should-use).
+New versions come out regularly: you can find out what the latest stable versions are https://github.com/serenity-bdd/serenity-core/#what-is-the-latest-stable-version-i-should-use[on the Serenity BDD Github home page].
 
 === Working with Cucumber 2
 

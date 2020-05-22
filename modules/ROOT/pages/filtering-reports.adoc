@@ -1,6 +1,9 @@
 
-= Filtering Reports
-Serenity BDD makes it easy to get both a broad overview of your test results and functional coverage. But when working with large test suites, it is often useful to be able to focus on specific functional areas of the application when reporting results. For example, you may want to view only the results for the tests related to the current release, or to a specific functional area.
+= Filtering Execution and Reports with Tags
+
+Serenity BDD makes it easy to get both a broad overview of your test results and functional coverage.
+But when working with large test suites, it is often useful to be able to focus on specific functional areas of the application when reporting results.
+For example, you may want to view only the results for the tests related to the current release, or to a specific functional area.
 
 In Serenity BDD, you can use tags to generate this kind of focused report.
 
@@ -27,7 +30,7 @@ public class WhenAddingNumbers {
     MathWizSteps michael;
 
     @Test
-    @WithTag("sprint-2")
+    @WithTag("release:sprint-2")
     public void addingSums() {
         // Given
         michael.startsWith(1);
@@ -38,13 +41,23 @@ public class WhenAddingNumbers {
         // Then
         michael.shouldHave(3);
     }
+
+    @WithTagsValuesOf({"Reporting", "release:sprint-3"})
+    public void testWithMultipleTags() {
+    }
 }
 ----
 
-== Running
+== Running Scenarios by tags
+
+Tags are also a great way to help organize test execution.
+For example, you might want to flag all of the web services tests, or mark certain tests to run against Internet Explorer browser only.
+With JUnit tests, this can be achieved by providing a single tag or a comma separated list of tags from command line.
+If provided, only classes and/or methods with tags in this list will be executed.
 
 ----
-mvn clean verify -Dtags="sprint-2"
+mvn clean verify -Dtags="feature:Reporting, release:sprint-2"
+mvn clean verify -Dtags="feature:Reporting, release:sprint-2"
 ----
 
 When using Cucumber, we need to use the `cucumber.options` property to indicate which scenarios should be executed. For example, the following command runs all of the Cucumber scenarios with the `@sprint-2` tag":
@@ -71,7 +84,3 @@ If you have already run the full set of tests, you can also produce a filtered a
 ```
 $ mvn serenity:aggregate -Dtags=sprint-2
 ```
-
-== Using custom requirements structures
-
-By default, requirements filtering will a

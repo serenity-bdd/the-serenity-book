@@ -1,3 +1,5 @@
+= Introduction
+
 Serenity BDD is an open source library that aims to make the idea of living documentation a reality.
 
 Serenity BDD helps you write cleaner and more maintainable automated acceptance and regression tests faster. Serenity also uses the test results to produce illustrated, narrative reports that document and describe what your application does and how it works.

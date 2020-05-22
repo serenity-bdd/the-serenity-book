@@ -1,0 +1,27 @@
+<build>
+    ...
+    <plugins>
+        ...
+        <plugin>
+            <groupId>net.serenity.maven.plugins</groupId>
+            <artifactId>maven-serenity-plugin</artifactId>
+            <version>xxx</version>
+            <executions>
+                <execution>
+                    <id>serenity-reports</id>
+                    <phase>post-integration-test</phase>
+                    <goals>
+                        <goal>aggregate</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <dependencies>
+                <dependency>
+                    <groupId>net.serenity.plugins.jira</groupId>
+                    <artifactId>serenity-jira-requirements-provider</artifactId>
+                    <version>xxx</version>
+                </dependency>
+            </dependencies>
+        </plugin>
+    </plugins>
+</build>

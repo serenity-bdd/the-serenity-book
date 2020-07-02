@@ -354,7 +354,6 @@ The possible values are:
 
  * scenario
  * story or feature
- * example
  * never
 
 ==== Pausing between each step

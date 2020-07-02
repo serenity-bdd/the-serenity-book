@@ -131,7 +131,7 @@ Set this to true for running all web tests in a single browser, for one test. Ca
 Set this to false for running all web tests in same story file with one browser, can be used when Jbehave is used. default value is 'false'
 
 === serenity.restart.browser.for.each 
-Indicate when a browser should be restarted during a test run. Can be one of: example, scenario, story, feature, never
+Indicate when a browser should be restarted during a test run. Can be one of: scenario, story, feature, never
 
 === serenity.native.events 
 Activate and deactivate native events for Firefox by setting this property to `true` or `false`.

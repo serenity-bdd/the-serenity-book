@@ -6,8 +6,8 @@ Whether you are using Screenplay or classic Serenity Page Objects, the simplest 
 
 [source,java]
 ----
-@DefaultUrl(""http://myapp.myorg.com"/somepage")
-public void MyAppHomePage extends PageObject {}
+@DefaultUrl("http://myapp.myorg.com/somepage")
+public class MyAppHomePage extends PageObject {}
 ----
 
 You can modify this url at runtime by providing a different base URL in the `webdriver.base.url` system property.
@@ -76,12 +76,11 @@ You can then reference a URL in a page object using the "page:" notation:
 [source,java]
 ----
 @DefaultUrl("page:home.page")
-public void MyAppHomePage extends PageObject {}
-Or, if you are using Screenplay, you can refer to the pages directly by name:
-actor.attemptsTo(
-    Open.thePageNamed("home.page")
-)
+public class MyAppHomePage extends PageObject {}
 ----
+
+Or, if you are using Screenplay, you can refer to the pages directly by name: `actor.attemptsTo(Open.thePageNamed("home.page"))`
+
 
 You can also add an all section, for URLs that will apply to any environment. These can use properties from the `default` environment section (or elsewhere in the config file), using the # symbol (the $ symbol, normally used, may conflict with the normal TypeSafe Config variable substitution). An example is shown here:
 
@@ -129,7 +128,7 @@ public class MyWebServiceActions {
   public void invoke_my_webservice() {
     String webserviceEndpoint =  EnvironmentSpecificConfiguration.from(environmentVariables)
                                                                  .getProperty("my.webservice.endpoint");
-    ...
+    // ...
   }
 }
 ----

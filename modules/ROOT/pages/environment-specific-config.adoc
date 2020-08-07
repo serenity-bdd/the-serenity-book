@@ -18,7 +18,7 @@ For example, if you set `webdriver.base.url` to "http://staging.myapp.myorg.com"
 
 You can also configure the `webdriver.base.url` property for different environments in the `serenity.conf` configuration file, in the `src/test/resources` directory. To do this, you add an `environments` section that contains the configuration property values to be used for each environment. For example, suppose you need to configure your tests for three environments: dev, staging and prod, each with a different base url. You con set this up by adding the following section to your `serenity.conf` file:
 
-[source,json]
+[source]
 ----
 environments {
     default {
@@ -49,7 +49,7 @@ The `default` environment will be used if no other value is provided, which is w
 
 You may need some pages to use different base URLs even within the same environment. For example, you may need to open a page on a different site or domain. You can do this by adding arbitrarily-named properties to each environment section, like the `accounts.service.url` property defined here:
 
-[source,json]
+[source]
 ----
 environments {
     default {
@@ -85,7 +85,7 @@ actor.attemptsTo(
 
 You can also add an all section, for URLs that will apply to any environment. These can use properties from the `default` environment section (or elsewhere in the config file), using the # symbol (the $ symbol, normally used, may conflict with the normal TypeSafe Config variable substitution). An example is shown here:
 
-[source,json]
+[source]
 ----
 environments {
     ...
@@ -102,7 +102,7 @@ environments {
 You can even leverage this feature for your own application code, and access environment-specific properties programmatically.
 Suppose your `serenity.conf` file contains the following configuration:
 
-[source,json]
+[source]
 ----
 environments {
     default {

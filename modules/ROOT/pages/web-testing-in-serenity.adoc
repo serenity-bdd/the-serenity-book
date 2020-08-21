@@ -371,6 +371,11 @@ You can add arbitrary capabilities to the WebDriver driver by using the `serenit
 serenity.driver.capabilities="browserName:iphone; deviceName:iPad Retina; version:9.2"
 ----
 
+=== Automatic WebDriver management
+
+Serenity uses the WebDriverManager tool (https://github.com/bonigarcia/webdrivermanager) for automatic web driver management.
+Automatic web driver download can be activated using the property `webdriver.autodownload=true`
+
 === Driver troubleshooting
 
 One of the most common Serenity issues is the "Could not instantiate new WebDriver instance" message.

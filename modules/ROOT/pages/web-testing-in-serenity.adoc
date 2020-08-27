@@ -319,7 +319,7 @@ You can add more complete JSON configuratio options in the `serenity.conf` file,
 ----
 gecko.firefox.options="""
 {
-    args": ["-headless", "-profile", "/path/to/my/profile"],
+    "args": ["-headless", "-profile", "/path/to/my/profile"],
     "prefs": {
         "dom.ipc.processCount": 8
     },

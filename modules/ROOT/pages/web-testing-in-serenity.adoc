@@ -304,7 +304,7 @@ chrome {
 
 ==== Configuring Firefox
 
-Firefox has [a number of Firefox-specific options](https://firefox-source-docs.mozilla.org/testing/geckodriver/geckodriver/Capabilities.html) which you can configure in Serenity.
+Firefox has https://firefox-source-docs.mozilla.org/testing/geckodriver/geckodriver/Capabilities.html[a number of Firefox-specific options] which you can configure in Serenity.
 
 The `moz:firefoxOptions` property can be set using the `gecko.firefox.options` property, e.g.
 
@@ -373,7 +373,7 @@ serenity.driver.capabilities="browserName:iphone; deviceName:iPad Retina; versio
 
 === Automatic WebDriver management
 
-Serenity uses the WebDriverManager tool (https://github.com/bonigarcia/webdrivermanager) for automatic web driver management.
+Serenity uses the https://github.com/bonigarcia/webdrivermanager[WebDriverManager] tool  for automatic web driver management.
 Automatic web driver download can be activated using the property `webdriver.autodownload=true`
 
 === Driver troubleshooting

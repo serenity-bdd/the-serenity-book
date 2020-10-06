@@ -12,6 +12,14 @@ The simplest screenshot configuration option is the <<serenity-system-properties
 An even more granular level of control is possible using annotations.
 You can annotate any test or step method (or any method used by a step or test) with the +@Screenshots+ annotation to override the number of screenshots taken within this step (or sub-step). Some sample uses are shown here:
 
+== Full page screenshot configuration
+
+Serenity lets you define photographer mode with <<serenity-system-properties.adoc#_serenity.full.page.screenshot.strategy,serenity.full.page.screenshot.strategy>> property.
+
+== Using annotations to control screenshots
+An even more granular level of control is possible using annotations.
+You can annotate any test or step method (or any method used by a step or test) with the +@Screenshots+ annotation to override the number of screenshots taken within this step (or sub-step). Some sample uses are shown here:
+
 [source,java]
 ------------------
 @Step

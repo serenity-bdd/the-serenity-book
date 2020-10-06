@@ -68,8 +68,7 @@ Set this property to have more finer control on how screenshots are taken, defau
 Set this property to have full page screenshot support. This property can take the following values:
 
 * `true`: Enables WHOLE_PAGE screenshot mode.
-* `false`: Enables VIEWPORT_ONLY screenshot mode.
-Serenity BDD will use VIEWPORT mode if property not set.
+* `false`: Enables VIEWPORT_ONLY screenshot mode. (default)
 
 === serenity.report.encoding
 Encoding used to generate the CSV exports

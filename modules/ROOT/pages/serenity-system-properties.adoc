@@ -12,6 +12,9 @@ Absolute path of the property file where Serenity system property defaults are d
 === webdriver.driver
 What browser do you want your tests to run in, for example firefox, chrome, phantomjs or iexplorer. You can also use the *driver* property as a shortcut.
 
+=== webdriver.autodownload
+Set to `false` if you don't want Serenity to automatically download driver binaries for local runs.
+
 === webdriver.provided_type
 If using a provided driver, what type is it. The implementation class needs to be defined in the webdriver.provided.{type} system property.
 

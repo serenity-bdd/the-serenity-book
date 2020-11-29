@@ -3,6 +3,7 @@
 * xref:getting-started.adoc[Getting Started]
 * xref:first-steps.adoc[First Steps]
 * xref:step-libraries.adoc[Working with Step Libraries]
+* xref:maven.adoc[Building Serenity BDD with Maven]
 
 .Testing Web Applications
 * xref:web-testing-in-serenity.adoc[Testing Web Applications]

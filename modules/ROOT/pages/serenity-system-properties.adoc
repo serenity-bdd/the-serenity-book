@@ -306,6 +306,8 @@ If this property equal to true you will find colorful output:
 .Console color output is enabled
 image::console-colors-on.png[]
 
+=== serenity.include.actor.name.in.consequences
+Set to true to show actor names in the "then" steps. Especially useful when you have multiple actors in a test
 
 // FIXME move FF profile to extended driver info pages?
 == Providing your own Firefox profile

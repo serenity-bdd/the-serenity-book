@@ -37,7 +37,7 @@ The full configuration looks something like this:
         </dependency>
         <dependency>
             <groupId>net.serenity-bdd</groupId>
-            <artifactId>serenity-single-page-report</artifactId>
+            <artifactId>serenity-navigator-report</artifactId>
             <version>${serenity.version}</version>
         </dependency>
     </dependencies>

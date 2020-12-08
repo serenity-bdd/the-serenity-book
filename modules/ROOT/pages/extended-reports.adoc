@@ -3,7 +3,7 @@
 In addition to the standard HTML reports, Serenity provides additional reports for more specific usages. These include
 
   * Emailable HTML reports
-  * Archivable PDF reports (coming soon)
+  * Html report as single page react application
 
 == Serenity emailable reports
 
@@ -29,8 +29,13 @@ The full configuration looks something like this:
     <groupId>net.serenity-bdd.maven.plugins</groupId>
     <artifactId>serenity-maven-plugin</artifactId>
     <version>${serenity.version}</version>
-    <dependencies>
-        <dependency> <1>
+    <dependencies> <1>
+        <dependency> 
+            <groupId>net.serenity-bdd</groupId>
+            <artifactId>serenity-single-page-report</artifactId>
+            <version>${serenity.version}</version>
+        </dependency>
+        <dependency>
             <groupId>net.serenity-bdd</groupId>
             <artifactId>serenity-single-page-report</artifactId>
             <version>${serenity.version}</version>
@@ -38,7 +43,7 @@ The full configuration looks something like this:
     </dependencies>
     <configuration>
         <tags>${tags}</tags>
-        <reports>single-page-html</reports> <2>
+        <reports>single-page-html,navigator</reports> <2>
     </configuration>
     <executions>
         <execution>
@@ -52,8 +57,8 @@ The full configuration looks something like this:
 </plugin>
 ----
 
-<1> Add a dependency to the serenity-emailer module
-<2> Produce the emailable summary report when we run the aggregate goal
+<1> Dependencies on the different report modules 
+<2> List of reports to generate
 
 If you are using Maven, you can also generate these reports directly using the `reports` goal and by passing the `serenity.reports` system property:
 

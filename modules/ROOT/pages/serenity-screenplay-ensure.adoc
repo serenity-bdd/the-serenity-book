@@ -405,8 +405,8 @@ aster.attemptsTo(
 
 ### Using Named Expectations
 
-If you have commonly used predicates in your test code, you can use the `NamedException` to make your code more concise.
-For example, here we define a `NamedException` that matches primary colors:
+If you have commonly used predicates in your test code, you can use the `NamedExpectation` to make your code more concise.
+For example, here we define a `NamedExpectation` that matches primary colors:
 
 [source,java]
 -----

@@ -41,7 +41,7 @@ $ mvn clean verify
 or
 
 ----
-$gradle clean test
+$ gradle clean test
 ----
 
 This should produce something like the following:

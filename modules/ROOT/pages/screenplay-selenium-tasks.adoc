@@ -277,7 +277,7 @@ public class TheUserName implements Question<String> {
 
 Here we use `BrowseTheWeb.as(actor)` to get the Serenity WebDriver API for the actor's webdriver instance, which gives access to the full range of Serenity Page Object methods.
 
-We could also use a Target to locate the user name, which we could store in a separate Page Compenent class:
+We could also use a Target to locate the user name, which we could store in a separate Page Component class:
 
 ```
 public static Target USER_NAME = Target.the("User name").locatedBy(".user-name");
@@ -299,7 +299,7 @@ public class TheUserName implements Question<String> {
 }
 -----
 
-Alternatively, we could write this class as a factory, and use a lambda expression instead of a fully blown Qeustion class:
+Alternatively, we could write this class as a factory, and use a lambda expression instead of a fully blown `Question` class:
 
 [source,java]
 -----
@@ -341,8 +341,8 @@ public class TheUserName {
 }
 -----
 
-==== Reading numbers
-This would not be a very strong use case by itself. But the `Text` class makes it easy to do type conversions in a very readable way. For example, if we wanted to read an Integer value rather than a String, we can use the `asInteger()` method in the place of `asString()`. This might lead to a factory class like the following:
+=== Reading numbers
+This would not be a very strong use case by itself. But the `Text` class makes it easy to do type conversions in a very readable way. For example, if we wanted to read an `Integer` value rather than a `String`, we can use the `asInteger()` method in the place of `asString()`. This might lead to a factory class like the following:
 
 [source,java]
 -----
@@ -361,7 +361,7 @@ public class TheUser {
 
 You can also use `asLong()`, `asDouble()`, `asFloat()` and `asBigDecimal()` to convert the value to other numerical types.
 
-==== Reading lists
+=== Reading lists
 
 We can also return a list of values located by a given target, with the `asList()` method, illustrated in the following example:
 
@@ -379,7 +379,7 @@ public class DisplayedItems implements Question<List<String>> {
 }
 -----
 
-==== Reading dates
+=== Reading dates
 
 You can convert a retrieved value to a `LocalDate` using the `asLocalDate()` method, e.g.
 
@@ -390,7 +390,7 @@ You can convert a retrieved value to a `LocalDate` using the `asLocalDate()` met
     }
 -----
 
-==== Reading enums
+=== Reading enums
 
 It is often convenient to convert displayed values directly to enums. You can do this by using the `asEnum()` method. For example, suppose we have the following enum class:
 
@@ -420,13 +420,14 @@ public class CurrentFilter implements Question<TodoStatusFilter> {
 }
 -----
 
-==== Reading off-screen text
+=== Reading off-screen text
 
 The WebDriver `getText()` method may fail in certain cases if the element being read is not visible on the screen. For example, if you have a long list, elements below the bottom of the screen may not be accessible.
 To get around this issue, you can scroll to the element before retrieving the text, but this can be slow and not always reliable.
 
 Another approach is to read th `textContent` attribute, which will return a value whether the element is displayed or not. You can use the `TextContent` class in the place of the `Text` class to achieve this. For example, you could read the full list of results, even if some where below the bottom of the page, like this:
 
+[source,java]
 -----
 @Subject("the displayed todo items")
 public class DisplayedItems implements Question<List<String>> {
@@ -460,7 +461,7 @@ The `Value.of()` method follows the same pattern as `Text.of()`, so all of the c
 
 === Reading from dropdown lists
 
-You can read the selected value or values from a dropdown list using either the `SelectedValue` or `SelectedVisibleTextValue` class. For example, imagine our registration form had an age dropdown, with integer values. We could reead the selected value as follows:
+You can read the selected value or values from a dropdown list using either the `SelectedValue` or `SelectedVisibleTextValue` class. For example, imagine our registration form had an age dropdown, with integer values. We could read the selected value as follows:
 
 [source,java]
 -----
@@ -527,7 +528,7 @@ The `WebElementStateMatchers` contains a set of Hamcrest matchers which can be u
 
 To check the state of an element, you first need to convert the locator used to locate the element into a `Question` about the state of the element. This locator can be a `Target`, a `By` locator, or an XPath or CSS expression.
 
-To convert a locator to a Question about the element's state, we use the `WebElementQuestion` class. This class has three static DSL methods, which are all equivalent (you just use the one that reads the most fluently):
+To convert a locator to a `Question` about the element's state, we use the `WebElementQuestion` class. This class has three static DSL methods, which are all equivalent (you just use the one that reads the most fluently):
 
   * `WebElementQuestion.stateOf(locator)`
   * `WebElementQuestion.valueOf(locator)`

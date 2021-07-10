@@ -1,6 +1,6 @@
 name: theserenitybook
 title: The Serenity Book
-version: '2.3.8'
+version: '2.4.48'
 nav:
 - modules/ROOT/nav.adoc
 

@@ -382,3 +382,91 @@ One of the most common Serenity issues is the "Could not instantiate new WebDriv
 This is usually not a Serenity issue as such, but more commonly an issue to do with an incompatible version of the WebDriver binary
 or the browser installed on the machine. Be sure to read the error message carefully, and to make sure you have the latest versions
  of Serenity, the WebDriver driver, and your browser.
+
+
+== Taking Screenshots
+
+By default, Serenity will take screenshots for every step and action, and include these in the reports.
+
+You can fine-tune this behaviour using the `serenity.take.screenshots` property, 
+
+  * FOR_EACH_ACTION: Take a screenshot for every UI action
+  * BEFORE_AND_AFTER_EACH_STEP: Before and after each @Step-annotated method or Screenplay task.
+  * AFTER_EACH_STEP: At the end of each @Step-annotated method or Screenplay task.
+  * FOR_FAILURES: Only take screenshots if a test fails.
+
+=== Using Screenplay with Shutterbug
+By default Serenity uses the standard WebDriver screenshot feature. However you can also configure Serenity to use ShutterBug screenshots as well.
+
+To use Shutterbug 0.9.5 with Serenity, add the Serenity Shutterbug dependency to your project:
+
+[source,xml]
+----
+        <dependency>
+            <groupId>net.serenity-bdd</groupId>
+            <artifactId>serenity-shutterbug</artifactId>
+        </dependency>
+----
+
+Then set the `serenity.screenshooter` property in your Serenity config file:
+
+----
+serenity.screenshooter=shutterbug
+----
+
+You can configure Shutterbug with the following properties:
+
+[source,hocon]
+----
+shutterbug {
+    scrollstrategy = VIEWPORT_ONLY (or) WHOLE_PAGE (or) WHOLE_PAGE_SCROLL_AND_STITCH
+    betweenScrollTimeout = 100
+    useDevicePixelRatio = true 
+}
+----
+
+To use Shutterbug 1.x (currently 1.5) with Serenity, add the Serenity Shutterbug dependency to your project:
+
+[source,xml]
+----
+xml
+        <dependency>
+            <groupId>net.serenity-bdd</groupId>
+            <artifactId>serenity-shutterbug1x</artifactId>
+        </dependency>
+----
+
+Then set the `serenity.screenshooter` property in your Serenity config file:
+
+----
+serenity.screenshooter=shutterbug1x
+----
+
+You can configure Shutterbug with the following properties:
+
+[source,hocon]
+----
+shutterbug {
+    capturestrategy = VIEWPORT (or) FULL (or) FULL_SCROLL (or) VERTICAL_SCROLL (or) HORIZONTAL_SCROLL
+    betweenScrollTimeout = 100
+    useDevicePixelRatio = true 
+}
+----
+
+=== Custom Screenshot handling
+
+You can write your own screenshot handler by implementing the `ScreenShooter` interface:
+
+[source,java]
+----
+public interface ScreenShooter {
+    byte[] takeScreenshot() throws IOException;
+}
+----
+
+Then set the `serenity.screenshooter` property to point to your implementation, e.g.
+
+[source,java]
+----
+serenity.screenshooter=my.fancy.ScreenShooterImpl
+----

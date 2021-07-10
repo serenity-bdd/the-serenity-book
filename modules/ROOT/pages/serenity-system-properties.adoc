@@ -244,12 +244,12 @@ Add extra columns to the CSV output, obtained from tag values.
 Write the console headings using ascii-art ("ascii", default value) or in normal text ("normal")
 
 === tags
-Comma separated list of tags. If provided, only JUnit classes and/or methods with tags in this list will be executed. For example,
+"or" separated list of tags. If provided, only JUnit classes and/or methods with tags in this list will be executed. For example,
 
 ---------------
 mvn verify -Dtags="iteration:I1"
 
-mvn verify -Dtags="color:red,flavor:strawberry"
+mvn verify -Dtags="color:red or flavor:strawberry"
 ---------------
 
 === output.formats
@@ -306,6 +306,8 @@ If this property equal to true you will find colorful output:
 .Console color output is enabled
 image::console-colors-on.png[]
 
+=== serenity.include.actor.name.in.consequences
+Set to true to show actor names in the "then" steps. Especially useful when you have multiple actors in a test
 
 // FIXME move FF profile to extended driver info pages?
 == Providing your own Firefox profile

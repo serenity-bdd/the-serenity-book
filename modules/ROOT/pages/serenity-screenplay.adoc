@@ -84,7 +84,7 @@ We find it useful to give the actors real names, rather than just to use a gener
 
 Actors need to be able to do things to perform their assigned tasks. So we give our actors “abilities”, a bit like the superpowers of a super-hero, but in more mundane. If this is a web test, for example, we need James to be able to browse the web using a browser.
 
-Serenity BDD plays well with Selenium WebDriver, and is happy to manage the browser lifecycle for you. All you need to do is to use the @Managed annotation with a WebDriver member variable, as shown here:
+Serenity BDD plays well with Selenium WebDriver, and is happy to manage the browser lifecycle for you. All you need to do is to use the `@Managed` annotation with a WebDriver member variable, as shown here:
 
 [source,java]
 ----
@@ -139,17 +139,17 @@ For example, we could have written the last line of code like this:
 givenThat(james).wasAbleTo(AddATodoItem.called("Buy some milk"))
 ----
 
-Let’s break it down to understand what is going on. At the heart of the Screenplay Pattern, an actor performs a sequence of tasks. In Serenity, this mechanism is implemented in the Actor class using a variation of the Command Pattern, where the actor executes each task by invoking a special method called performAs() on the corresponding Task object (see <<fig-journey-command-pattern>>).
+Let’s break it down to understand what is going on. At the heart of the Screenplay Pattern, an actor performs a sequence of tasks. In Serenity, this mechanism is implemented in the `Actor` class using a variation of the Command Pattern, where the actor executes each task by invoking a special method called `performAs()` on the corresponding `Task` object (see <<fig-journey-command-pattern>>).
 
 [[fig-journey-command-pattern]]
 .The actor invokes the `performAs()` method on a sequence of tasks
 image::journey-command-pattern.png[]
 
-Tasks are just objects that implement the `Task` interface, and need to implement the `performAs(actor)` method. In fact, you can think of any Task class as basically a `performAs()` method alongside a supporting cast of helper methods.
+Tasks are just objects that implement the `Task` interface, and need to implement the `performAs(actor)` method. In fact, you can think of any `Task` class as basically a `performAs()` method alongside a supporting cast of helper methods.
 
 === Tasks can be created using annotated fields or builders ===
 
-To do its reporting magic, Serenity BDD needs to instrument the task and action objects used during the tests. The simplest way to do arrange this is to let Serenity create it for you, just like any other Serenity step library, using the @Steps annotation. In the following code snippet, Serenity will instantiate the openTheApplication field for you, so that James can use it to open the application:
+To do its reporting magic, Serenity BDD needs to instrument the task and action objects used during the tests. The simplest way to arrange this is to let Serenity create it for you, just like any other Serenity step library, using the `@Steps` annotation. In the following code snippet, Serenity will instantiate the `openTheApplication` field for you, so that James can use it to open the application:
 
 [source,java]
 ----
@@ -205,7 +205,7 @@ To get the job done, a high level business task will usually need to call either
 include::../examples/journey-pattern-sample/src/main/java/net/serenitybdd/demos/todos/tasks/AddATodoItem.java[tags=performAs]
 ----
 
-The actual implementation uses pre-defined `Action` classes (such as `Enter` and `Hit `shown here) that come with Serenity.  `Action` classes are very similar to `Task` classes, except that they focus on interacting directly with the application. Serenity provides a small number of basic Action classes for core UI interactions such as entering field values, clicking on elements, or selecting values from drop-down lists. You can find these in the `net.serenitybdd.screenplay.actions` package. In practice, these provide a convenient and readable DSL that let you describe common low-level UI interactions needed to perform a task.
+The actual implementation uses pre-defined `Action` classes (such as `Enter` and `Hit` shown here) that come with Serenity. `Action` classes are very similar to `Task` classes, except that they focus on interacting directly with the application. Serenity provides a small number of basic `Action` classes for core UI interactions such as entering field values, clicking on elements, or selecting values from drop-down lists. You can find these in the `net.serenitybdd.screenplay.actions` package. In practice, these provide a convenient and readable DSL that let you describe common low-level UI interactions needed to perform a task.
 
 For example, the UI Action to enter the text defined in the `thingToDo` field into the input field with an ID value of “new-todo” would look like this:
 
@@ -214,7 +214,7 @@ For example, the UI Action to enter the text defined in the `thingToDo` field in
 Enter.theValue(thingToDo).into("#new-todo")
 ----
 
-However, hard-coding the CSS selector could lead to duplication. A better practice would be to refactor the selector into a simple Page Object class, like this one:
+However, hard-coding the CSS selector could lead to duplication. A better practice would be to refactor the selector into a simple _Page Object_ class, like this one:
 
 [source,java]
 ----
@@ -223,7 +223,7 @@ public class NewTodoForm extends PageObject {
 }
 ----
 
-Alternatively, we could use the Serenity Target class to associate a meaningful label with a CSS selector. These labels appear in the test reports and make them more readable:
+Alternatively, we could use the Serenity `Target` class to associate a meaningful label with a CSS selector. These labels appear in the test reports and make them more readable:
 
 [source,java]
 ----
@@ -232,7 +232,7 @@ public class NewTodoForm extends PageObject {
 }
 ----
 
-The `@Step` annotation on the performAs() method is used to provide information about how the task will appear in the test reports:
+The `@Step` annotation on the `performAs()` method is used to provide information about how the task will appear in the test reports:
 
 [source,java]
 ----
@@ -240,8 +240,7 @@ The `@Step` annotation on the performAs() method is used to provide information 
 public <T extends Actor> void performAs(T actor) {...}
 ----
 
-Any member variables can be referred to in the @Step annotation by name using the hash (‘#’) prefix (like "#thingToDo" in the example). You can also reference the actor itself using the special
-"{0} placeholder. The end result is a blow-by-blow account of how each business task was performed (see <<fig-journey-action-report>>).
+Any member variables can be referred to in the `@Step` annotation by name using the hash (‘#’) prefix (like "#thingToDo" in the example). You can also reference the actor itself using the special "{0} placeholder. The end result is a blow-by-blow account of how each business task was performed (see <<fig-journey-action-report>>).
 
 [[fig-journey-action-report]]
 .Test reports show details about both tasks and UI interactions
@@ -249,7 +248,7 @@ image::journey-action-report.png[]
 
 === Action classes can access the Serenity WebDriver integration ===
 
-You can also write your own `Action` classes. If the actor has the `BrowseTheWeb` ability, the Action class can integrate with the Serenity WebDriver support in several ways.
+You can also write your own `Action` classes. If the actor has the `BrowseTheWeb` ability, the `Action` class can integrate with the Serenity WebDriver support in several ways.
 
 One approach is to use the `BrowseTheWeb` class to access the WebDriver instance associated with an actor. To do this, you use the `BrowseTheWeb.as(theActor)` method, as shown here:
 
@@ -263,14 +262,14 @@ public <T extends Actor> void performAs(T theActor) {
 
 === Tasks can be used as building blocks by other tasks ===
 
-It is easy to reuse tasks in other, higher level tasks. For example, the sample project uses a AddTodoItems task to add a number of todo items to the list, like this:
+It is easy to reuse tasks in other, higher level tasks. For example, the sample project uses a `AddTodoItems` task to add a number of todo items to the list, like this:
 
 [source,java]
 ----
 givenThat(james).wasAbleTo(AddTodoItems.called("Walk the dog", "Put out the garbage"));
 ----
 
-This task is defined using the AddATodoItem class, as shown here:
+This task is defined using the `AddATodoItem` class, as shown here:
 
 [source,java]
 ----
@@ -288,7 +287,7 @@ A typical automated acceptance test has three parts:
 
 From a testing perspective, the third step is where the real value lies – this is where we check that the application does what it is supposed to do.
 
-In a traditional Serenity test, we would write an assertion using a library like Hamcrest or AssertJ to check an outcome against an expected value. Using the Serenity Screenplay Pattern, we express assertions using a flexible, fluent API quite similar to the one used for Tasks and Actions. In the test shown above, the assertion looks like this:
+In a traditional Serenity test, we would write an assertion using a library like Hamcrest or AssertJ to check an outcome against an expected value. Using the Serenity Screenplay Pattern, we express assertions using a flexible, fluent API quite similar to the one used for `Task`s and `Action`s. In the test shown above, the assertion looks like this:
 
 [source,java]
 ----
@@ -301,7 +300,7 @@ The structure of this code is illustrated in <<fig-journey-breakdown>>
 .A Serenity Screenplay Pattern assertion
 image::journey-breakdown.png[]
 
-As you might expect, this code checks a value retrieved from the application (the items displayed on the screen) against an expected value (described by a Hamcrest expression). However, rather than passing an actual value, we pass a Question object. The role of a Question object is to answer a precise question about the state of the application, from the point of view of the actor, and typically using the abilities of the actor to do so.
+As you might expect, this code checks a value retrieved from the application (the items displayed on the screen) against an expected value (described by a Hamcrest expression). However, rather than passing an actual value, we pass a `Question` object. The role of a `Question` object is to answer a precise question about the state of the application, from the point of view of the actor, and typically using the abilities of the actor to do so.
 
 === Actors use their abilities to interact with the system ===
 
@@ -325,11 +324,11 @@ The test needs to check that the number of remaining items is 1. The correspondi
 then(james).should(seeThat(TheRemainingItemCount.value(), is(1)));
 ----
 
-The Question object here is defined by the `TheRemainingItemCount` class.  This class has one very precise responsibility: to read the number in the remaining item count text displayed at the bottom of the todo list.
+The `Question` object here is defined by the `TheRemainingItemCount` class.  This class has one very precise responsibility: to read the number in the remaining item count text displayed at the bottom of the todo list.
 
-The static `value()`` method is a simple factory method that returns a new instance of the `TheRemainingItemCount` class.  This is simply to make the code read more fluently.
+The static `value()` method is a simple factory method that returns a new instance of the `TheRemainingItemCount` class.  This is simply to make the code read more fluently.
 
-`Question` objects are similar to `Task` and `Action` objects. However, instead of the `performAs()` used for Tasks and Actions, a Question class needs to implement the `answeredBy(actor)` method, and return a result of a specified type. The `TheRemainingItemCount` class is configured to return an Integer. Since it will be querying the web interface, we can extend the WebQuestion class to give us access to the powerful Serenity WebDriver API.
+`Question` objects are similar to `Task` and `Action` objects. However, instead of the `performAs()` used for `Task`s and `Action`s, a `Question` class needs to implement the `answeredBy(actor)` method, and return a result of a specified type. The `TheRemainingItemCount` class is configured to return an `Integer`. Since it will be querying the web interface, we can extend the `WebQuestion` class to give us access to the powerful Serenity WebDriver API.
 
 [source,java]
 ----

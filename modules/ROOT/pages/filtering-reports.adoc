@@ -52,12 +52,12 @@ public class WhenAddingNumbers {
 
 Tags are also a great way to help organize test execution.
 For example, you might want to flag all of the web services tests, or mark certain tests to run against Internet Explorer browser only.
-With JUnit tests, this can be achieved by providing a single tag or a comma separated list of tags from command line.
+With JUnit tests, this can be achieved by providing a single tag or an "or" separated list of tags from command line.
 If provided, only classes and/or methods with tags in this list will be executed.
 
 ----
-mvn clean verify -Dtags="feature:Reporting, release:sprint-2"
-mvn clean verify -Dtags="feature:Reporting, release:sprint-2"
+mvn clean verify -Dtags="feature:Reporting or release:sprint-2"
+mvn clean verify -Dtags="feature:Reporting or release:sprint-2"
 ----
 
 When using Cucumber, we need to use the `cucumber.options` property to indicate which scenarios should be executed. For example, the following command runs all of the Cucumber scenarios with the `@sprint-2` tag":

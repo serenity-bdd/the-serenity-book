@@ -210,7 +210,7 @@ This is to ensure that web elements are available and usable before they are use
 For alternative behaviour, you can set this value to `DisplayedElementLocatorFactory`, `AjaxElementLocatorFactory` or `DefaultElementLocatorFactory`.
 
 === chrome.switches
-Arguments to be passed to the Chrome driver, separated by commas. Example: `chrome.switches = --incognito;--disable-download-notification`
+Arguments to be passed to the Chrome driver, separated by semicolons. Example: `chrome.switches = --incognito;--disable-download-notification`
 
 // FIXME link to Serenity.useFirefoxProfile()
 === webdriver.firefox.profile

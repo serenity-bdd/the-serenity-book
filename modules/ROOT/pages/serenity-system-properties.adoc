@@ -196,7 +196,7 @@ When deriving requirement types from a path, exclude any values from this comma-
 The base directory in which requirements are kept.
 It is assumed that this directory contains sub folders src/test/resources.
 If this property is set, the requirements are read from src/test/resources under this folder instead of the classpath or working directory.
-If you need to set an independent requirements directory that does not follow the src/test/resources convention, use `serenity.requirements.dir1` instead
+If you need to set an independent requirements directory that does not follow the src/test/resources convention, use `serenity.requirements.dir` instead
 
 This property is used to support situations where your working directory
 is different from the requirements base dir (for example when building a multi-module project from parent pom with requirements stored inside a sub-module.

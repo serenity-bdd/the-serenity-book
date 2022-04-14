@@ -148,9 +148,6 @@ Activate and deactivate native events for Firefox by setting this property to `t
 === security.enable_java
 Set this to true to enable Java support in Firefox. By default, this is set to false as it slows down the web driver.
 
-=== serenity.test.requirements.basedir
-The base folder of the sub-module where the jBehave stories are kept. It is assumed that this directory contains sub folders src/test/resources. If this property is set, the requirements are read from src/test/resources under this folder instead of the classpath or working directory. This property is used to support situations where your working directory is different from the requirements base dir (for example when building a multi-module project from parent pom with requirements stored inside a sub-module)
-
 === serenity.proxy.http
 HTTP Proxy URL configuration for Firefox and PhantomJS
 

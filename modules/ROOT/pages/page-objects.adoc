@@ -461,7 +461,7 @@ boolean loadingFinished = slowLoadingField.isDisplayed()
 
 When we access this field, two things can happen. If the field takes less than 5 seconds to load, all will be good. But if it takes more than 5 seconds, a NoSuchElementException (or something similar) will be thrown.
 
-That this timeout also applies for lists. Suppose we have defined a field like this, which takes some time to dynamically load:
+This timeout also applies for lists. Suppose we have defined a field like this, which takes some time to dynamically load:
 
 [source,java]
 ----

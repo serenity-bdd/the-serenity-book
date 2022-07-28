@@ -1,8 +1,8 @@
 = Integration testing Spring
 
 Spring projects are well suited for running your acceptance tests against different layers of your application.
-With Serenity you can ensure correct behavior using a browser, the REST API or work with the service layer of you application directly.
-Occasionally it can also be useful to access the service layers directly in your browser based ent-to-end tests.
+With Serenity, you can ensure correct behavior using a browser or the REST API or work with the service layer of your application directly.
+Occasionally it can also be useful to access the service layers directly in your browser-based end-to-end tests.
 For example, you may have a scenario where a user action must, as a side effect, record an audit log in a table in the database.
 To keep your test focused and simple, you may want to call the service layer directly to check the audit logs, rather than using the browser to log in as an administrator and navigate to the audit logs screen.
 
@@ -42,7 +42,7 @@ public class WhenInjectingSpringDependencies {
 
 == In Spring Boot <1.3
 
-use the `@ContextConfiguration` annotation to define the configuration file or files to use. The you can inject dependencies as you would with an ordinary Spring integration test, using the usual Spring annotations such as `@Autowired` or `@Resource`. For example, suppose we are using the following Spring configuration file, called ‘config.xml’:
+use the `@ContextConfiguration` annotation to define the configuration file or files to use. Then you can inject dependencies as you would with an ordinary Spring integration test, using the usual Spring annotations such as `@Autowired` or `@Resource`. For example, suppose we are using the following Spring configuration file, called ‘config.xml’:
 
 [source,xml]
 --------------------
